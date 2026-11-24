@@ -202,7 +202,7 @@
     };
     return JSON.stringify(
       {
-        metadata: { name: deck.name },
+        metadata: { name: deck.name, author: (SWU.AI && SWU.AI.settings.playerName) || '' },
         leader: { id: id(deck.leader), count: 1 },
         base: { id: id(deck.base), count: 1 },
         deck: Object.entries(deck.main).map(([k, n]) => ({ id: id(k), count: n })),
@@ -211,6 +211,18 @@
       null,
       1
     );
+  };
+  // Melee.gg 牌表格式：Leaders / Base / Deck / Sideboard，每行「張數 | 卡名 | 副標」
+  D.toMelee = (deck) => {
+    const line = (k, n) => {
+      const c = D.card(k);
+      if (!c) return n + ' | ' + k;
+      return n + ' | ' + c.n + (c.s && c.t !== 'Base' ? ' | ' + c.s : '');
+    };
+    const out = ['Leaders', line(deck.leader, 1), '', 'Base', line(deck.base, 1), '', 'Deck', ...D.sorted(deck.main).map(([k, n]) => line(k, n))];
+    const side = D.sorted(deck.side || {});
+    if (side.length) out.push('', 'Sideboard', ...side.map(([k, n]) => line(k, n)));
+    return out.join('\n');
   };
   D.sorted = (zone) =>
     Object.entries(zone || {}).sort((a, b) => {
