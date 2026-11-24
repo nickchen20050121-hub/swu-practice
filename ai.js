@@ -115,7 +115,7 @@
         s = b ? 2 + b.s * 0.6 : -1;
       } else if (a.type === 'deploy') s = 6;
       else if (a.type === 'initiative') s = P.units.length && !acts.some((x) => x.type === 'attack' || x.type === 'play') ? 1 : 0.2;
-      else if (a.type === 'ability' || a.type === 'leaderAbility') s = 2.5;
+      else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : 2.5;
       else if (a.type === 'manualAbility' || a.type === 'manualLeader') s = AI.hasClaude() ? 1.5 : -1;
       if (s > bestS) {
         bestS = s;

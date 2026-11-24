@@ -151,7 +151,30 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .hand{display:flex;gap:6px;flex-wrap:wrap;padding:6px 2px 2px;--cw:86px}
 .handcard{position:relative;border-radius:7px;transition:transform .15s}
 .handcard .pen{position:absolute;top:-6px;right:-4px;background:var(--bad);color:#fff;font-family:var(--f-num);font-size:11px;border-radius:6px;padding:0 5px}
-@media (max-width:720px){:root{--cw:60px}.lanes{grid-template-columns:1fr}.center{flex-direction:row!important}.hand{--cw:68px}}
+@media (max-width:720px){
+  :root{--cw:56px}
+  .board{padding:8px;gap:8px}
+  .zone{padding:6px;gap:4px}
+  .lanes{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"center center" "ground space";gap:6px}
+  .lanes .center{grid-area:center;flex-direction:row!important;justify-content:center}
+  .lanes .lane.ground{grid-area:ground}.lanes .lane.space{grid-area:space}
+  .zone.p0 .lanes{grid-template-areas:"ground space" "center center"}
+  .lane{min-height:calc(var(--cw)*1.4 + 14px);padding:14px 4px 4px}
+  .hand{--cw:64px;position:sticky;bottom:0;z-index:6;flex-wrap:nowrap;overflow-x:auto;background:var(--panel);border-top:1px solid var(--line);margin:0 -8px -8px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));scroll-snap-type:x proximity}
+  .hand .handcard{flex:0 0 auto;scroll-snap-align:start}
+  .side .preview{display:none}
+  .promptbar{padding:8px;gap:6px}
+  .promptbar button{min-height:40px}
+}
+.peek{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 8px 30px rgba(0,0,0,.25);max-height:60vh;overflow:auto;--cw:84px}
+.peek[hidden]{display:none}
+.peek-body{flex:1;min-width:0;display:grid;gap:4px}
+.peek-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.peek-head b{font-family:var(--f-display);font-size:16px}
+.peek-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.peek-acts button{min-height:42px;flex:1 1 auto}
+.peek .pv-text{font-size:13px;line-height:1.5;white-space:pre-line}
+.peek .pv-meta{font-size:11px;color:var(--muted)}
 
 .side{display:grid;gap:10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
 @media (max-width:1100px){.side{position:static;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}}
@@ -182,6 +205,7 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .manual-card p{margin:4px 0;white-space:pre-line}
 .tool-target{font-family:var(--f-display);padding:6px 10px;border-radius:8px;background:var(--panel2);border:1px dashed var(--warn)}
 .tools{display:flex;flex-wrap:wrap;gap:6px}
+.lbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:8px}.lbar i{display:block;height:100%;background:var(--accent);transition:width .3s}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:8px 16px;border-radius:999px;z-index:60}
 
 /* 組牌器 */
@@ -268,6 +292,7 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 <script src="engine.js"></script>
 <script src="i18n.js"></script>
 <script src="effects.js"></script>
+<script src="gfx.js"></script>
 <script src="deck.js"></script>
 <script src="ai.js"></script>
 <script src="ui.js"></script>

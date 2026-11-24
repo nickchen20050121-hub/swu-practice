@@ -280,7 +280,12 @@
       A.copies[Math.min(3, n)] = (A.copies[Math.min(3, n)] || 0) + 1;
       const c = D.card(k);
       if (c && D.penalty(deck, c)) A.penaltyCards.push(k);
-      if (c && SWU.abilityLines(c).length && !SWU.EFFECTS.has(c, 'card')) A.unimplemented.push(k);
+      if (c && SWU.GFX && ['partial', 'manual'].includes(SWU.GFX.status(c, 'card'))) A.unimplemented.push(k);
+      else if (c && !SWU.GFX && SWU.abilityLines(c).length && !SWU.EFFECTS.has(c, 'card')) A.unimplemented.push(k);
+    }
+    for (const k of [deck.leader, deck.base]) {
+      const c = k && D.card(k);
+      if (c && SWU.GFX && SWU.GFX.sidesOf(c).some((sd) => ['partial', 'manual'].includes(SWU.GFX.status(c, sd)))) A.unimplemented.unshift(k);
     }
     A.avg = N ? sum / N : 0;
     A.early = (A.curve[1] || 0) + (A.curve[2] || 0) + (A.curve[3] || 0);

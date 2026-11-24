@@ -13,7 +13,14 @@
   SWU.EFFECTS = {
     get(card, side = 'card') {
       if (!card) return null;
-      return REG.get((card.key || SWU.cardKey(card)).toLowerCase() + '#' + side) || null;
+      const h = REG.get((card.key || SWU.cardKey(card)).toLowerCase() + '#' + side);
+      if (h && !h.auto) return h;
+      const gx = SWU.GFX && SWU.GFX.impl(card, side);
+      return gx || h || null;
+    },
+    hasHand(card, side) {
+      const h = REG.get((card.key || SWU.cardKey(card)).toLowerCase() + '#' + side);
+      return !!(h && !h.auto);
     },
     has(card, side) {
       return !!this.get(card, side);

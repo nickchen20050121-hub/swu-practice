@@ -35,7 +35,7 @@
     exportText: '匯出文字', exportJson: '匯出 SWUDB JSON', copied: '已複製', copyFail: '請手動複製下面的文字',
     autoBuild: '由奈幫我組', autoBuildQuick: '快速自動組（不用 AI）', wishes: '想要的風格（可不填，例如：偏快攻、多放哨兵）', building: '由奈組牌中…',
     analysis: '分析', prob: '起手機率', review: '由奈評語', askReview: '請由奈評估這副牌', reviewing: '由奈閱讀中…',
-    score: '結構分數', curve: '費用曲線', types: '類型', arenas: '戰區', penalty: '會被罰費的卡', keywords: '關鍵字', automation: '自動化狀態', autoOk: '全部卡片效果都已自動化', autoMissing: '這些卡的文字效果會跳出手動處理：',
+    score: '結構分數', curve: '費用曲線', types: '類型', arenas: '戰區', penalty: '會被罰費的卡', keywords: '關鍵字', automation: '自動化狀態', autoLearn: '請由奈讀懂這些卡（Claude）', autoLearning: '由奈正在讀卡片效果… {0}/{1}', autoNeedKey: '到「設定」輸入 Claude API 金鑰後，由奈就能把這些卡也變成自動處理（每張只需讀一次）。', autoLearned: '由奈讀懂了 {0} 張卡的效果！', autoStats: '自動處理 {0} 張／待讀懂 {1} 張', autoOk: '全部卡片效果都已自動化', autoMissing: '這些卡的文字效果會跳出手動處理：',
     avgCost: '平均費用', interaction: '解場／互動卡', probTarget: '目標', probAtLeast: '至少抽到', probMull: '起手沒抽到就重抽', probRound: '回合', probSeen: '看過張數', probP: '機率',
     probCard: '指定卡', probCat: '類別', cat2: '2 費以下單位', cat3: '3 費以下單位', catSentinel: '有哨兵的卡', catRemoval: '解場卡', probCore: '每張牌在第 1／3／5 回合前抽到的機率',
     scSize: '張數', scCurve: '前期卡比例', scAvg: '平均費用', scPenalty: '顏色罰費', scConsistency: '穩定度（3 張的比例）', scInteraction: '互動手段', scUnits: '單位比例',
@@ -67,7 +67,7 @@
     exportText: 'Export text', exportJson: 'Export SWUDB JSON', copied: 'Copied', copyFail: 'Copy the text below',
     autoBuild: 'Yuna, build it for me', autoBuildQuick: 'Quick auto-build (no AI)', wishes: 'Style wishes (optional, e.g. aggressive, lots of Sentinels)', building: 'Yuna is building…',
     analysis: 'Analysis', prob: 'Draw odds', review: "Yuna's review", askReview: 'Ask Yuna to review this deck', reviewing: 'Yuna is reading…',
-    score: 'Structure score', curve: 'Cost curve', types: 'Types', arenas: 'Arenas', penalty: 'Cards with aspect penalty', keywords: 'Keywords', automation: 'Automation', autoOk: 'Every card effect is automated', autoMissing: 'These cards will ask for manual resolution:',
+    score: 'Structure score', curve: 'Cost curve', types: 'Types', arenas: 'Arenas', penalty: 'Cards with aspect penalty', keywords: 'Keywords', automation: 'Automation', autoLearn: 'Let Yuna learn these cards (Claude)', autoLearning: 'Yuna is reading card effects… {0}/{1}', autoNeedKey: 'Add a Claude API key in Settings and Yuna can automate these cards too (each card is read once).', autoLearned: 'Yuna learned {0} cards!', autoStats: '{0} automated / {1} to learn', autoOk: 'Every card effect is automated', autoMissing: 'These cards will ask for manual resolution:',
     avgCost: 'Average cost', interaction: 'Removal / interaction', probTarget: 'Target', probAtLeast: 'At least', probMull: 'Mulligan if missing', probRound: 'Round', probSeen: 'Cards seen', probP: 'Chance',
     probCard: 'Card', probCat: 'Category', cat2: 'Units costing 2 or less', cat3: 'Units costing 3 or less', catSentinel: 'Cards with Sentinel', catRemoval: 'Removal',
     probCore: 'Chance to see each card by rounds 1 / 3 / 5',
@@ -142,9 +142,40 @@
     } else wrap.append(textFrame(card, side, opts.stats));
     return wrap;
   }
-  function setPreview(card, side) {
+  const isTouch = () => window.matchMedia && matchMedia('(max-width:720px), (pointer:coarse)').matches;
+  function setPreview(card, side, acts) {
     S.preview = { card, side };
     renderPreview();
+    if (isTouch() && S.tab === 'play' && S.game) showPeek(card, side, acts || []);
+  }
+  // 手機：點卡片時從下方滑出的小卡片說明（可直接按按鈕打出）
+  function showPeek(card, side, acts) {
+    let el = $('#peek');
+    if (!el) {
+      el = h('div', { id: 'peek', class: 'peek', role: 'dialog' });
+      document.body.append(el);
+    }
+    el.innerHTML = '';
+    const meta = [card.t, card.c != null ? t('cost') + ' ' + card.c : '', card.p != null ? card.p + '/' + card.h : card.h ? card.h + ' HP' : '', (card.tr || []).join(' · ')].filter(Boolean).join(' · ');
+    el.append(
+      h('div', { class: 'peek-face' }, cardFace(card, side, { small: true })),
+      h(
+        'div',
+        { class: 'peek-body' },
+        h('div', { class: 'peek-head' }, h('b', {}, card.n), h('button', { class: 'ghost small peek-x', 'aria-label': 'close', onclick: hidePeek }, '✕')),
+        card.s ? h('small', { class: 'muted' }, card.s) : null,
+        h('div', { class: 'pv-meta' }, meta),
+        h('div', { class: 'pv-text' }, SWU.cardText(card, side) || (SWU.lang === 'zh' ? '（沒有能力文字）' : '(no ability text)')),
+        acts.length ? h('div', { class: 'peek-acts' }, ...acts.map((a) => h('button', { class: 'primary', onclick: () => (hidePeek(), settle(a)) }, a.label))) : null
+      )
+    );
+    el.hidden = false;
+    clearTimeout(S.peekTimer);
+    if (!acts.length) S.peekTimer = setTimeout(hidePeek, 7000);
+  }
+  function hidePeek() {
+    const el = $('#peek');
+    if (el) el.hidden = true;
   }
   function renderPreview() {
     const box = $('#preview');
@@ -196,14 +227,45 @@
     if (!pd) return;
     S.pending = null;
     closeModal();
+    hidePeek();
     pd.resolve(val);
   }
 
+  // ---------- 讓 Claude 讀懂卡片效果 ----------
+  function deckCardsFor(d) {
+    return [SWU.Deck.card(d.leader), SWU.Deck.card(d.base), ...Object.keys(d.main || {}).map((k) => SWU.Deck.card(k))].filter(Boolean);
+  }
+  async function learnCards(cards) {
+    const need = SWU.GFX.needsClaude(cards);
+    if (!need.length || !SWU.AI.hasClaude()) return 0;
+    const m = $('#modal');
+    const show = (i, n) => {
+      m.hidden = false;
+      m.innerHTML = '';
+      m.append(h('div', { class: 'dialog small' }, h('p', {}, t('autoLearning', i, n)), h('div', { class: 'lbar' }, h('i', { style: 'width:' + Math.round((100 * i) / Math.max(1, n)) + '%' }))));
+    };
+    show(0, need.length);
+    let n = 0;
+    try {
+      n = await SWU.GFX.compileWithClaude(need, show);
+    } finally {
+      closeModal();
+    }
+    toast(t('autoLearned', n));
+    return n;
+  }
+  function toast(text) {
+    const el = h('div', { class: 'toast' }, text);
+    document.body.append(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+
   // ---------- 開局 ----------
-  function startGame() {
+  async function startGame() {
     const mine = deckById(S.lobby.mine);
     const yuna = deckById(S.lobby.yuna);
     if (!mine || !yuna) return;
+    if (SWU.AI.hasClaude()) await learnCards([...deckCardsFor(mine), ...deckCardsFor(yuna)]);
     const mk = (d, name) => ({ name, leader: SWU.Deck.card(d.leader), base: SWU.Deck.card(d.base), cards: SWU.Deck.expand(d) });
     const aiPlayer = SWU.AI.makePlayer({
       say: (text) => {
@@ -553,7 +615,7 @@
             class: 'handcard' + (acts.length ? ' act' : ''),
             tabindex: acts.length ? '0' : null,
             onmouseenter: () => setPreview(c.card, 'card'),
-            onclick: () => (acts.length === 1 ? settle(acts[0]) : acts.length ? openMenu(acts) : setPreview(c.card, 'card')),
+            onclick: () => (isTouch() ? setPreview(c.card, 'card', acts) : acts.length === 1 ? settle(acts[0]) : acts.length ? openMenu(acts) : setPreview(c.card, 'card')),
             onkeydown: (e) => e.key === 'Enter' && acts.length && settle(acts[0]),
           },
           cardFace(c.card, 'card'),
@@ -1277,7 +1339,16 @@
       h('div', { class: 'chips' }, ...Object.entries(A.kw).sort((a, b) => b[1] - a[1]).map(([k, v]) => h('span', { class: 'chip' }, k + ' ' + v))),
       A.penaltyCards.length ? h('div', {}, h('h4', {}, t('penalty')), h('p', { class: 'small' }, A.penaltyCards.join('、'))) : null,
       h('h4', {}, t('automation')),
-      A.unimplemented.length ? h('p', { class: 'small' }, t('autoMissing') + ' ' + A.unimplemented.join('、')) : h('p', { class: 'ok small' }, '✓ ' + t('autoOk'))
+      A.unimplemented.length
+        ? h(
+            'div',
+            {},
+            h('p', { class: 'small' }, t('autoMissing') + ' ' + A.unimplemented.join('、')),
+            SWU.AI.hasClaude()
+              ? h('button', { class: 'primary', onclick: () => learnCards(deckCardsFor(d)).then(() => renderBuilder()) }, t('autoLearn'))
+              : h('p', { class: 'small muted' }, t('autoNeedKey'))
+          )
+        : h('p', { class: 'ok small' }, '✓ ' + t('autoOk'))
     );
   }
   function probEl(d) {

@@ -55,7 +55,7 @@
     return text
       .split('\n')
       .map((l) => l.trim())
-      .filter((l) => l && !/^(Sentinel|Overwhelm|Saboteur|Grit|Ambush|Shielded|Hidden|Raid \d+|Restore \d+|Exploit \d+|Fortify|Support)\b(?!.*:)/.test(l) && !/^\(/.test(l));
+      .filter((l) => l && !/^(Sentinel|Overwhelm|Saboteur|Grit|Ambush|Shielded|Hidden|Raid \d+|Restore \d+|Exploit \d+|Fortify|Support|Smuggle|Bounty|Coordinate|Piloting|Plot)\b(?![^(]*:)/i.test(l.replace(/\s*\([^)]*\)/g, '')) && !/^\(/.test(l));
   };
 
   // 「Action [C=1, Exhaust]: ...」
@@ -127,8 +127,8 @@
       const P = {
         idx: i,
         name: d.name || (i === 0 ? 'You' : 'Yuna'),
-        leader: { uid: UID++, card: d.leader, owner: i, deployed: false, exhausted: false, epicUsed: false },
-        base: { uid: UID++, card: d.base, damage: 0, owner: i, upgrades: [] },
+        leader: { uid: UID++, card: d.leader, owner: i, ctrl: i, deployed: false, exhausted: false, epicUsed: false, isLeaderFront: true },
+        base: { uid: UID++, card: d.base, damage: 0, owner: i, ctrl: i, upgrades: [], epicUsed: false, isBase: true },
         deck: shuffle(d.cards.map((c) => this.inst(c, i))),
         hand: [],
         resources: [],
@@ -186,11 +186,33 @@
       }
       return this.findUnit(uid);
     }
+    // 能觸發「友方」能力的來源：場上單位、未部署的領袖、基地
+    sources(p) {
+      const P = this.P(p);
+      const out = P.units.map((u) => ({ src: u, e: this.eff(u) }));
+      if (!P.leader.deployed) out.push({ src: P.leader, e: SWU.EFFECTS.get(P.leader.card, 'leader') });
+      out.push({ src: P.base, e: SWU.EFFECTS.get(P.base.card, 'card') });
+      return out.filter((x) => x.e);
+    }
+    async fire(p, hook, ...args) {
+      for (const { src, e } of this.sources(p)) {
+        if (!e[hook]) continue;
+        if (src.uid && !src.isLeaderFront && !src.isBase && !this.findUnit(src.uid)) continue;
+        await this.safe(() => e[hook](this, src, ...args));
+      }
+    }
     ctrlOf(u) {
       return u.ctrl;
     }
     eff(u) {
-      return SWU.EFFECTS.get(u.card, u.isLeader ? 'unit' : 'card');
+      const base = SWU.EFFECTS.get(u.card, u.isLeader ? 'unit' : 'card');
+      if (!u.upgrades || !u.upgrades.length || !SWU.GFX) return base;
+      let out = base;
+      for (const up of u.upgrades) {
+        const ue = SWU.EFFECTS.get(up.card, 'card');
+        if (ue && ue.grant) out = SWU.GFX.mergeHooks(out, ue.grant);
+      }
+      return out;
     }
     statics(u) {
       // 持續效果：卡片本身、場上其他卡的光環、升級卡
@@ -521,12 +543,10 @@
       const snapshot = { ...u, defeatedByCombat: wasCombat };
       if (e && e.whenDefeated) await this.safe(() => e.whenDefeated(this, snapshot, why));
       else if (!e || !e.implemented) await this.unimplemented(u, 'When Defeated', ctrl);
-      for (const k of u.card.kwp?.Bounty || []) await this.unimplementedText(u, k, 1 - ctrl);
+      if (e && e.bounty) await this.safe(() => e.bounty(this, snapshot, 1 - ctrl));
+      else for (const k of u.card.kwp?.Bounty || []) await this.unimplementedText(u, k, 1 - ctrl);
       // 其他卡的「當敵方單位被擊敗」
-      for (const w of this.allUnits()) {
-        const we = this.eff(w);
-        if (we && we.onAnyDefeated) await this.safe(() => we.onAnyDefeated(this, w, snapshot));
-      }
+      for (const q of [ctrl, 1 - ctrl]) await this.fire(q, 'onAnyDefeated', snapshot);
     }
     async checkState() {
       let again = true;
@@ -668,7 +688,7 @@
         const e = this.eff(u);
         if (e && e.actions)
           e.actions.forEach((ab, i) => {
-            if (ab.can(this, u)) acts.push({ type: 'ability', uid: u.uid, i, label: SWU.t('actAbility', u.card.n, ab.label ? SWU.t(ab.label) : '') });
+            if (ab.can(this, u)) acts.push({ type: 'ability', manual: !!ab.manual, uid: u.uid, i, label: SWU.t('actAbility', u.card.n, ab.label ? SWU.t(ab.label) : ab.text || '') });
           });
       }
       // 未實作的「Action [...]」能力：當成手動能力提供
@@ -688,10 +708,15 @@
         const le = SWU.EFFECTS.get(L.card, 'leader');
         if (le && le.actions)
           le.actions.forEach((ab, i) => {
-            if (ab.can(this, L)) acts.push({ type: 'leaderAbility', i, label: SWU.t('actLeaderAbility', L.card.n, ab.label ? SWU.t(ab.label) : '') });
+            if (ab.can(this, L)) acts.push({ type: 'leaderAbility', manual: !!ab.manual, i, label: SWU.t('actLeaderAbility', L.card.n, ab.label ? SWU.t(ab.label) : ab.text || '') });
           });
         if (!L.epicUsed && P.resources.length >= (L.card.c || 99)) acts.push({ type: 'deploy', label: SWU.t('actDeploy', L.card.n) });
       }
+      const be = SWU.EFFECTS.get(P.base.card, 'card');
+      if (be && be.actions)
+        be.actions.forEach((ab, i) => {
+          if (ab.can(this, P.base)) acts.push({ type: 'baseAbility', manual: !!ab.manual, i, label: SWU.t('actAbility', P.base.card.n, ab.text || '') });
+        });
       if (!G.initiativeTaken) acts.push({ type: 'initiative', label: SWU.t('actInitiative') });
       acts.push({ type: 'pass', label: SWU.t('actPass') });
       return acts;
@@ -736,10 +761,7 @@
           G.tookInit[p] = true;
           G.initiative = p;
           this.log('logInitiative', P.name);
-          for (const u of P.units) {
-            const e = this.eff(u);
-            if (e && e.onTakeInitiative) await this.safe(() => e.onTakeInitiative(this, u));
-          }
+          await this.fire(p, 'onTakeInitiative');
           G.consecutivePasses = 0;
           return;
         case 'play':
@@ -761,6 +783,12 @@
           const ab = SWU.EFFECTS.get(P.leader.card, 'leader').actions[act.i];
           this.log('logAbility', P.leader.card.n);
           await this.safe(() => ab.run(this, P.leader));
+          break;
+        }
+        case 'baseAbility': {
+          const ab = SWU.EFFECTS.get(P.base.card, 'card').actions[act.i];
+          this.log('logAbility', P.base.card.n);
+          await this.safe(() => ab.run(this, P.base));
           break;
         }
         case 'deploy':
@@ -793,7 +821,7 @@
       } else c = P.hand.find((x) => x.uid === uid);
       if (!c) return;
       const card = c.card;
-      let cost = opts.free ? 0 : from === 'smuggle' ? this.costOf(p, card, { baseCost: card.kwp.Smuggle }) : this.costOf(p, card, { discount: opts.discount || 0 });
+      let cost = opts.free ? 0 : from === 'smuggle' ? this.costOf(p, card, { baseCost: card.kwp.Smuggle }) : this.costOf(p, card, { discount: opts.discount || 0, ignoreAspect: opts.ignoreAspect });
       // Exploit
       if (!opts.free && card.kwp.Exploit && P.units.length) {
         const max = Math.min(card.kwp.Exploit, P.units.length);
@@ -828,10 +856,7 @@
         this.emit({ type: 'play', u });
         if (this.has(u, 'Shielded')) this.giveShield(u);
         // 其他卡「當你打出單位時」
-        for (const w of [...P.units]) {
-          const we = this.eff(w);
-          if (we && we.onFriendlyPlay && this.findUnit(w.uid)) await this.safe(() => we.onFriendlyPlay(this, w, u));
-        }
+        await this.fire(p, 'onFriendlyPlay', u);
         if (e && e.whenPlayed) await this.safe(() => e.whenPlayed(this, u));
         else if (!e || !e.implemented) await this.unimplemented(u, 'When Played', p);
         await this.checkState();
@@ -841,10 +866,7 @@
         P.discard.push(inst);
         if (e && e.event) await this.safe(() => e.event(this, p, inst));
         else await this.unimplementedText({ card }, card.tx || '', p);
-        for (const w of P.units) {
-          const we = this.eff(w);
-          if (we && we.onFriendlyEvent) await this.safe(() => we.onFriendlyEvent(this, w, card));
-        }
+        await this.fire(p, 'onFriendlyEvent', card);
       } else if (card.t === 'Upgrade') {
         const targets = opts.target ? [opts.target] : this.upgradeTargets(p, card);
         const t = await this.pickUnit(p, SWU.t('promptAttach', card.n), (u) => targets.includes(u), { ctx: { card: card.key } });
@@ -919,7 +941,7 @@
         if (!target) return;
         atk.defender = target.unit || null;
         atk.base = target.base != null;
-        if (opts.power) this.buff(attacker, opts.power, 0, 'attack');
+        if (opts.power || opts.hp) this.buff(attacker, opts.power || 0, opts.hp || 0, 'attack');
         if (opts.kw) attacker.mods.push({ p: 0, h: 0, kw: opts.kw, until: 'attack', attackId: atk.id });
         this.log(atk.base ? 'logAttackBase' : 'logAttackUnit', attacker.card.n, atk.defender ? atk.defender.card.n : this.opp(p).name);
         this.emit({ type: 'attack', atk });
@@ -940,10 +962,7 @@
         }
         if (opts.onAttackExtra) await this.safe(() => opts.onAttackExtra(atk));
         // 其他友方「當友方單位攻擊時」
-        for (const w of this.P(p).units) {
-          const we = this.eff(w);
-          if (we && we.onFriendlyAttack && w !== attacker) await this.safe(() => we.onFriendlyAttack(this, w, atk));
-        }
+        await this.fire(p, 'onFriendlyAttack', atk);
         if (atk.defender && this.findUnit(atk.defender.uid)) {
           const de = this.eff(atk.defender);
           if (de && de.whenAttacked) await this.safe(() => de.whenAttacked(this, atk.defender, atk));
@@ -953,17 +972,7 @@
         await this.checkState();
         // When attack ends
         atk.ended = true;
-        for (const P of G.players) {
-          const L = P.leader;
-          if (!L.deployed) {
-            const le = SWU.EFFECTS.get(L.card, 'leader');
-            if (le && le.onFriendlyAttackEnd && P.idx === p) await this.safe(() => le.onFriendlyAttackEnd(this, L, atk));
-          }
-          for (const w of P.units) {
-            const we = this.eff(w);
-            if (we && we.onFriendlyAttackEnd && P.idx === p) await this.safe(() => we.onFriendlyAttackEnd(this, w, atk));
-          }
-        }
+        await this.fire(p, 'onFriendlyAttackEnd', atk);
         // Advantage 代幣
         for (const u of [attacker, atk.defender]) {
           if (u && this.findUnit(u.uid)) u.upgrades = u.upgrades.filter((x) => x.card.n !== 'Advantage');
@@ -1081,11 +1090,7 @@
       G.playedThisPhase = [[], []];
       G.attackedBase = [[], []];
       this.log('logRound', G.round);
-      for (const P of G.players)
-        for (const u of P.units) {
-          const e = this.eff(u);
-          if (e && e.onActionPhaseStart) await this.safe(() => e.onActionPhaseStart(this, u));
-        }
+      for (const q of [G.initiative, 1 - G.initiative]) await this.fire(q, 'onActionPhaseStart');
       this.emit({ type: 'update' });
       let guard = 0;
       while (G.consecutivePasses < 2 && guard++ < 500) {
@@ -1106,11 +1111,7 @@
       G.phase = 'regroup';
       G.phaseId++;
       this.log('logRegroup');
-      for (const P of G.players)
-        for (const u of P.units) {
-          const e = this.eff(u);
-          if (e && e.onRegroupStart) await this.safe(() => e.onRegroupStart(this, u));
-        }
+      for (const q of [G.initiative, 1 - G.initiative]) await this.fire(q, 'onRegroupStart');
       for (const p of [G.initiative, 1 - G.initiative]) this.draw(p, 2);
       this.emit({ type: 'update' });
       for (const p of [G.initiative, 1 - G.initiative]) {

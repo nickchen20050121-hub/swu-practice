@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const dir=path.join(__dirname,'..');
 global.window=global; global.localStorage={getItem:()=>null,setItem:()=>{}};
-for(const f of ['cards.js','engine.js','i18n.js','effects.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['cards.js','engine.js','i18n.js','effects.js','gfx.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
 const pres=SWU.Deck.presets();
 for(const d of pres){const v=SWU.Deck.validate(d); console.log(d.name,SWU.Deck.count(d),v, SWU.Deck.analyze(d).unimplemented);}
@@ -9,7 +9,7 @@ const games=+process.argv[2]||5; let wins=[0,0],rounds=0,errs=0,manual=0;
 (async()=>{
 for(let i=0;i<games;i++){
   const mk=(d,n)=>({name:n,leader:SWU.Deck.card(d.leader),base:SWU.Deck.card(d.base),cards:SWU.Deck.expand(d)});
-  const io=()=>({chooseAction:async(g,p,a)=>SWU.AI.heur.chooseAction(g,p,a),choose:async(g,p,r)=>SWU.AI.heur.choose(g,p,r),resolveManual:async()=>{manual++}});
+  const io=()=>({chooseAction:async(g,p,a)=>SWU.AI.heur.chooseAction(g,p,a),choose:async(g,p,r)=>SWU.AI.heur.choose(g,p,r),resolveManual:async(g,p,info)=>{manual++;console.log('MANUAL',info.card.key,'|',info.text)}});
   const d2 = i%2? pres[1] : SWU.Deck.autoBuild("Darth Vader | Don't Fail Me Again",'Bioweapons Lab | Naboo');
   const g=new SWU.Game([mk(pres[0],'A'),mk(d2.leader?d2:pres[1],'B')],[io(),io()]);
   await g.run();
