@@ -237,6 +237,16 @@
     }
     statics(u) {
       // 持續效果：卡片本身、場上其他卡的光環、升級卡
+      // 光環互相參照（例如「有某關鍵字的單位得到某關鍵字」）時避免無限遞迴
+      if ((this._sDepth || 0) > 3) return { p: 0, h: 0, kw: {} };
+      this._sDepth = (this._sDepth || 0) + 1;
+      try {
+        return this._statics(u);
+      } finally {
+        this._sDepth--;
+      }
+    }
+    _statics(u) {
       const out = { p: 0, h: 0, kw: {} };
       const add = (s) => {
         if (!s) return;

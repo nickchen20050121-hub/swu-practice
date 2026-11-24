@@ -12,7 +12,7 @@ const games=+process.argv[2]||10; let smartW=0,oldW=0,draw=0,tmax=0,ttot=0,dec=0
 for(let i=0;i<games;i++){
   const smartSeat=i%2;
   const io=(smart)=>{let force=null;return {
-    chooseAction:async(g,p,a)=>{ if(!smart) return H.chooseAction(g,p,a); const t=Date.now(); const r=await H.chooseActionSmart(g,p,a); const dt=Date.now()-t; tmax=Math.max(tmax,dt); ttot+=dt; dec++; force=r.force!=null&&r.act&&r.act.type==='attack'?{uid:r.act.uid,target:r.force}:null; return r.act; },
+    chooseAction:async(g,p,a)=>{ const vsSmart=process.argv[4]==='deep'; if(!smart&&!vsSmart) return H.chooseAction(g,p,a); if(!smart){const r=await H.chooseActionSmart(g,p,a,{deep:false}); force=r.force!=null&&r.act&&r.act.type==='attack'?{uid:r.act.uid,target:r.force}:null; return r.act;} const t=Date.now(); const r=await H.chooseActionSmart(g,p,a,JSON.parse(process.env.OPT||'{"deep":true}')); const dt=Date.now()-t; tmax=Math.max(tmax,dt); ttot+=dt; dec++; force=r.force!=null&&r.act&&r.act.type==='attack'?{uid:r.act.uid,target:r.force}:null; return r.act; },
     choose:async(g,p,r)=>{ if(force&&r.kind==='target'&&r.ctx&&r.ctx.uid===force.uid&&r.options.some(o=>o.id===force.target)){const t=force.target;force=null;return [t];} return H.choose(g,p,r)},
     resolveManual:async()=>{}}};
   const d0=pres[i%pres.length], d1=pres[(i+(process.argv[3]==='cross'?1:0))%pres.length];

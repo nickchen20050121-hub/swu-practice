@@ -19,7 +19,7 @@
 
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
-    lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
+    setSound: '音效', setVolume: '音量', setZoom: '滑鼠指到卡片時放大顯示（手機長按）', lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
     needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
@@ -54,7 +54,7 @@
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
-    lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
+    setSound: 'Sound effects', setVolume: 'Volume', setZoom: 'Enlarge cards on hover (long-press on phones)', lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
     tapTwice: 'Double-click a card to play / attack', setAutoSingle: 'When there is only one legal target', setAutoSingleOff: 'Always let me click (default)', setAutoSingleOn: 'Choose it automatically', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
@@ -121,7 +121,7 @@
   function aspectDots(card) {
     return h('span', { class: 'asp' }, ...(card.a || []).map((a) => h('i', { class: 'dot ' + ASP_CLASS[a], title: t('asp_' + a) })));
   }
-  function textFrame(card, side, stats) {
+  function textFrame(card, side, stats, full) {
     const isUnitSide = side === 'unit';
     const p = stats ? stats.p : card.p;
     const hp = stats ? stats.h : card.h;
@@ -131,7 +131,7 @@
       h('div', { class: 'fr-top' }, card.c != null && card.t !== 'Base' ? h('b', { class: 'fr-cost' }, isUnitSide ? '' : card.c) : null, aspectDots(card)),
       h('div', { class: 'fr-name' }, card.n),
       card.s ? h('div', { class: 'fr-sub' }, card.s) : null,
-      h('div', { class: 'fr-text' }, SWU.cardText(card, side).slice(0, 160)),
+      h('div', { class: 'fr-text' }, full ? SWU.cardText(card, side) : SWU.cardText(card, side).slice(0, 160)),
       p != null || hp != null ? h('div', { class: 'fr-stats' }, h('span', { class: 'pw' }, p != null ? p : ''), h('span', { class: 'hpv' }, hp != null ? hp : '')) : null
     );
   }
@@ -139,13 +139,112 @@
     const url = imgUrl(card, side);
     const wrap = h('div', { class: 'face' + (card.t === 'Leader' || card.t === 'Base' ? ' wide' : '') + (opts.small ? ' small' : '') });
     if (url) {
-      const img = h('img', { src: url, alt: card.key, loading: 'lazy', draggable: 'false' });
+      // 放大圖：先放文字版墊底，圖片載入後蓋上去（網路慢也看得到內容）
+      if (opts.full) wrap.append(textFrame(card, side, opts.stats, true));
+      const img = h('img', { src: url, alt: card.key, loading: opts.full ? 'eager' : 'lazy', draggable: 'false', class: opts.full ? 'zimg' : null });
       img.addEventListener('error', () => {
-        img.replaceWith(textFrame(card, side, opts.stats));
+        if (opts.full) img.remove();
+        else img.replaceWith(textFrame(card, side, opts.stats));
       });
       wrap.append(img);
-    } else wrap.append(textFrame(card, side, opts.stats));
+    } else wrap.append(textFrame(card, side, opts.stats, opts.full));
+    if (!opts.noZoom) zoomable(wrap, card, side, opts.stats);
     return wrap;
+  }
+  // ---------- 卡片放大：電腦滑鼠指到就放大，手機長按 ----------
+  const zoom = { el: null, timer: null, cur: null, shownByPress: false };
+  function zoomable(el, card, side = 'card', stats) {
+    if (!card) return el;
+    el._zc = { card, side, stats };
+    el.setAttribute('data-zoom', '');
+    return el;
+  }
+  function zoomEl() {
+    if (!zoom.el) {
+      zoom.el = h('div', { id: 'zoom', class: 'zoom', 'aria-hidden': 'true' });
+      document.body.append(zoom.el);
+    }
+    return zoom.el;
+  }
+  function showZoom(face, x, y, center) {
+    const zc = face._zc;
+    if (!zc || SWU.AI.settings.zoom === false) return;
+    const el = zoomEl();
+    el.innerHTML = '';
+    const big = cardFace(zc.card, zc.side, { stats: zc.stats, full: true, noZoom: true });
+    el.append(big);
+    if (zc.card.t === 'Leader' && zc.side === 'card' && zc.card.bimg) el.append(cardFace(zc.card, 'unit', { full: true, noZoom: true }));
+    el.className = 'zoom on' + (big.classList.contains('wide') ? ' wide' : '') + (center ? ' center' : '');
+    if (center) {
+      el.style.left = el.style.top = '';
+      return;
+    }
+    const r = el.getBoundingClientRect();
+    const W = innerWidth, H = innerHeight, pad = 12;
+    let left = x + 24;
+    if (left + r.width > W - pad) left = x - 24 - r.width;
+    left = Math.max(pad, left);
+    const top = Math.min(Math.max(pad, y - r.height / 2), H - r.height - pad);
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+  }
+  function hideZoom() {
+    clearTimeout(zoom.timer);
+    zoom.cur = null;
+    if (zoom.el) zoom.el.className = 'zoom';
+  }
+  function installZoom() {
+    const fine = () => window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches;
+    document.addEventListener('mouseover', (e) => {
+      if (!fine()) return;
+      const f = e.target.closest && e.target.closest('[data-zoom]');
+      if (f === zoom.cur) return;
+      clearTimeout(zoom.timer);
+      if (!f || !f._zc || f.closest('#zoom, #preview, .peek')) {
+        hideZoom();
+        return;
+      }
+      zoom.cur = f;
+      const { clientX: x, clientY: y } = e;
+      zoom.timer = setTimeout(() => zoom.cur === f && showZoom(f, x, y), 180);
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!zoom.cur || !zoom.el || !zoom.el.classList.contains('on')) return;
+      showZoom(zoom.cur, e.clientX, e.clientY);
+    });
+    document.addEventListener('mousedown', hideZoom, true);
+    document.addEventListener('scroll', hideZoom, true);
+    // 手機長按
+    let press = null;
+    document.addEventListener(
+      'touchstart',
+      (e) => {
+        const f = e.target.closest && e.target.closest('[data-zoom]');
+        clearTimeout(press);
+        if (!f || !f._zc || f.closest('#zoom')) return;
+        press = setTimeout(() => {
+          zoom.shownByPress = true;
+          clearTimeout(peekTimer);
+          hidePeek();
+          showZoom(f, 0, 0, true);
+        }, 450);
+      },
+      { passive: true }
+    );
+    const end = (e) => {
+      clearTimeout(press);
+      if (zoom.shownByPress) {
+        zoom.shownByPress = false;
+        hideZoom();
+        if (e.cancelable) e.preventDefault(); // 長按放開不要算成點擊
+      }
+    };
+    document.addEventListener('touchend', end, { passive: false });
+    document.addEventListener('touchcancel', end);
+    document.addEventListener('touchmove', () => clearTimeout(press), { passive: true });
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.closest && e.target.closest('[data-zoom]') && zoom.shownByPress) e.preventDefault();
+    });
   }
   // 點兩下判定（電腦 dblclick／手機連點兩下都適用）
   let lastTap = { id: null, t: 0 };
@@ -396,11 +495,15 @@
       } else if (ev.type === 'reveal') {
         if (ev.p !== 0) showRevealPop(ev);
         renderBoard();
-      } else if (ev.type === 'log') renderLog();
+      } else if (ev.type === 'log') {
+        renderLog();
+        SWU.sfx && SWU.sfx.onLog(g.G.log[g.G.log.length - 1]);
+      }
       else if (ev.type === 'gameover') {
         S.pending = null;
         renderBoard();
         const win = g.G.winner === 0;
+        SWU.sfx && SWU.sfx(win ? 'win' : 'lose');
         if (S.match && g.G.winner != null && !g._counted) {
           g._counted = true;
           S.match.wins[g.G.winner]++;
@@ -668,7 +771,7 @@
       if (c) groups[gkey(c)].push([c, n]);
     }
     const line = ([c, n]) =>
-      h('li', { title: SWU.cardText(c, 'card') }, h('span', { class: 'qty' }, n + '×'), h('span', { class: 'dl-c' }, c.c != null ? c.c : ''), h('span', { class: 'dl-n' }, c.n + (c.s ? ', ' + c.s : '')), aspectDots(c));
+      zoomable(h('li', {}, h('span', { class: 'qty' }, n + '×'), h('span', { class: 'dl-c' }, c.c != null ? c.c : ''), h('span', { class: 'dl-n' }, c.n + (c.s ? ', ' + c.s : '')), aspectDots(c)), c);
     const sortL = (a) => a.sort((x, y) => (x[0].c || 0) - (y[0].c || 0) || x[0].n.localeCompare(y[0].n));
     const sec = (k, list) => (list.length ? h('div', { class: 'dl-sec' }, h('h4', {}, t('dl_' + k) + '（' + list.reduce((s, x) => s + x[1], 0) + '）'), h('ul', {}, ...sortL(list).map(line))) : null);
     const side = Object.entries(d.side || {}).map(([k, n]) => [SWU.Deck.card(k), n]).filter((x) => x[0]);
@@ -686,8 +789,8 @@
         h(
           'div',
           { class: 'dv-meta' },
-          h('div', {}, h('i', {}, t('type_Leader') + '：'), L ? L.n + (L.s ? ', ' + L.s : '') : '—'),
-          h('div', {}, h('i', {}, t('type_Base') + '：'), B ? B.n + (B.s ? '（' + B.s + '）' : '') : '—'),
+          h('div', {}, h('i', {}, t('type_Leader') + '：'), L ? zoomable(h('span', { class: 'zlink' }, L.n + (L.s ? ', ' + L.s : '')), L) : '—'),
+          h('div', {}, h('i', {}, t('type_Base') + '：'), B ? zoomable(h('span', { class: 'zlink' }, B.n + (B.s ? '（' + B.s + '）' : '')), B) : '—'),
           h('div', {}, h('i', {}, t('dvAspects') + '：'), aspectDots({ a: asp })),
           h('div', {}, h('i', {}, t('dvDraw') + '：'), t('results', SWU.Deck.count(d)) + (side.length ? '　' + t('dl_side') + ' ' + side.reduce((s, x) => s + x[1], 0) : '')),
           d.event ? h('div', { class: 'muted small' }, d.event) : null
@@ -798,7 +901,22 @@
           t('initiative') + '：' + g.P(G.initiative).name + (G.initiativeTaken ? '（' + t('taken') + '）' : '')
         );
       })(),
-      G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null
+      G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null,
+      h(
+        'button',
+        {
+          class: 'chip sndbtn',
+          title: t('setSound'),
+          'aria-label': t('setSound'),
+          onclick: () => {
+            SWU.AI.settings.sound = SWU.AI.settings.sound === false;
+            SWU.AI.save();
+            if (SWU.AI.settings.sound) SWU.sfx('click');
+            renderStatus();
+          },
+        },
+        SWU.AI.settings.sound === false ? '🔇' : '🔊'
+      )
     );
   }
   function optionFor(uid) {
@@ -1102,7 +1220,7 @@
           'div',
           { class: 'siderow', onmouseenter: () => c && setPreview(c, 'card') },
           h('span', { class: 'cost' }, c && c.c != null ? c.c : ''),
-          h('span', { class: 'grow' }, (c ? c.n + (c.s ? ' – ' + c.s : '') : k) + ' ×' + n),
+          zoomable(h('span', { class: 'grow' }, (c ? c.n + (c.s ? ' – ' + c.s : '') : k) + ' ×' + n), c),
           h('button', { class: 'mini', onclick: () => move(k, zone, zone === 'main' ? 'side' : 'main') }, zone === 'main' ? t('toSide') + ' ⇢' : '⇠ ' + t('toMain'))
         );
       });
@@ -1759,7 +1877,7 @@
             ontouchstart: () => (press = setTimeout(() => removeCard(c.key, f.addZone || 'main'), 600)),
             ontouchend: () => clearTimeout(press),
           },
-          cardFace(c, 'card'),
+          cardFace(c, 'card', { noZoom: isTouch() }),
           n ? h('span', { class: 'count' }, '×' + n) : isSet ? h('span', { class: 'count' }, '✓') : null,
           h('small', {}, c.n, c.s ? ' – ' + c.s : ''),
           pr ? h('small', { class: 'setno' }, pr.set + ' ' + String(pr.n).padStart(3, '0')) : null
@@ -1881,7 +1999,7 @@
             { class: 'drow', onmouseenter: () => c.t && setPreviewBuilder(c) },
             h('span', { class: 'dc' }, c.c != null ? c.c : '·'),
             aspectDots(c),
-            h('span', { class: 'dn' }, c.n, c.s ? h('small', {}, ' ' + c.s) : null, pen ? h('em', { class: 'penmark' }, ' +' + pen) : null),
+            c.t ? zoomable(h('span', { class: 'dn' }, c.n, c.s ? h('small', {}, ' ' + c.s) : null, pen ? h('em', { class: 'penmark' }, ' +' + pen) : null), c) : h('span', { class: 'dn' }, c.n),
             h('button', { class: 'mini', title: '-', onclick: () => removeCard(k, zone) }, '−'),
             h('b', { class: 'dq' }, n),
             h('button', { class: 'mini', title: '+', onclick: () => c.t && addCard(c, zone) }, '+'),
@@ -2309,6 +2427,9 @@
           h('select', { id: 'mode', onchange: (e) => ((st.mode = e.target.value), save()) }, h('option', { value: 'main', selected: st.mode === 'main' }, t('modeMain')), h('option', { value: 'all', selected: st.mode === 'all' }, t('modeAll')))
         ),
         h('div', { class: 'field' }, h('label', { for: 'delay' }, t('setDelay')), h('input', { id: 'delay', type: 'number', min: '0', max: '5000', step: '100', value: st.delay, onchange: (e) => ((st.delay = +e.target.value || 0), save()) })),
+        h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'sound', checked: st.sound !== false, onchange: (e) => ((st.sound = e.target.checked), save(), st.sound && SWU.sfx('play')) }), t('setSound'))),
+        h('div', { class: 'field' }, h('label', { for: 'volume' }, t('setVolume')), h('input', { type: 'range', id: 'volume', min: 0, max: 1, step: 0.05, value: st.volume != null ? st.volume : 0.5, onchange: (e) => ((st.volume = +e.target.value), save(), SWU.sfx('hit')) })),
+        h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'zoom', checked: st.zoom !== false, onchange: (e) => ((st.zoom = e.target.checked), save()) }), t('setZoom'))),
         h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'images', checked: st.images, onchange: (e) => ((st.images = e.target.checked), save()) }), t('setImages'))),
         h(
           'div',
@@ -2365,6 +2486,7 @@
     SWU.markVanillaKeywordCards();
     document.documentElement.lang = SWU.lang === 'zh' ? 'zh-Hant' : 'en';
     S.decks = SWU.Deck.loadAll();
+    installZoom();
     render();
   };
 })();

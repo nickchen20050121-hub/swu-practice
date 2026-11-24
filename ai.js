@@ -202,7 +202,7 @@
     }
     return worst;
   };
-  H.search = async function (g, p, acts) {
+  H.search = async function (g, p, acts, opt = {}) {
     if (!SWU.engineRT || !g.rec || g.replaying) return null;
     const rt = SWU.engineRT.get();
     const STOP = { stop: true };
@@ -221,9 +221,10 @@
     if (!cands.length) return { best: null, gain: -Infinity, base };
     const t0 = Date.now();
     const pool = H.predictPool(g, p);
-    const sim = async (c) => {
+    const sim = async (c, deep) => {
       let score = null;
       let forced = c.force != null;
+      let oppMoves = 0;
       const mk = (q) => {
         const o = g.io[q] || {};
         return {
@@ -231,8 +232,14 @@
           get autoSingle() {
             return !!o.autoSingle;
           },
-          chooseAction: async (g2, who) => {
-            score = H.evalState(g2, p) - (who !== p ? H.oppThreat(g2, p) * 0.6 : 0);
+          chooseAction: async (g2, who, acts2) => {
+            // 深一層：讓對手用推測的手牌回應一手（最多兩個行動），再看局面
+            if (deep && who !== p && oppMoves < 2 && acts2 && acts2.length) {
+              oppMoves++;
+              const r = H.chooseAction(g2, who, acts2);
+              if (r && r.type !== 'pass') return r;
+            }
+            score = H.evalState(g2, p) - (who !== p ? H.oppThreat(g2, p) * (deep && oppMoves ? 0.4 : 0.6) : 0);
             throw STOP;
           },
           choose: async (g2, qq, req) => {
@@ -273,13 +280,36 @@
     };
     let best = null, bestS = -Infinity;
     try {
+      const scored = [];
       for (const c of cands) {
-        if (Date.now() - t0 > 2500) break;
-        const sc = await sim(c);
+        if (Date.now() - t0 > (opt.samples > 1 ? 4000 : 2500)) break;
+        let sc = 0;
+        const ns = opt.samples || 1;
+        for (let k = 0; k < ns; k++) sc += await sim(c, false);
+        sc /= ns;
+        scored.push({ c, sc });
         if (sc > bestS) {
           bestS = sc;
           best = c;
         }
+      }
+      // 全力：前幾名再多想一層（對手會怎麼回應），用兩層的結果決定
+      if (opt.deep && scored.length > 1) {
+        scored.sort((x, y) => y.sc - x.sc);
+        const top = scored.slice(0, 5);
+        let bd = -Infinity, bc = null;
+        for (const x of top) {
+          if (Date.now() - t0 > 5000) break;
+          let d = 0;
+          const N = 3;
+          for (let k = 0; k < N; k++) d += await sim(x.c, true);
+          d = d / N + x.sc * 0.25;
+          if (d > bd) {
+            bd = d;
+            bc = x.c;
+          }
+        }
+        if (bc) best = bc;
       }
     } finally {
       SWU.engineRT.set(rt);
@@ -287,10 +317,10 @@
     return { best: best && best.a, force: best && best.force, gain: bestS - base, base };
   };
   // 預想版行動選擇：沒有好處的行動就搶先攻／Pass
-  H.chooseActionSmart = async function (g, p, acts) {
+  H.chooseActionSmart = async function (g, p, acts, opt = H.bestOpt || {}) {
     let r = null;
     try {
-      r = await H.search(g, p, acts);
+      r = await H.search(g, p, acts, opt);
     } catch (e) {
       console.warn('search failed', e);
     }
@@ -298,6 +328,8 @@
     const init = acts.find((a) => a.type === 'initiative');
     const pass = acts.find((a) => a.type === 'pass');
     if (r.best && r.gain > 0.3) return { act: r.best, force: r.force };
+    // 還有費用能下牌時，先把場面鋪好再搶先攻（資源留到回合結束就浪費了）
+    if (opt.initFix && init && r.best && r.best.type === 'play' && r.gain > -1.5) return { act: r.best, force: r.force };
     // 沒什麼好做的：能搶先攻就搶（等於 Pass 但下回合先手）
     if (init) return { act: init };
     if (r.best && r.gain > -0.5 && !pass) return { act: r.best, force: r.force };
