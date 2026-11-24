@@ -31,7 +31,7 @@
     manualTools: '手動調整', gameOverWin: '你贏了！', gameOverLose: '由奈贏了～', again: '再來一局', viewLog: '看紀錄',
     // 組牌器
     myDecks: '我的牌組', newDeck: '新牌組', import: '匯入', presets: '內建牌組', importHint: '貼上 SWUDB 匯出的 JSON，或文字清單（每行「3 卡名 - 副標」，可用 Leader:/Base: 開頭標出領袖和基地）', doImport: '匯入',
-    search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
+    type_Leader: '領袖', type_Base: '基地', type_Unit: '單位', type_Event: '事件', type_Upgrade: '升級', sortBy: '排序', sort_number: '卡號', sort_cost: '費用', sort_name: '名稱', sort_aspect: '屬性', sort_type: '類型', sort_power: '戰力', sort_hp: '生命', sort_price: '價格', allSets: '全部系列', setsLabel: '系列（可多選）：', allArenas: '地面＋太空', arenaGround: '只看地面', arenaSpace: '只看太空', allTraits: '全部特性', allKw: '全部關鍵字', groupBy: '分組顯示', aspAll: '同時有選的屬性', aspAny: '有任一選的屬性', aspNone: '無屬性', showing: '顯示 {0} / {1}', clearFilters: '清除篩選', noAspect: '無屬性', search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
     deckName: '牌組名稱', leader: '領袖', base: '基地', main: '主牌', side: '備牌', toSide: '移到備牌', toMain: '移到主牌', save: '儲存', saved: '已儲存', del: '刪除', confirmDel: '再按一次刪除',
     exportText: '匯出文字', exportJson: '匯出 SWUDB JSON', copied: '已複製', copyFail: '請手動複製下面的文字',
     autoBuild: '由奈幫我組', autoBuildQuick: '快速自動組（不用 AI）', wishes: '想要的風格（可不填，例如：偏快攻、多放哨兵）', building: '由奈組牌中…',
@@ -64,7 +64,7 @@
     toolBounce: 'Return to hand', toolBuffUp: '+1/+1 this phase', toolBuffDown: '-1/-1 this phase', toolDraw: 'I draw 1', toolResTop: 'Resource top card', toolToken: 'Create token', toolForce: 'Force',
     manualTools: 'Manual tools', gameOverWin: 'You win!', gameOverLose: 'Yuna wins!', again: 'Play again', viewLog: 'View log',
     myDecks: 'My decks', newDeck: 'New deck', import: 'Import', presets: 'Built-in decks', importHint: 'Paste SWUDB JSON or a text list ("3 Name - Subtitle" per line, Leader:/Base: lines for leader and base)', doImport: 'Import',
-    search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
+    type_Leader: 'Leader', type_Base: 'Base', type_Unit: 'Unit', type_Event: 'Event', type_Upgrade: 'Upgrade', sortBy: 'Sort', sort_number: 'Set #', sort_cost: 'Cost', sort_name: 'Name', sort_aspect: 'Aspect', sort_type: 'Type', sort_power: 'Power', sort_hp: 'HP', sort_price: 'Price', allSets: 'All sets', setsLabel: 'Sets (multi):', allArenas: 'Ground + Space', arenaGround: 'Ground only', arenaSpace: 'Space only', allTraits: 'All traits', allKw: 'All keywords', groupBy: 'Group', aspAll: 'Has all selected', aspAny: 'Has any selected', aspNone: 'No aspect', showing: 'Showing {0} / {1}', clearFilters: 'Clear filters', noAspect: 'Colorless', search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
     deckName: 'Deck name', leader: 'Leader', base: 'Base', main: 'Main deck', side: 'Sideboard', toSide: 'To sideboard', toMain: 'To main', save: 'Save', saved: 'Saved', del: 'Delete', confirmDel: 'Click again to delete',
     exportText: 'Export text', exportJson: 'Export SWUDB JSON', copied: 'Copied', copyFail: 'Copy the text below',
     autoBuild: 'Yuna, build it for me', autoBuildQuick: 'Quick auto-build (no AI)', wishes: 'Style wishes (optional, e.g. aggressive, lots of Sentinels)', building: 'Yuna is building…',
@@ -95,7 +95,7 @@
     preview: null,
     decks: [],
     edit: null,
-    filters: { q: '', type: '', aspects: [], cost: '', legal: true, nopen: false, page: 0 },
+    filters: { q: '', type: '', aspects: [], cost: '', legal: true, nopen: false, page: 0, sets: [], sort: 'number', dir: 1, arena: '', trait: '', kw: '', group: true, aspMode: 'all' },
     deckTab: 'analysis',
     review: '',
     lobby: { mine: null, yuna: null },
@@ -1077,22 +1077,106 @@
     }
     S.review = d.review || '';
   }
+  // ---------- 組牌器：系列、卡號、排序 ----------
+  const SET_ORDER = ['SOR', 'SHD', 'TWI', 'JTL', 'LOF', 'IBH', 'SEC', 'LAW', 'TS26', 'ASH', 'HMW', 'IC27'];
+  const SET_SIZE = { SOR: 252, SHD: 262, TWI: 257, JTL: 262, LOF: 264, IBH: 104, SEC: 264, LAW: 264, TS26: 84, ASH: 264, HMW: 272, IC27: 194 };
+  const SET_ZH = { SOR: '一彈 反抗之火', SHD: '二彈 銀河暗影', TWI: '三彈 共和暮光', JTL: '四彈 躍入光速', LOF: '五彈 原力傳說', IBH: '入門 霍斯之戰', SEC: '六彈 力量的秘密', LAW: '七彈 無法時代', TS26: 'Twin Suns 2026', ASH: '八彈 帝國餘燼', HMW: '九彈 家園', IC27: 'Icons 2027' };
+  function printings(c) {
+    if (c._pr) return c._pr;
+    const out = [];
+    for (const id of c.ids || [c.id]) {
+      const [st, n] = id.split('-');
+      if (SET_ORDER.includes(st) && /^\d+$/.test(n) && +n <= (SET_SIZE[st] || 999)) out.push({ set: st, n: +n });
+    }
+    out.sort((x, y) => SET_ORDER.indexOf(x.set) - SET_ORDER.indexOf(y.set) || x.n - y.n);
+    return (c._pr = out);
+  }
+  function printingOf(c, sets) {
+    const pr = printings(c);
+    return (sets && sets.length && pr.find((x) => sets.includes(x.set))) || pr[0] || null;
+  }
+  const TYPE_ORDER = ['Leader', 'Base', 'Unit', 'Event', 'Upgrade'];
+  const aspKey = (c) => {
+    const a = c.a || [];
+    if (!a.length) return 99;
+    return a.map((x) => SWU.ASPECTS.indexOf(x)).sort((x, y) => x - y).reduce((s, v) => s * 7 + v + 1, 0);
+  };
+  function sortKey(c, f) {
+    const pr = printingOf(c, f.sets);
+    const num = pr ? SET_ORDER.indexOf(pr.set) * 1000 + pr.n : 99999;
+    switch (f.sort) {
+      case 'cost': return [c.c == null ? 99 : c.c, num];
+      case 'name': return [c.key.toLowerCase()];
+      case 'aspect': return [aspKey(c), c.c || 0, num];
+      case 'type': return [TYPE_ORDER.indexOf(c.t), c.c || 0, num];
+      case 'power': return [c.p == null ? -1 : c.p, c.c || 0, num];
+      case 'hp': return [c.h == null ? -1 : c.h, c.c || 0, num];
+      case 'price': return [+c.pr || 0, num];
+      default: return [num];
+    }
+  }
+  function groupOf(c, f) {
+    switch (f.sort) {
+      case 'cost': return c.c == null ? '—' : t('cost') + ' ' + c.c;
+      case 'aspect': return (c.a || []).length ? (c.a || []).map((x) => t('asp_' + x)).join(' + ') : t('noAspect');
+      case 'type': return t('type_' + c.t) !== 'type_' + c.t ? t('type_' + c.t) : c.t;
+      case 'number': { const pr = printingOf(c, f.sets); return pr ? pr.set + ' · ' + (SWU.lang === 'zh' ? SET_ZH[pr.set] || '' : '') : '—'; }
+      case 'power': return c.p == null ? '—' : (SWU.lang === 'zh' ? '戰力 ' : 'Power ') + c.p;
+      case 'hp': return c.h == null ? '—' : (SWU.lang === 'zh' ? '生命 ' : 'HP ') + c.h;
+      default: return null;
+    }
+  }
+  let TRAITS = null, KWS = null;
+  function traitList() {
+    if (TRAITS) return TRAITS;
+    const tc = {}, kc = {};
+    for (const c of SWU.DB.list) {
+      if (/Token/.test(c.t)) continue;
+      for (const x of c.tr || []) tc[x] = (tc[x] || 0) + 1;
+      for (const x of c.kw || []) kc[x] = (kc[x] || 0) + 1;
+    }
+    TRAITS = Object.keys(tc).sort();
+    KWS = Object.keys(kc).sort();
+    return TRAITS;
+  }
   function filteredCards() {
     const f = S.filters;
     const q = f.q.trim().toLowerCase();
     const deck = S.edit;
-    return SWU.DB.list.filter((c) => {
+    const list = SWU.DB.list.filter((c) => {
       if (/Token/.test(c.t)) return false;
       if (f.type && c.t !== f.type) return false;
       if (f.legal && c.pl !== 'Yes') return false;
-      if (f.aspects.length && !f.aspects.every((a) => (c.a || []).includes(a))) return false;
+      if (f.sets.length && !printings(c).some((x) => f.sets.includes(x.set))) return false;
+      if (f.aspects.length) {
+        const ca = c.a || [];
+        const want = f.aspects.filter((a) => a !== 'none');
+        const none = f.aspects.includes('none');
+        const hit = f.aspMode === 'any' ? (none && !ca.length) || want.some((a) => ca.includes(a)) : none ? !ca.length && !want.length : want.every((a) => ca.includes(a));
+        if (!hit) return false;
+      }
       if (f.cost !== '') {
         if (f.cost === '7' ? (c.c || 0) < 7 : (c.c || 0) !== +f.cost) return false;
       }
+      if (f.arena && c.ar !== f.arena) return false;
+      if (f.trait && !(c.tr || []).includes(f.trait)) return false;
+      if (f.kw && !(c.kw || []).includes(f.kw)) return false;
       if (f.nopen && deck && ['Unit', 'Event', 'Upgrade'].includes(c.t) && SWU.Deck.penalty(deck, c) > 0) return false;
-      if (q && !(c.key.toLowerCase().includes(q) || (c.tx || '').toLowerCase().includes(q) || (c.tr || []).join(' ').toLowerCase().includes(q) || (SWU.ZH[c.key] && SWU.ZH[c.key].tx.includes(q)))) return false;
+      if (q && !(c.key.toLowerCase().includes(q) || (c.tx || '').toLowerCase().includes(q) || (c.tr || []).join(' ').toLowerCase().includes(q) || (SWU.ZH[c.key] && ((SWU.ZH[c.key].tx || '').includes(q) || (SWU.ZH[c.key].n || '').includes(q))))) return false;
       return true;
     });
+    const keys = new Map(list.map((c) => [c, sortKey(c, f)]));
+    list.sort((x, y) => {
+      const a = keys.get(x), b = keys.get(y);
+      for (let i = 0; i < Math.max(a.length, b.length); i++) {
+        if (a[i] === b[i]) continue;
+        if (a[i] == null) return -1;
+        if (b[i] == null) return 1;
+        return (a[i] < b[i] ? -1 : 1) * (i === 0 ? f.dir : 1);
+      }
+      return x.key < y.key ? -1 : 1;
+    });
+    return list;
   }
   function addCard(c, zone = 'main') {
     const d = S.edit;
@@ -1208,24 +1292,80 @@
   function searchPanel() {
     const f = S.filters;
     const list = filteredCards();
-    const pageSize = 60;
+    const pageSize = 120;
     const page = list.slice(0, (f.page + 1) * pageSize);
-    const aspBtns = SWU.ASPECTS.map((a) =>
+    const rerender = () => {
+      f.page = 0;
+      renderBuilderBody();
+    };
+    const sel = (id, val, set, opts) => h('select', { id, onchange: (e) => (set(e.target.value), rerender()) }, ...opts.map(([v, l]) => h('option', { value: v, selected: val === v }, l)));
+    const aspBtns = [...SWU.ASPECTS, 'none'].map((a) =>
       h(
         'button',
         {
-          class: 'aspbtn ' + ASP_CLASS[a] + (f.aspects.includes(a) ? ' on' : ''),
-          title: t('asp_' + a),
+          class: 'aspbtn ' + (a === 'none' ? 'none' : ASP_CLASS[a]) + (f.aspects.includes(a) ? ' on' : ''),
+          title: a === 'none' ? t('noAspect') : t('asp_' + a),
           onclick: () => {
             f.aspects = f.aspects.includes(a) ? f.aspects.filter((x) => x !== a) : [...f.aspects, a];
-            f.page = 0;
-            renderBuilderBody();
+            rerender();
           },
         },
-        h('i', { class: 'dot ' + ASP_CLASS[a] })
+        a === 'none' ? h('i', { class: 'dot none' }) : h('i', { class: 'dot ' + ASP_CLASS[a] })
       )
     );
+    const setBtns = SET_ORDER.map((st) =>
+      h(
+        'button',
+        {
+          class: 'setbtn' + (f.sets.includes(st) ? ' on' : ''),
+          title: SET_ZH[st] || st,
+          onclick: () => {
+            f.sets = f.sets.includes(st) ? f.sets.filter((x) => x !== st) : [...f.sets, st];
+            rerender();
+          },
+        },
+        st
+      )
+    );
+    traitList();
     let timer;
+    // 依排序分組，組名當標題列
+    const items = [];
+    let lastG;
+    for (const c of page) {
+      if (f.group) {
+        const g = groupOf(c, f);
+        if (g != null && g !== lastG) {
+          items.push(h('div', { class: 'rgroup' }, g));
+          lastG = g;
+        }
+      }
+      const n = (S.edit.main[c.key] || 0) + (S.edit.side[c.key] || 0);
+      const isSet = S.edit.leader === c.key || S.edit.base === c.key;
+      const pr = printingOf(c, f.sets);
+      let press;
+      items.push(
+        h(
+          'div',
+          {
+            class: 'rcard' + (n || isSet ? ' indeck' : ''),
+            onmouseenter: () => setPreviewBuilder(c),
+            onclick: () => addCard(c),
+            oncontextmenu: (e) => {
+              e.preventDefault();
+              removeCard(c.key);
+            },
+            ontouchstart: () => (press = setTimeout(() => removeCard(c.key), 600)),
+            ontouchend: () => clearTimeout(press),
+          },
+          cardFace(c, 'card'),
+          n ? h('span', { class: 'count' }, '×' + n) : isSet ? h('span', { class: 'count' }, '✓') : null,
+          h('small', {}, c.n, c.s ? ' – ' + c.s : ''),
+          pr ? h('small', { class: 'setno' }, pr.set + ' ' + String(pr.n).padStart(3, '0')) : null
+        )
+      );
+    }
+    const more = list.length > page.length;
     return h(
       'section',
       { class: 'panel search' },
@@ -1241,68 +1381,59 @@
             clearTimeout(timer);
             timer = setTimeout(() => {
               f.q = e.target.value;
-              f.page = 0;
-              renderBuilderBody();
+              rerender();
             }, 250);
           },
         }),
-        h(
-          'select',
-          {
-            id: 'ftype',
-            onchange: (e) => {
-              f.type = e.target.value;
-              f.page = 0;
-              renderBuilderBody();
-            },
-          },
-          h('option', { value: '' }, t('allTypes')),
-          ...['Leader', 'Base', 'Unit', 'Event', 'Upgrade'].map((x) => h('option', { value: x, selected: f.type === x }, x))
-        ),
-        h(
-          'select',
-          {
-            id: 'fcost',
-            onchange: (e) => {
-              f.cost = e.target.value;
-              f.page = 0;
-              renderBuilderBody();
-            },
-          },
-          h('option', { value: '' }, t('cost') + '：' + t('any')),
-          ...['0', '1', '2', '3', '4', '5', '6', '7'].map((x) => h('option', { value: x, selected: f.cost === x }, x === '7' ? '7+' : x))
-        ),
-        h('div', { class: 'aspbtns' }, ...aspBtns),
-        h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'flegal', checked: f.legal, onchange: (e) => ((f.legal = e.target.checked), (f.page = 0), renderBuilderBody()) }), t('legalOnly')),
-        h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'fnopen', checked: f.nopen, onchange: (e) => ((f.nopen = e.target.checked), (f.page = 0), renderBuilderBody()) }), t('noPenalty')),
-        h('span', { class: 'muted small' }, t('results', list.length) + ' · ' + t('addHint'))
+        sel('fsort', f.sort, (v) => (f.sort = v), ['number', 'cost', 'aspect', 'type', 'name', 'power', 'hp', 'price'].map((x) => [x, t('sortBy') + '：' + t('sort_' + x)])),
+        h('button', { class: 'ghost small', id: 'fdir', title: f.dir > 0 ? '↑' : '↓', onclick: () => ((f.dir = -f.dir), rerender()) }, f.dir > 0 ? '↑' : '↓'),
+        h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'fgroup', checked: f.group, onchange: (e) => ((f.group = e.target.checked), rerender()) }), t('groupBy'))
+      ),
+      h('div', { class: 'filters setrow' }, h('span', { class: 'muted small' }, t('setsLabel')), ...setBtns),
+      h(
+        'div',
+        { class: 'filters' },
+        sel('ftype', f.type, (v) => (f.type = v), [['', t('allTypes')], ...TYPE_ORDER.map((x) => [x, t('type_' + x)])]),
+        sel('fcost', f.cost, (v) => (f.cost = v), [['', t('cost') + '：' + t('any')], ...['0', '1', '2', '3', '4', '5', '6', '7'].map((x) => [x, t('cost') + ' ' + (x === '7' ? '7+' : x)])]),
+        sel('farena', f.arena, (v) => (f.arena = v), [['', t('allArenas')], ['Ground', t('arenaGround')], ['Space', t('arenaSpace')]]),
+        sel('ftrait', f.trait, (v) => (f.trait = v), [['', t('allTraits')], ...TRAITS.map((x) => [x, x])]),
+        sel('fkw', f.kw, (v) => (f.kw = v), [['', t('allKw')], ...KWS.map((x) => [x, x])])
       ),
       h(
         'div',
-        { class: 'results' },
-        ...page.map((c) => {
-          const n = (S.edit.main[c.key] || 0) + (S.edit.side[c.key] || 0);
-          const isSet = S.edit.leader === c.key || S.edit.base === c.key;
-          let press;
-          return h(
-            'div',
-            {
-              class: 'rcard' + (n || isSet ? ' indeck' : ''),
-              onmouseenter: () => setPreviewBuilder(c),
-              onclick: () => addCard(c),
-              oncontextmenu: (e) => {
-                e.preventDefault();
-                removeCard(c.key);
-              },
-              ontouchstart: () => (press = setTimeout(() => removeCard(c.key), 600)),
-              ontouchend: () => clearTimeout(press),
+        { class: 'filters' },
+        h('div', { class: 'aspbtns' }, ...aspBtns),
+        f.aspects.length > 1 ? sel('faspmode', f.aspMode, (v) => (f.aspMode = v), [['all', t('aspAll')], ['any', t('aspAny')]]) : null,
+        h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'flegal', checked: f.legal, onchange: (e) => ((f.legal = e.target.checked), rerender()) }), t('legalOnly')),
+        h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'fnopen', checked: f.nopen, onchange: (e) => ((f.nopen = e.target.checked), rerender()) }), t('noPenalty')),
+        h(
+          'button',
+          {
+            class: 'ghost small',
+            onclick: () => {
+              Object.assign(f, { q: '', type: '', aspects: [], cost: '', nopen: false, sets: [], arena: '', trait: '', kw: '', aspMode: 'all' });
+              rerender();
             },
-            cardFace(c, 'card'),
-            n ? h('span', { class: 'count' }, '×' + n) : isSet ? h('span', { class: 'count' }, '✓') : null,
-            h('small', {}, c.n, c.s ? ' – ' + c.s : '')
-          );
-        }),
-        list.length > page.length
+          },
+          t('clearFilters')
+        ),
+        h('span', { class: 'muted small' }, t('showing', page.length, list.length) + ' · ' + t('addHint'))
+      ),
+      h(
+        'div',
+        {
+          class: 'results',
+          onscroll: (e) => {
+            const el = e.target;
+            if (more && el.scrollTop + el.clientHeight > el.scrollHeight - 300 && !el._loading) {
+              el._loading = true;
+              f.page++;
+              renderBuilderBody();
+            }
+          },
+        },
+        ...items,
+        more
           ? h(
               'button',
               {
