@@ -1308,7 +1308,7 @@
   }
   function renderBuilder(v) {
     S.decks = SWU.Deck.loadAll();
-    if (!S.edit) editDeck(S.decks[0] || SWU.Deck.presets()[1]);
+    if (!S.edit) editDeck(S.decks[0] || SWU.Deck.blank(t('newDeck')));
     v.append(h('div', { class: 'builder', id: 'builder' }));
     renderBuilderBody();
   }
@@ -1360,20 +1360,6 @@
           },
         },
         '+ ' + t('newDeck')
-      ),
-      h('h4', {}, t('presets')),
-      ...SWU.Deck.presets().map((d) =>
-        h(
-          'button',
-          {
-            class: 'ghost small left',
-            onclick: () => {
-              editDeck(d);
-              renderBuilderBody();
-            },
-          },
-          d.name
-        )
       ),
       h('h4', {}, t('import')),
       imp,
