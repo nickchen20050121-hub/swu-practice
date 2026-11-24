@@ -44,13 +44,53 @@
     }
     return need.length === 0;
   }
-  async function disclose(g, p, aspects, label) {
+  // 揭示：玩家自己挑要公開的手牌（必須湊齊指定圖示）；AI 挑最少張
+  function discloseNeed(cards, aspects) {
+    const need = [...aspects];
+    for (const c of cards)
+      for (const a of c.card.a || []) {
+        const i = need.indexOf(a);
+        if (i >= 0) need.splice(i, 1);
+      }
+    return need;
+  }
+  async function disclose(g, p, aspects, label, optional = true) {
     if (!canDisclose(g, p, aspects)) return false;
-    const ok = await g.yesno(p, T('promptDisclose', aspects.map((a) => T('asp_' + a)).join(' '), label));
-    if (ok) g.log('logDisclose', g.P(p).name, aspects.join(' '));
-    return ok;
+    const P = g.P(p);
+    const txt = aspects.map((a) => T('asp_' + a)).join(' ');
+    const cands = P.hand.filter((c) => (c.card.a || []).some((a) => aspects.includes(a)));
+    let picked;
+    if (g.io[p] && g.io[p].isHuman) {
+      const ids = await g.choose(p, {
+        kind: 'cards',
+        prompt: T('promptDiscloseCards', txt, label || ''),
+        options: cands.map((c) => ({ id: c.uid, label: c.card.key, card: c.card.key })),
+        min: optional ? 0 : 1,
+        max: cands.length,
+        forceAsk: true,
+        validate: (sel) => discloseNeed(cands.filter((c) => sel.includes(c.uid)), aspects).length === 0,
+        needText: (sel) => discloseNeed(cands.filter((c) => sel.includes(c.uid)), aspects).map((a) => T('asp_' + a)).join(' '),
+      });
+      picked = cands.filter((c) => ids.includes(c.uid));
+      if (!picked.length || discloseNeed(picked, aspects).length) return false;
+    } else {
+      if (optional && !(await g.yesno(p, T('promptDisclose', txt, label)))) return false;
+      picked = [];
+      let need = [...aspects];
+      while (need.length) {
+        const best = cands.filter((c) => !picked.includes(c)).map((c) => ({ c, k: (c.card.a || []).filter((a) => need.includes(a)).length })).sort((x, y) => y.k - x.k)[0];
+        if (!best || !best.k) break;
+        picked.push(best.c);
+        need = discloseNeed(picked, aspects);
+      }
+      if (need.length) return false;
+    }
+    g.log('logDisclose', P.name, txt);
+    g.revealCards(p, picked, 'disclose');
+    return true;
   }
   SWU.canDisclose = canDisclose;
+  SWU.discloseFlow = disclose;
   const vanilla = { static: null };
 
   // ===== 領袖：Luke Skywalker – I Can Save Him =====

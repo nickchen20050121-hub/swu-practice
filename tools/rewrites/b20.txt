@@ -1,0 +1,142 @@
+# 修正：句型判讀與舊改寫同時存在造成效果重複；公開手牌類效果（自動產生，tools 外的 gen 腳本）
+
+= Ahsoka Tano | I Learned it From You#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"attackEnd"}],"steps":[{"op":"disclose","aspects":["Command","Heroism"],"optional":true},{"op":"attack","target":{"sel":"choose","side":"any","f":{"notSelf":true}},"exhaustedOk":false,"ifPrev":true}]}
+
+= Anakin Skywalker | Tempted by the Dark Side#unit
+!!replace
+{"trigger":"action","cost":{"res":0,"exhaust":false,"force":true},"epic":false,"steps":[{"op":"playFromHand","f":{"aspects":["Villainy"],"notType":"Unit"},"ignoreAspect":true,"free":false,"discount":0}],"text":"Action [use the Force]: Play a Villainy non-unit card from your hand, ignoring its aspect penalties."}
+
+= B2EM0 | That's Two Lies#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"onAttack"}],"steps":[{"op":"disclose","aspects":["Heroism","Heroism"],"optional":true},{"op":"buff","p":0,"h":0,"kw":{"Sentinel":true},"until":"phase","target":{"sel":"choose","side":"any","f":{}},"ifPrev":true}]}
+
+= Bardottan Ornithopter#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"disclose","aspects":["Vigilance"],"optional":true},{"op":"draw","n":1,"ifPrev":true}]}
+
+= Bo-Katan Kryze | Reclaiming Mandalore#leader
+!!replace
+{"trigger":"action","cost":{"res":2,"exhaust":true,"force":false},"epic":false,"steps":[{"op":"createToken","n":1,"name":"Mandalorian","who":"me","cond":{"all":[{"count":{"side":"friendly","f":{"arena":"Ground"}},"min":1},{"count":{"side":"friendly","f":{"arena":"Space"}},"min":1}]}}],"text":"Action [C=2, Exhaust]: If you control a unit in each arena, create a Mandalorian token."}
+
+= Bog Down in Procedure#card
+!!replace
+{"trigger":"event","steps":[{"op":"exhaust","target":{"sel":"choose","side":"any","f":{}}},{"op":"disclose","aspects":["Cunning"],"optional":true},{"op":"exhaust","target":{"sel":"choose","side":"any","f":{"notSelf":true}},"ifPrev":true}]}
+
+= Broken Horn | Vizago's Pride#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"draw","n":1,"cond":{"fewerCards":true}},{"op":"resourceTop","n":1,"cond":{"fewerResources":true}}]}
+
+= Cad Bane | Hostage Taker#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"capture","target":{"sel":"upTo","side":"enemy","f":{"nonLeader":true},"sumMax":8,"sumKey":"remaining","count":3}}]}
+
+= Charged with Espionage#card
+!!replace
+{"trigger":"event","steps":[{"op":"disclose","aspects":["Cunning","Cunning"],"optional":true},{"op":"lookHand","ifPrev":true},{"op":"discardOpp","f":{"type":"Unit"},"ifPrev":true}]}
+
+= Commence the Festivities#card
+!!replace
+{"trigger":"event","steps":[{"op":"attack","target":{"sel":"choose","side":"any","f":{}},"exhaustedOk":false,"kw":{"Saboteur":true},"alt":{"cond":{"fewerResources":true},"steps":[{"op":"attack","target":{"sel":"choose","side":"any","f":{}},"exhaustedOk":false,"kw":{"Saboteur":true},"p":2,"h":0}]}}]}
+
+= Easy Prey#card
+!!replace
+{"trigger":"event","steps":[{"op":"createToken","n":1,"name":"Beast","who":"me"},{"op":"createToken","n":1,"name":"Beast","who":"opp"},{"op":"token","name":"Weakness","n":1,"target":{"sel":"prev"}}]}
+
+= Grand Admiral Thrawn | Grand Schemer#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenDefeated"}],"steps":[{"op":"source","target":{"sel":"choose","side":"friendly","f":{}}},{"op":"capture","target":{"sel":"choose","side":"enemy","f":{"nonLeader":true,"sameArena":true}},"by":"src","ifPrev":true}]}
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"ready","target":{"sel":"self"}}]}
+
+= Heroic Bravery#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"token","name":"Shield","n":1,"target":{"sel":"attached"},"cond":{"attachedIs":{"aspects":["Heroism"]}}}]}
+
+= Hunter | Extraordinary Tracker#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"onAttack"}],"steps":[{"op":"buff","p":-4,"h":0,"kw":{},"until":"attack","target":{"sel":"defender"},"cond":{"defenderIs":{"exhausted":true}}}]}
+
+= It Binds All Things#card
+!!replace
+{"trigger":"event","steps":[{"op":"heal","n":3,"target":{"sel":"choose","side":"any","f":{}}},{"op":"damage","n":{"x":"amount"},"target":{"sel":"choose","side":"any","f":{"notSelf":true}},"optional":true,"cond":{"count":{"side":"friendly","f":{"traits":["FORCE"]}},"min":1}}]}
+
+= Karis Nemik | Freedom is a Pure Idea#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenDefeated"}],"steps":[{"op":"disclose","aspects":["Aggression","Heroism"],"optional":true},{"op":"createToken","n":1,"name":"Spy","who":"me","ifPrev":true},{"op":"ready","target":{"sel":"prev"},"ifPrev":true}]}
+
+= Kashyyyk Defender#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"heal","n":2,"target":{"sel":"choose","side":"any","f":{"notSelf":true}}},{"op":"damage","n":{"x":"amount"},"target":{"sel":"self"}}]}
+
+= Luke Skywalker | Jedi Knight#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"buff","p":-3,"h":-3,"kw":{},"until":"phase","target":{"sel":"choose","side":"enemy","f":{}},"alt":{"cond":{"defeatedThisPhase":"friendly"},"steps":[{"op":"buff","p":-6,"h":-6,"kw":{},"until":"phase","target":{"sel":"prev"}}]}}]}
+
+= Luke's Lightsaber#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"heal","n":99,"target":{"sel":"attached"},"cond":{"attachedIs":{"name":"luke skywalker"}}},{"op":"token","name":"Shield","n":1,"target":{"sel":"attached"},"cond":{"attachedIs":{"name":"luke skywalker"}}}]}
+
+= Mandalorian Armor#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"token","name":"Shield","n":1,"target":{"sel":"attached"},"cond":{"attachedIs":{"traits":["MANDALORIAN"]}}}]}
+
+= Migs Mayfeld | How About a Toast?#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"onAttack"}],"steps":[{"op":"damage","n":1,"target":{"sel":"defender"},"alt":{"cond":{"selfUpgraded":true},"steps":[{"op":"damage","n":2,"target":{"sel":"defender"}}]}}]}
+
+= Mister Bones | I Performed Violence#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"onAttack"}],"steps":[{"op":"damage","n":3,"target":{"sel":"choose","side":"any","f":{"arena":"Ground"}},"optional":true,"cond":{"handMax":0}}]}
+
+= Moff Gideon | Remnant Commander#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenDefeated"}],"steps":[{"op":"recover","f":{"type":"Unit","nonUnique":true,"traits":["IMPERIAL"]},"count":1,"to":"hand","upTo":false,"optional":true}]}
+
+= Princess Leia | Calculated Distraction#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"},{"t":"onAttack"}],"steps":[{"op":"exhaust","target":{"sel":"upTo","side":"any","f":{"sameArena":true},"sumMax":4,"sumKey":"cost","count":2}}]}
+
+= Reconnaissance#card
+!!replace
+{"trigger":"event","steps":[{"op":"draw","n":2,"cond":{"all":[{"count":{"side":"friendly","f":{"arena":"Ground"}},"min":1},{"count":{"side":"friendly","f":{"arena":"Space"}},"min":1}]}}]}
+
+= Redemption | Medical Frigate#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"divHeal","n":8,"withBase":true,"target":{"side":"any","f":{}}},{"op":"damage","n":{"x":"amount"},"target":{"sel":"self"}}]}
+
+= Satine Kryze | Standing on Principles#leader
+!!replace
+{"trigger":"action","cost":{"res":0,"exhaust":true,"force":false},"epic":false,"steps":[{"op":"heal","n":2,"target":{"sel":"choose","side":"any","f":{}}},{"op":"damage","n":{"x":"amount"},"target":{"sel":"base","side":"friendly"},"ifPrev":true}],"text":"Action [Exhaust]: Heal up to 2 damage from a unit. If you do, deal that much damage to your base."}
+
+= Sweep the Area#card
+!!replace
+{"trigger":"event","steps":[{"op":"bounce","target":{"sel":"upTo","side":"any","f":{"nonLeader":true,"sameArena":true},"sumMax":3,"sumKey":"cost","count":2}}]}
+
+= Take Captive#card
+!!replace
+{"trigger":"event","steps":[{"op":"source","target":{"sel":"choose","side":"friendly","f":{}}},{"op":"capture","target":{"sel":"choose","side":"enemy","f":{"nonLeader":true,"sameArena":true}},"by":"src","ifPrev":true}]}
+
+= The Mandalorian | From the Shadows#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"onAttack"}],"steps":[{"op":"buff","p":-4,"h":0,"kw":{},"until":"attack","target":{"sel":"defender"},"cond":{"defenderIs":{"exhausted":true}}}]}
+
+= Unauthorized Investigation#card
+!!replace
+{"trigger":"event","steps":[{"op":"createToken","n":1,"name":"Spy","who":"me"},{"op":"disclose","aspects":["Aggression"],"optional":true},{"op":"createToken","n":1,"name":"Spy","who":"me","ifPrev":true}]}
+
+= ISB Agent#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"reveal","f":{"type":"Event"},"optional":true},{"op":"damage","n":1,"target":{"sel":"choose","side":"any","f":{}},"ifPrev":true}]}
+
+= Queen Soruna | Willing to Fight#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"},{"t":"onAttack"}],"steps":[{"op":"reveal","f":{"type":"Unit"},"optional":true},{"op":"damage","n":3,"target":{"sel":"choose","side":"any","f":{"costEqRevealed":true}},"ifPrev":true}]}
+
+= Lieutenant Childsen | Death Star Prison Warden#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"reveal","f":{"aspects":["Vigilance"]},"max":4,"optional":true},{"op":"token","name":"Experience","n":{"x":"revealedCount"},"target":{"sel":"self"},"ifPrev":true}]}
+
+= Stormchaser#card
+!!replace
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"draw","n":1,"cond":{"discardHas":{"traits":["DISASTER"]}}},{"op":"reveal","f":{"traits":["DISASTER"]},"optional":true,"ifNotPrev":true},{"op":"draw","n":1,"ifPrev":true}]}

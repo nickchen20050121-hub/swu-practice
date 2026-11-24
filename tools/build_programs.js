@@ -28,7 +28,10 @@ for (const f of files) {
     const card = SWU.DB.byKey.get(key.toLowerCase()) || SWU.DB.list.find((c) => c.key.trim().toLowerCase() === key.toLowerCase());
     if (!card) { console.log(`${f}:${ln} unknown card ${key}`); errors++; return; }
     const base = G.compileRegex(card, side);
-    const prog = { v: 1, src: 'prebuilt', abilities: [...base.abilities], failed: [] };
+    // !!replace：這張卡完全以下面寫的為準（丟掉句型判讀的結果）
+    const replace = body.includes('!!replace');
+    if (replace) { const keep = body.filter((l) => l !== '!!replace'); body.length = 0; body.push(...keep); }
+    const prog = { v: 1, src: 'prebuilt', abilities: replace ? [] : [...base.abilities], failed: [] };
     const err = (m) => { console.log(`${f}:${ln} ${key}#${side}: ${m}`); errors++; };
     if (card.t === 'Event') {
       let txt = body.filter((l) => !/^[!~{]/.test(l));

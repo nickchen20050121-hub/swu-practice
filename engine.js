@@ -90,7 +90,18 @@
 
   // ---------- 工具 ----------
   let UID = 1;
-  const rnd = (n) => Math.floor(Math.random() * n);
+  // 可重現的亂數（回上一步時用同一個種子重播）
+  function mulberry32(a) {
+    return function () {
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  let RNG = Math.random;
+  const rnd = (n) => Math.floor(RNG() * n);
   function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
       const j = rnd(i + 1);
@@ -106,6 +117,16 @@
       // decks: [{leader, base, cards:[card...]}] ×2 ； io: [io0, io1]
       this.io = io;
       this.opts = opts;
+      this.decks = decks;
+      this.seed = opts.seed != null ? opts.seed : Math.floor(Math.random() * 2147483647);
+      RNG = mulberry32(this.seed);
+      this.uid0 = opts.uid0 != null ? opts.uid0 : UID;
+      UID = this.uid0;
+      this.rec = [];
+      this.replay = opts.replay && opts.replay.length ? opts.replay : null;
+      this.rp = 0;
+      this.replaying = !!this.replay;
+      this.checkpoints = [];
       this.listeners = new Set();
       this.G = {
         round: 1,
@@ -380,15 +401,49 @@
     }
 
     // ---------- 互動 ----------
+    rnd(n) {
+      return rnd(n);
+    }
+    // 所有玩家輸入都經過這裡：記錄下來，回上一步時重播
+    async input(p, kind, fn) {
+      if (this.replay) {
+        if (this.rp < this.replay.length) {
+          const r = this.replay[this.rp++];
+          this.rec.push(r);
+          return r.v == null ? r.v : JSON.parse(JSON.stringify(r.v));
+        }
+        this.replay = null;
+        this.replaying = false;
+        this.emit({ type: 'replay-done' });
+      }
+      const v = await fn();
+      this.rec.push({ p, k: kind, v: v === undefined ? null : JSON.parse(JSON.stringify(v)) });
+      return v;
+    }
     async choose(p, req) {
       // req: {prompt, options:[{id,label,uid?}], min, max}
       if (!req.options.length) return [];
       const min = req.min == null ? 1 : req.min;
-      if (req.options.length === 1 && min >= 1 && (req.max || 1) === 1 && !req.forceAsk && !(this.io[p] && this.io[p].isHuman && !this.io[p].autoSingle && req.kind !== 'internal')) return [req.options[0].id];
-      this.emit({ type: 'prompt', p, req });
-      const r = await this.io[p].choose(this, p, req);
-      this.emit({ type: 'prompt-done', p });
+      const r = await this.input(p, 'c', async () => {
+        if (req.options.length === 1 && min >= 1 && (req.max || 1) === 1 && !req.forceAsk && !(this.io[p] && this.io[p].isHuman && !this.io[p].autoSingle && req.kind !== 'internal')) return [req.options[0].id];
+        this.emit({ type: 'prompt', p, req });
+        const v = await this.io[p].choose(this, p, req);
+        this.emit({ type: 'prompt-done', p });
+        return v;
+      });
       return Array.isArray(r) ? r : r == null ? [] : [r];
+    }
+    // 給玩家看牌（不需要回答）
+    async showCards(p, cards, prompt) {
+      if (!cards.length || this.replaying) return;
+      const io = this.io[p];
+      if (io && io.showCards) await io.showCards(this, p, cards, prompt);
+    }
+    // 公開卡片：記錄並讓對手看到
+    revealCards(p, cards, why) {
+      if (!cards.length) return;
+      this.log('logReveal', this.P(p).name, cards.map((c) => c.card.n).join('、'));
+      this.emit({ type: 'reveal', p, cards: cards.map((c) => c.card), why });
     }
     async yesno(p, prompt, ctx) {
       const r = await this.choose(p, {
@@ -513,9 +568,12 @@
       let alloc = null;
       const io = this.io[chooser];
       if (io && io.distribute) {
-        this.emit({ type: 'prompt', p: chooser, req });
-        alloc = await io.distribute(this, chooser, req);
-        this.emit({ type: 'prompt-done', p: chooser });
+        alloc = await this.input(chooser, 'd', async () => {
+          this.emit({ type: 'prompt', p: chooser, req });
+          const v = await io.distribute(this, chooser, req);
+          this.emit({ type: 'prompt-done', p: chooser });
+          return v;
+        });
       }
       if (!alloc) alloc = this.autoDistribute(chooser, req);
       return alloc;
@@ -812,7 +870,7 @@
     }
     async unimplementedText(u, text, p) {
       this.log('logManual', u.card.n, text);
-      if (this.io[p].resolveManual) await this.io[p].resolveManual(this, p, { card: u.card, text, source: u });
+      if (this.io[p].resolveManual) await this.input(p, 'm', () => this.io[p].resolveManual(this, p, { card: u.card, text, source: u }));
     }
 
     // ---------- 打出卡片 ----------
@@ -1252,7 +1310,10 @@
         this.emit({ type: 'turn', p });
         let act;
         if (acts.length === 1) act = acts[0];
-        else act = await this.io[p].chooseAction(this, p, acts);
+        else {
+          if (this.io[p].isHuman) this.checkpoints.push(this.rec.length);
+          act = await this.input(p, 'a', () => this.io[p].chooseAction(this, p, acts));
+        }
         if (!act) act = { type: 'pass' };
         await this.doAction(p, act);
         this.emit({ type: 'update' });

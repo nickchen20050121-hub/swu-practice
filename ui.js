@@ -254,6 +254,13 @@
         renderBoard();
       });
     },
+    showCards(g, p, cards, prompt) {
+      return new Promise((resolve) => {
+        S.pending = { type: 'show', cards, prompt, resolve };
+        renderBoard();
+        openShowModal();
+      });
+    },
     resolveManual(g, p, info) {
       return new Promise((resolve) => {
         S.pending = { type: 'manual', info, resolve, prev: S.pending };
@@ -325,10 +332,55 @@
     });
     S.chat = [{ who: 'yuna', text: SWU.lang === 'zh' ? '嘿嘿，請多指教～我會認真打的喔 (｡･ω･｡)' : "Hehe, let's have a good game~ I'll do my best!" }];
     const g = new SWU.Game([mk(mine, SWU.lang === 'zh' ? '柏偉' : 'Nick'), mk(yuna, SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer]);
+    attachGame(g);
+  }
+  // ---------- 回上一步：用同一個亂數種子重播到上一個檢查點 ----------
+  function undoTarget() {
+    const g = S.game;
+    if (!g || !S.pending || g.G.winner != null || !g.checkpoints) return null;
+    const cps = g.checkpoints;
+    if (!cps.length) return null;
+    const last = cps[cps.length - 1];
+    if (S.pending.type === 'action' && last === g.rec.length) return cps.length >= 2 ? { to: cps[cps.length - 2], mid: false } : null;
+    return { to: last, mid: true };
+  }
+  function doUndo() {
+    const u = undoTarget();
+    if (!u) return;
+    const old = S.game;
+    old.listeners.clear();
+    S.pending = null;
+    S.selUid = null;
+    closeModal();
+    hidePeek();
+    const g = new SWU.Game(old.decks, old.io, { ...old.opts, seed: old.seed, uid0: old.uid0, replay: old.rec.slice(0, u.to) });
+    attachGame(g);
+    toast(t('undo') + ' ✓');
+  }
+  function showRevealPop(ev) {
+    const old = document.querySelector('.revealpop');
+    if (old) old.remove();
+    const el = h(
+      'div',
+      { class: 'revealpop' },
+      h('b', {}, t('revealedBy', S.game.P(ev.p).name)),
+      h('div', { class: 'revealcards' }, ...ev.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c, 'card'), onclick: () => showPeek && showPeek(c, 'card') }, cardFace(c, 'card'), h('small', {}, c.n)))),
+      h('button', { class: 'primary', onclick: () => el.remove() }, t('okSeen'))
+    );
+    document.body.append(el);
+  }
+  function attachGame(g) {
     S.game = g;
     S.pending = null;
     g.on((ev) => {
-      if (ev.type === 'log') renderLog();
+      if (g.replaying && ev.type !== 'gameover') return;
+      if (ev.type === 'replay-done') {
+        renderLog();
+        renderBoard();
+      } else if (ev.type === 'reveal') {
+        if (ev.p !== 0) showRevealPop(ev);
+        renderBoard();
+      } else if (ev.type === 'log') renderLog();
       else if (ev.type === 'gameover') {
         S.pending = null;
         renderBoard();
@@ -448,6 +500,7 @@
     renderChat();
     renderLog();
     if (S.pending && S.pending.type === 'manual') openManualModal();
+    else if (S.pending && S.pending.type === 'show') openShowModal();
     else if (S.pending && S.pending.req && S.pending.req.kind === 'cards') openCardsModal();
   }
   function renderChat() {
@@ -702,6 +755,28 @@
     );
   }
   function promptBar() {
+    const el = promptBar0();
+    const u = undoTarget();
+    if (u) el.append(h('button', { class: 'ghost undobtn', title: u.mid ? t('undoMid') : t('undoHint'), onclick: doUndo }, '↶ ' + t('undo')));
+    return el;
+  }
+  function openShowModal() {
+    const pd = S.pending;
+    if (!pd || pd.type !== 'show') return;
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    m.append(
+      h(
+        'div',
+        { class: 'dialog' },
+        h('h3', {}, pd.prompt),
+        h('div', { class: 'pickgrid' }, ...pd.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c.card, 'card') }, cardFace(c.card, 'card'), h('small', {}, c.card.n)))),
+        h('div', { class: 'row end' }, h('button', { class: 'primary', onclick: () => settle(null) }, t('okSeen')))
+      )
+    );
+  }
+  function promptBar0() {
     const pd = S.pending;
     const g = S.game;
     if (g.G.winner != null) {
@@ -782,6 +857,7 @@
         h('button', { class: 'primary', disabled: !ok, onclick: () => settle({ ...pd.alloc }) }, t('confirm'))
       );
     }
+    if (pd.type === 'show') return h('div', { class: 'promptbar asking' }, h('b', {}, pd.prompt), h('button', { onclick: openShowModal }, t('select')), h('button', { class: 'primary', onclick: () => settle(null) }, t('okSeen')));
     if (pd.type === 'manual') return h('div', { class: 'promptbar asking' }, h('b', {}, t('manualTitle')), h('button', { onclick: () => openManualModal() }, t('manualTools')));
     return h('div', { class: 'promptbar' });
   }
@@ -879,9 +955,10 @@
         h(
           'div',
           { class: 'row end' },
+          req.needText && pd.sel.length && !req.validate(pd.sel) ? h('span', { class: 'warn' }, t('needMore', req.needText(pd.sel))) : null,
           h('span', { class: 'muted' }, (max >= 20 ? pd.sel.length : pd.sel.length + ' / ' + max) + (lim != null ? (SWU.lang !== 'zh' ? ` · total ${req.sumKey || 'cost'} ${used} / ${lim}` : ` · 總${req.sumKey === 'power' ? '戰力' : '費用'} ${used} / ${lim}`) : '')),
           min === 0 ? h('button', { class: 'ghost', onclick: () => settle([]) }, t('skip')) : null,
-          max > 1 || min === 0 ? h('button', { class: 'primary', disabled: pd.sel.length < min, onclick: () => settle(pd.sel) }, t('confirm')) : null
+          max > 1 || min === 0 ? h('button', { class: 'primary', disabled: pd.sel.length < min || (req.validate && !(pd.sel.length && req.validate(pd.sel))), onclick: () => settle(pd.sel) }, t('confirm')) : null
         )
       )
     );

@@ -833,6 +833,7 @@
   function unitMatch(g, ctx, u, f = {}) {
     if (!f) return true;
     if (f.notSelf && ctx.self && u.uid === ctx.self.uid) return false;
+    if (f.costEqRevealed && !(ctx.revealed && ctx.revealed[0] && (u.card.c || 0) === (ctx.revealed[0].card.c || 0))) return false;
     if (f.nonLeader && u.isLeader) return false;
     if (f.leader && !u.isLeader) return false;
     if (f.unique && !u.card.u) return false;
@@ -957,6 +958,7 @@
     if (n.x === 'credits') return g.P(ctx.p).credits;
     if (n.x === 'amount') return ctx.amount || 0;
     if (n.x === 'prevCount') return (ctx.prev || []).length;
+    if (n.x === 'revealedCount') return (ctx.revealed || []).length;
     if (n.x === 'discardCount') return g.P(ctx.p).discard.filter((c) => cardMatch(c.card, n.f)).length;
     if (n.x === 'div') return Math.floor(amt(ctx, n.of) / (n.k || 1));
     if (n.x === 'mul') return (n.k || 1) * amt(ctx, n.of);
@@ -1226,7 +1228,7 @@
         const ts = await resolve(ctx, st);
         for (const x of ts) {
           if (x.base != null) continue;
-          for (let i = 0; i < (st.n || 1); i++) {
+          for (let i = 0, nn = st.n && typeof st.n === 'object' ? amt(ctx, st.n) : st.n || 1; i < nn; i++) {
             if (st.name === 'Shield') g.giveShield(x);
             else if (st.name === 'Experience') g.giveExp(x, 1);
             else g.giveToken(x, st.name);
@@ -1281,7 +1283,7 @@
         if (who === p && !(await ask(ctx, st, L(`棄 ${st.n} 張手牌`, `discard ${st.n}`)))) return false;
         if (st.random) {
           const Q = g.P(who);
-          const i = Math.floor(Math.random() * Q.hand.length);
+          const i = g.rnd(Q.hand.length);
           const [c] = Q.hand.splice(i, 1);
           Q.discard.push(c);
           g.log('logDiscard', Q.name, c.card.n);
@@ -1461,6 +1463,7 @@
         const O = g.P(1 - p);
         const cands = O.hand.filter((c) => cardMatch(c.card, st.f || {}));
         g.log('logLookHand', P.name);
+        if (!ctx.sawHand && cands.length < O.hand.length) await g.showCards(p, O.hand, `${ctx.card.n}：${L('對手的手牌', "opponent's hand")}`);
         if (!cands.length) return false;
         const pick = await g.pickCards(p, `${ctx.card.n}：${L('從對手手牌選一張棄掉', "discard a card from the opponent's hand")}`, cands, st.optional ? 0 : 1, 1);
         for (const c of pick) {
@@ -1471,15 +1474,26 @@
         ctx.prev = pick;
         return pick.length > 0;
       }
-      case 'disclose': {
-        if (!SWU.canDisclose || !SWU.canDisclose(g, p, st.aspects)) return false;
-        if (!(await ask(ctx, st, L('揭示 ', 'disclose ') + st.aspects.map((a) => SWU.t('asp_' + a)).join(' ')))) return false;
-        g.log('logDisclose', P.name, st.aspects.join(' '));
+      case 'disclose':
+        return SWU.discloseFlow(g, p, st.aspects, ctx.card.n, st.optional !== false);
+      case 'reveal': {
+        const cands = P.hand.filter((c) => cardMatch(c.card, st.f || {}));
+        if (!cands.length) return false;
+        const max = st.max || 1;
+        const pick = await g.pickCards(p, `${ctx.card.n}：${L('選擇要公開的手牌', 'choose cards from your hand to reveal')}${max > 1 ? L(`（最多 ${max} 張）`, ` (up to ${max})`) : ''}`, cands, st.optional ? 0 : 1, max);
+        if (!pick.length) return false;
+        g.revealCards(p, pick, 'reveal');
+        ctx.revealed = pick;
+        ctx.prev = pick;
         return true;
       }
-      case 'lookHand':
+      case 'lookHand': {
+        const O = g.P(st.who === 'me' ? p : 1 - p);
+        ctx.sawHand = true;
         g.log('logLookHand', P.name);
+        await g.showCards(p, O.hand, `${ctx.card.n}：${L('對手的手牌', "opponent's hand")}`);
         return true;
+      }
       case 'source': {
         const ts = await resolve(ctx, { ...st, op: 'source' });
         ctx.src = ts[0];
