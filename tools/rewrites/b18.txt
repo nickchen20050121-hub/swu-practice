@@ -35,7 +35,7 @@ When Played: You may search the top 8 cards of your deck for a Droid unit, revea
 = The Invisible Hand | Imposing Flagship#card
 ~
 = The Legacy Run | Doomed Debris#card
-When Defeated: Deal 3 damage to an enemy unit. Deal 3 damage to an enemy unit.
+When Defeated: Deal 6 damage divided as you choose among enemy units.
 = The Mandalorian | Cleaning Up Nevarro#card
 When this unit attacks and defeats a unit: A friendly unit captures an enemy non-leader unit.
 = The Mandalorian | Devoted Rescuer#card

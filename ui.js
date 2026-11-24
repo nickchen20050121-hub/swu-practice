@@ -23,7 +23,7 @@
     needDecks: '先到組牌器建一副牌，或直接用內建的路克牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
     yourTurn: '輪到你', yunaTurn: '由奈思考中…', hand: '手牌', deck: '牌庫', discard: '棄牌', resources: '資源', ground: '地面', space: '太空',
-    tapTwice: '點兩下卡牌直接打出／攻擊', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
+    tapTwice: '點兩下卡牌直接打出／攻擊', distLeft: '還剩 {0} 點', distHint: '點場上發亮的單位或基地，每點一下分配 1 點', distReset: '重新分配', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
     confirm: '確定', skip: '略過', cancel: '取消', done: '完成', select: '選擇', log: '對戰紀錄', chat: '由奈',
     manualTitle: '需要手動處理的效果', manualHint: '這個效果還沒自動化。用下面的工具照卡片文字調整，或請由奈幫你判讀。', manualAsk: '請由奈幫我處理',
     toolTarget: '先點選目標（單位或基地）', toolDmg: '+1 傷害', toolHeal: '回復 1', toolShield: '護盾', toolExp: '經驗', toolDefeat: '擊敗', toolExhaust: '橫置', toolReady: '準備',
@@ -55,7 +55,7 @@
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or use the built-in Luke deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
-    tapTwice: 'Double-click a card to play / attack', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
+    tapTwice: 'Double-click a card to play / attack', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
     round: 'Round {0}', phase_setup: 'Setup', phase_action: 'Action phase', phase_regroup: 'Regroup', initiative: 'Initiative', taken: 'taken',
     yourTurn: 'Your turn', yunaTurn: 'Yuna is thinking…', hand: 'Hand', deck: 'Deck', discard: 'Discard', resources: 'Resources', ground: 'Ground', space: 'Space',
     confirm: 'Confirm', skip: 'Skip', cancel: 'Cancel', done: 'Done', select: 'Select', log: 'Game log', chat: 'Yuna',
@@ -165,6 +165,7 @@
     else settle(a);
     return true;
   }
+  window.__swuGame = () => S.game; // 測試用
   const isTouch = () => window.matchMedia && matchMedia('(max-width:720px), (pointer:coarse)').matches;
   function setPreview(card, side, acts) {
     S.preview = { card, side };
@@ -240,6 +241,13 @@
         renderBoard();
         if (req.kind === 'cards') openCardsModal();
         else if (!req.options.some((o) => o.uid != null) && (req.max || 1) === 1) openEffectModal();
+      });
+    },
+    distribute(g, p, req) {
+      return new Promise((resolve) => {
+        S.pending = { type: 'distribute', req: { ...req, options: req.targets }, alloc: {}, resolve };
+        closeModal();
+        renderBoard();
       });
     },
     resolveManual(g, p, info) {
@@ -479,7 +487,7 @@
   }
   function optionFor(uid) {
     const pd = S.pending;
-    if (!pd || pd.type !== 'choose') return null;
+    if (!pd || (pd.type !== 'choose' && pd.type !== 'distribute')) return null;
     return pd.req.options.find((o) => o.uid === uid || o.id === uid) || null;
   }
   function actsFor(uid) {
@@ -515,6 +523,7 @@
         h('span', { class: 'hp' + (u.damage ? ' hurt' : '') }, g.remaining(u)),
         u.damage ? h('span', { class: 'dmg' }, '-' + u.damage) : null
       ),
+      pd && pd.type === 'distribute' && pd.alloc['u' + u.uid] ? h('span', { class: 'allocbadge' }, '+' + pd.alloc['u' + u.uid]) : null,
       h(
         'div',
         { class: 'tokens' },
@@ -544,8 +553,22 @@
     setPreview(u.card, u.isLeader ? 'unit' : 'card', acts);
     renderBoard();
   }
+  function distSum(pd) {
+    return Object.values(pd.alloc).reduce((a, b) => a + b, 0);
+  }
+  function distAdd(id, d) {
+    const pd = S.pending;
+    if (!pd || pd.type !== 'distribute') return;
+    const cur = pd.alloc[id] || 0;
+    if (d > 0 && distSum(pd) >= pd.req.total) return;
+    if (d < 0 && !cur) return;
+    pd.alloc[id] = cur + d;
+    if (!pd.alloc[id]) delete pd.alloc[id];
+    renderBoard();
+  }
   function pickOption(id) {
     const pd = S.pending;
+    if (pd && pd.type === 'distribute') return distAdd(id, 1);
     const req = pd.req;
     const max = req.max || 1;
     const min = req.min == null ? 1 : req.min;
@@ -599,7 +622,8 @@
         },
       },
       cardFace(P.base.card, 'card'),
-      h('div', { class: 'basehp' + (baseHP <= 10 ? ' low' : '') }, h('b', {}, baseHP), h('small', {}, '/' + (P.base.card.h || 30)))
+      h('div', { class: 'basehp' + (baseHP <= 10 ? ' low' : '') }, h('b', {}, baseHP), h('small', {}, '/' + (P.base.card.h || 30))),
+      S.pending && S.pending.type === 'distribute' && S.pending.alloc['base' + pIdx] ? h('span', { class: 'allocbadge' }, '+' + S.pending.alloc['base' + pIdx]) : null
     );
     const leaderEl = L.deployed
       ? h('div', { class: 'leadercard deployed', onmouseenter: () => setPreview(L.card, 'card') }, cardFace(L.card, 'card', { small: true }), h('span', { class: 'badge' }, '★'))
@@ -717,6 +741,41 @@
         ...(boardOpts.length && boardOpts.length <= 8 ? boardOpts.map((o) => h('button', { class: 'ghost small', onmouseenter: () => hilite(o.uid), onclick: () => pickOption(o.id) }, o.label)) : []),
         (req.max || 1) > 1 && req.kind !== 'cards' ? h('button', { class: 'primary', disabled: pd.sel.length < min, onclick: () => settle(pd.sel) }, t('confirm')) : null,
         min === 0 && req.kind !== 'yesno' ? h('button', { class: 'ghost', onclick: () => settle([]) }, t('skip')) : null
+      );
+    }
+    if (pd.type === 'distribute') {
+      const req = pd.req;
+      const sum = distSum(pd);
+      const left = req.total - sum;
+      const ok = req.upTo || left === 0;
+      const src = S.game && S.game.srcCard;
+      return h(
+        'div',
+        { class: 'promptbar asking effpop dist' },
+        src ? h('div', { class: 'effsrc', onmouseenter: () => setPreview(src, 'card') }, cardFace(src, 'card')) : null,
+        h(
+          'div',
+          { class: 'effq' },
+          src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null,
+          h('b', {}, req.prompt),
+          h('span', { class: 'distleft' + (left ? '' : ' done') }, t('distLeft', left)),
+          h('small', { class: 'muted' }, t('distHint'))
+        ),
+        h(
+          'div',
+          { class: 'distlist' },
+          ...req.options.map((o) =>
+            h(
+              'span',
+              { class: 'distrow' + (pd.alloc[o.id] ? ' on' : '') },
+              h('button', { class: 'ghost small', disabled: !pd.alloc[o.id], onclick: () => distAdd(o.id, -1) }, '−'),
+              h('span', { class: 'distname' }, o.label + (pd.alloc[o.id] ? '  ×' + pd.alloc[o.id] : '')),
+              h('button', { class: 'ghost small', disabled: !left, onclick: () => distAdd(o.id, 1) }, '+')
+            )
+          )
+        ),
+        h('button', { class: 'ghost', onclick: () => ((pd.alloc = {}), renderBoard()) }, t('distReset')),
+        h('button', { class: 'primary', disabled: !ok, onclick: () => settle({ ...pd.alloc }) }, t('confirm'))
       );
     }
     if (pd.type === 'manual') return h('div', { class: 'promptbar asking' }, h('b', {}, t('manualTitle')), h('button', { onclick: () => openManualModal() }, t('manualTools')));

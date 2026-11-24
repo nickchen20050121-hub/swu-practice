@@ -67,7 +67,7 @@ Action [C=1]: Exhaust a friendly unit. If you do, play a unit from your hand. Re
 = Ferrix Uprising#card
 Deal damage to a unit equal to 2 times the number of friendly units.
 = Fett's Firespray | Feared Silhouette#card
-When Played/On Attack: Deal 1 indirect damage to each opponent.
+When Played/On Attack: Deal 1 indirect damage to a player. If you control a unit named Boba Fett, deal 2 indirect damage to a player instead.
 = Fett's Firespray | Pursuing the Bounty#card
 When Played: If you control a unit named Boba Fett, ready this unit.
 Action [C=2]: Exhaust a non-unique unit.

@@ -63,7 +63,7 @@ On Attack: You may exhaust a unit that costs 2 or less.
 = Hold For Questioning#card
 Exhaust an enemy unit. If you do, look at an opponent's hand. Discard a card from it.
 = Hold Them Off#card
-A friendly unit deals damage equal to its power to an enemy unit.
+A friendly unit deals damage equal to its power divided as you choose among any number of units.
 = Hold-Out Blaster#card
 When Played: You may deal 1 damage to a ground unit.
 = Home One | On My Mark#card

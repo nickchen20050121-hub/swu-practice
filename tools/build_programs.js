@@ -67,6 +67,7 @@ for (const f of files) {
         else prog.abilities.push(ab);
       }
     }
+    { const seen = new Set(); prog.abilities = prog.abilities.filter((x) => { const k = JSON.stringify(x); if (seen.has(k)) return false; seen.add(k); return true; }); }
     out[card.key.toLowerCase() + '#' + side] = prog;
   };
   lines.forEach((raw, i) => {

@@ -45,7 +45,7 @@ When Played: If attached unit is Darth Vader, you may deal 4 damage to a ground 
 = Valiant Commando#card
 ~
 = Vambrace Flamethrower#card
-Attached unit gains: "On Attack: You may deal 3 damage to an enemy ground unit."
+Attached unit gains: "On Attack: You may deal 3 damage divided as you choose among enemy ground units."
 = Vane | Quarrelsome Pirate#leader
 Action [Exhaust]: Defeat a friendly upgrade. If you do, deal 2 damage to a base.
 = Vane | Quarrelsome Pirate#unit

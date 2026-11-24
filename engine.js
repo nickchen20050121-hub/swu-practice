@@ -489,6 +489,112 @@
       if (!src.combat) await this.checkState();
       return n;
     }
+    // ---------- 分配傷害（間接傷害／自行分配） ----------
+    // req: {prompt, total, upTo, targets:[{id, uid?, base?}], own:bool}
+    async distribute(chooser, req) {
+      if (!req.targets.length || req.total <= 0) return {};
+      let alloc = null;
+      const io = this.io[chooser];
+      if (io && io.distribute) {
+        this.emit({ type: 'prompt', p: chooser, req });
+        alloc = await io.distribute(this, chooser, req);
+        this.emit({ type: 'prompt-done', p: chooser });
+      }
+      if (!alloc) alloc = this.autoDistribute(chooser, req);
+      return alloc;
+    }
+    autoDistribute(chooser, req) {
+      const alloc = {};
+      let left = req.total;
+      const units = req.targets.filter((t) => t.uid != null).map((t) => ({ t, u: this.findUnit(t.uid) })).filter((x) => x.u);
+      const baseT = req.targets.find((t) => t.base != null);
+      const add = (id, n) => ((alloc[id] = (alloc[id] || 0) + n), (left -= n));
+      if (req.own) {
+        // 自己承受：基地夠厚就全部放基地，否則盡量讓單位吃但不死
+        const B = baseT ? this.P(baseT.base).base : null;
+        const bRem = B ? (B.card.h || 30) - B.damage : 0;
+        if (baseT && bRem > left + 4) add(baseT.id, left);
+        else {
+          for (const x of units.sort((a, b) => this.remaining(b.u) - this.remaining(a.u))) {
+            const k = Math.min(left, this.remaining(x.u) - 1);
+            if (k > 0) add(x.t.id, k);
+            if (!left) break;
+          }
+          if (left && baseT && bRem > left) add(baseT.id, left);
+          if (left) for (const x of units.sort((a, b) => (a.u.card.c || 0) - (b.u.card.c || 0))) { if (!left) break; add(x.t.id, left); }
+          if (left && baseT) add(baseT.id, left);
+        }
+        return alloc;
+      }
+      // 打對手：先把能打死的高費單位打死，剩下打基地或最大的單位
+      const shield = (u) => (u.upgrades.some((x) => x.card.n === 'Shield') && !req.unpreventable ? 1 : 0);
+      for (const x of units.sort((a, b) => (b.u.card.c || 0) - (a.u.card.c || 0))) {
+        if (shield(x.u)) continue;
+        const need = this.remaining(x.u);
+        if (need <= left) add(x.t.id, need);
+        if (!left) break;
+      }
+      if (left && baseT) add(baseT.id, left);
+      else if (left && units.length) {
+        const big = units.filter((x) => !alloc[x.t.id]).sort((a, b) => this.remaining(b.u) - this.remaining(a.u))[0] || units[0];
+        add(big.t.id, left);
+      }
+      if (req.upTo && !units.length && !baseT) return {};
+      return alloc;
+    }
+    distTargets(list, withBaseOf) {
+      const ts = list.map((u) => ({ id: 'u' + u.uid, uid: u.uid, label: u.card.n + ' ' + this.power(u) + '/' + this.remaining(u) }));
+      if (withBaseOf != null) ts.push({ id: 'base' + withBaseOf, base: withBaseOf, label: this.P(withBaseOf).name + ' ' + SWU.t('baseWord') });
+      return ts;
+    }
+    // 間接傷害：由承受方分配到自己的單位和基地，不能被防止
+    async dealIndirect(from, to, n, src = {}) {
+      const F = this.P(from);
+      n += F.units.filter((u) => /^Hunting Aggressor/.test(u.card.key || u.card.n)).length;
+      if (n <= 0) return { base: 0, units: [] };
+      const srcUnit = src.unit && this.findUnit(src.unit.uid);
+      const iAssign = F.units.some((u) => /^Devastator/.test(u.card.key || u.card.n)) || (srcUnit && srcUnit.upgrades.some((x) => x.card.n === 'Targeting Computer'));
+      const chooser = iAssign ? from : to;
+      const targets = this.distTargets(this.P(to).units, to);
+      this.log('logIndirect', this.P(to).name, n);
+      const alloc = await this.distribute(chooser, { kind: 'distribute', indirect: true, unpreventable: true, own: chooser === to, total: n, targets, prompt: SWU.t('promptIndirect', n, this.P(to).name) });
+      const hit = [];
+      let baseN = 0;
+      for (const t of targets) {
+        const k = alloc[t.id] || 0;
+        if (!k) continue;
+        if (t.base != null) baseN += k;
+        else {
+          const u = this.findUnit(t.uid);
+          if (!u) continue;
+          u.damage += k;
+          this.log('logUnitDmg', u.card.n, k);
+          this.pendingDamaged = this.pendingDamaged || [];
+          this.pendingDamaged.push(u);
+          hit.push(u);
+        }
+      }
+      if (baseN) this.damageBase(to, baseN, { ability: true, indirect: true });
+      await this.checkState();
+      return { base: baseN, units: hit };
+    }
+    // 自行分配傷害（可被護盾防止）
+    async dealDivided(chooser, n, units, opts = {}) {
+      if (n <= 0 || !units.length) return [];
+      const targets = this.distTargets(units, opts.baseOf);
+      const alloc = await this.distribute(chooser, { kind: 'distribute', own: false, upTo: !!opts.upTo, total: n, targets, prompt: opts.prompt || SWU.t('promptDivide', n) });
+      const hit = [];
+      for (const t of targets) {
+        const k = alloc[t.id] || 0;
+        if (!k) continue;
+        if (t.base != null) this.damageBase(t.base, k, { ability: true });
+        else {
+          const u = this.findUnit(t.uid);
+          if (u && (await this.damageUnit(u, k))) hit.push(u);
+        }
+      }
+      return hit;
+    }
     heal(u, n) {
       const h = Math.min(n, u.damage);
       u.damage -= h;

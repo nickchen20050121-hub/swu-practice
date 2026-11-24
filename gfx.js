@@ -257,7 +257,10 @@
       return [st];
     }
     if ((m = l.match(/^take control of (.+?)( until the regroup phase)?$/)) && (t = T(m[1]))) return [{ op: 'takeControl', target: t, temp: !!m[2] }];
-    if ((m = l.match(/^deal (\d+) indirect damage to (?:each opponent|a player|an opponent|the defending player|each player)$/))) return [{ op: 'damage', n: +m[1], target: { sel: 'base', side: 'enemy' } }];
+    if ((m = l.match(/^deal (\d+) indirect damage to (?:each opponent|a player|an opponent|the defending player|each player|its controller)$/))) return [{ op: 'indirect', n: +m[1] }];
+    if ((m = l.match(/^deal indirect damage (?:to (?:each opponent|a player|an opponent|the defending player|its controller) )?equal to (.+?)(?: to (?:each opponent|a player|an opponent|the defending player|its controller))?$/)) && amountOf(m[1])) return [{ op: 'indirect', n: amountOf(m[1]) }];
+    if ((m = l.match(/^(?:deal )?(up to )?(\d+) damage divided as you choose among (.+)$/)) && (t = parseTarget('each ' + m[3].replace(/^any number of /, '').replace(/units$/, 'unit')))) return [{ op: 'divide', n: +m[2], upTo: !!m[1], target: t }];
+    if ((m = l.match(/^(.+?) deals damage equal to its power divided as you choose among (.+)$/)) && T(m[1]) && (t = parseTarget('each ' + m[2].replace(/^any number of /, '').replace(/units$/, 'unit')))) return [{ op: 'source', target: T(m[1]) }, { op: 'divide', n: { x: 'power', of: 'src' }, target: t, ifPrev: true }];
     if ((m = l.match(/^look at an opponent's hand(?: and|\.)? (?:you may )?discard a (.+?) from it$/)))
       return [{ op: 'discardOpp', f: m[1] === 'card' ? {} : cardFilter('a ' + m[1]) || {} }];
     if (/^look at an opponent's hand$/.test(l)) return [{ op: 'lookHand' }];
@@ -499,6 +502,7 @@
     if ((m = l.match(/^the (?:defending unit|defender) (?:was|is) defeated$/))) return { defenderDefeated: true };
     if ((m = l.match(/^(?:it|that unit) (?:was|is) defeated$/))) return { prevDefeated: true };
     if ((m = l.match(/^(?:it|that unit) survived$/))) return { not: { prevDefeated: true } };
+    if (/^a base (?:is|was) damaged this way$/.test(l)) return { indirectBase: true };
     if ((m = l.match(/^(?:this unit|it) is damaged$/))) return { selfDamaged: true };
     if ((m = l.match(/^your base has (\d+) or more damage on it$/))) return { baseDamage: +m[1] };
     if ((m = l.match(/^you control (?:a|an) (.+) base$/)) || (m = l.match(/^your base is (?:a|an) (.+)$/))) {
@@ -871,6 +875,7 @@
       if (c.leaderTrait) return g.hasTrait(g.P(ctx.p).leader.card, c.leaderTrait);
       if (c.baseTrait) return g.hasTrait(g.P(ctx.p).base.card, c.baseTrait);
       if (c.baseDamage) return g.P(ctx.p).base.damage >= c.baseDamage;
+      if (c.indirectBase) return !!ctx.indirectBase;
       if (c.prevDefeated) {
         const u = (ctx.prev && ctx.prev[0]) || (ctx.atk && ctx.atk.defender);
         return !!u && !g.findUnit(u.uid);
@@ -1075,6 +1080,22 @@
     const P = g.P(p);
     const who = st.who === 'opp' ? 1 - p : p;
     switch (st.op) {
+      case 'indirect': {
+        const n = amt(ctx, st.n);
+        const r = await g.dealIndirect(p, 1 - p, n, { unit: ctx.self });
+        ctx.prev = r.units;
+        ctx.indirectBase = r.base > 0;
+        return n > 0;
+      }
+      case 'divide': {
+        const n = amt(ctx, st.n);
+        const t = st.target || {};
+        const list = g.allUnits().filter((u) => sideOk(t.side, u, p) && unitMatch(g, ctx, u, t.f));
+        const withBase = t.withBase ? 1 - p : null;
+        const hit = await g.dealDivided(p, n, list, { upTo: st.upTo, baseOf: withBase });
+        ctx.prev = hit;
+        return hit.length > 0;
+      }
       case 'damage': {
         const n = amt(ctx, st.n);
         const ts = await resolve(ctx, st);

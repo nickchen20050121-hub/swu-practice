@@ -64,7 +64,7 @@ Choose one
 = Overcharged Transport#card
 When Played/When Defeated: You may defeat an upgrade.
 = Overwhelming Barrage#card
-Give a friendly unit +2/+2 for this phase. It deals damage equal to its power to an enemy unit.
+Give a friendly unit +2/+2 for this phase. It deals damage equal to its power divided as you choose among any number of other units.
 = Pack Guardian#card
 ~
 = Padawan Starfighter#card
@@ -113,7 +113,7 @@ When Played: Search the top 3 cards of your deck for a unit, reveal it, and draw
 = Pit Droid Team#card
 ~
 = Planetary Bombardment#card
-Deal 8 damage to an enemy base.
+Deal 8 indirect damage to a player. If you control a Capital Ship unit, deal 12 indirect damage to a player instead.
 = Planetary Invasion#card
 ~
 Ready up to 3 units. Give them +1/+0 and Overwhelm for this phase.

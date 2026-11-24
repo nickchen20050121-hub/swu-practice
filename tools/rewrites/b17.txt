@@ -28,7 +28,7 @@ When Played: Draw a card.
 = Supercommando Squad#card
 While this unit is upgraded, this unit gains Sentinel.
 = Superheavy Ion Cannon#card
-Attached unit gains: "On Attack: You may exhaust an enemy non-leader unit."
+Attached unit gains: "On Attack: You may exhaust an enemy non-leader unit. If you do, deal indirect damage equal to its power to a player."
 = Superlaser Technician#card
 !
 = Supremacy | Destroy the Resistance#card
@@ -63,7 +63,7 @@ Defeat an upgrade. If you do, deal 1 damage to a unit.
 = Tactical Droid Commander#card
 ~
 = Tactical Heavy Bomber#card
-On Attack: Deal damage to an enemy base equal to this unit's power.
+On Attack: Deal indirect damage equal to this unit's power to the defending player. If a base is damaged this way, draw a card.
 = Take Action#card
 ~
 Deal 3 damage to a unit.

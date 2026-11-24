@@ -35,7 +35,7 @@ Exhaust up to 2 units that cost 3 or less.
 = Ki-Adi-Mundi | Composed and Confident#card
 ~
 = Kimoglia Heavy Fighter#card
-When Played: Deal 3 damage to an enemy base.
+When Played: Deal 3 indirect damage to a player. Exhaust each of them.
 = King Grakchawwaa | King of Kashyyyk#card
 When Played: Resource the top card of your deck.
 = Kit Fisto | Focused Jedi Master#leader
