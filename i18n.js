@@ -94,9 +94,26 @@
     } catch (e) {}
   };
   const fmt = (s, a) => String(s).replace(/\{(\d+)\}/g, (_, i) => (a[i] != null ? a[i] : ''));
-  SWU.t = (k, ...a) => fmt((S[SWU.lang] && S[SWU.lang][k]) || S.en[k] || S.zh[k] || k, a);
+  // 朋友版（沒有主人模式）：對手叫「AI」，用簡潔中性的系統語氣
+  SWU.friendMode = () => !(SWU.AI && SWU.AI.settings && SWU.AI.settings.owner);
+  const FRIEND = {
+    zh: { gameOverLose: 'AI 獲勝', yunaSided: 'AI 已依你的牌組換入 {0} 張備牌。', yunaNoSide: 'AI 本局不換備牌。', friendHello: 'AI 對手已就緒。', friendWin: '對局結束：你獲勝。', friendLose: '對局結束：AI 獲勝。' },
+    en: { gameOverLose: 'AI wins', yunaSided: 'AI sided in {0} cards against your deck.', yunaNoSide: 'AI keeps its deck for this game.', friendHello: 'AI opponent ready.', friendWin: 'Game over: you win.', friendLose: 'Game over: AI wins.' },
+  };
+  const raw = (k) => (S[SWU.lang] && S[SWU.lang][k]) || S.en[k] || S.zh[k] || k;
+  SWU.t = (k, ...a) => {
+    if (!SWU.friendMode()) return fmt(raw(k), a);
+    const f = (FRIEND[SWU.lang] || FRIEND.en)[k];
+    return fmt(f || raw(k), a)
+      .replace(/由奈/g, 'AI')
+      .replace(/Yuna's/g, "AI's")
+      .replace(/Yuna/g, 'AI');
+  };
   SWU.tl = (lang, k, ...a) => fmt((S[lang] && S[lang][k]) || S.en[k] || k, a);
-  SWU.fmtLog = (l, lang = SWU.lang) => SWU.tl(lang, l.k, ...l.a);
+  SWU.fmtLog = (l, lang = SWU.lang) => {
+    const r = SWU.tl(lang, l.k, ...l.a);
+    return SWU.friendMode && SWU.friendMode() ? r.replace(/由奈/g, 'AI').replace(/Yuna/g, 'AI') : r;
+  };
   SWU.addStrings = (lang, obj) => Object.assign(S[lang], obj);
 
   // ---------- 卡片繁中翻譯（柏偉的路克牌組＋常見代幣） ----------

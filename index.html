@@ -141,7 +141,9 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .aiopt.on span{color:rgba(255,255,255,.85)}
 .deckview{max-width:760px;width:calc(100vw - 32px)}
 .dv-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.dv-head h3{margin:0}
+.dv-head h3{margin:0;min-width:0;overflow-wrap:anywhere}
+.dv-headbtns{display:flex;gap:6px;flex:none;align-items:center}
+.dimgbtn{white-space:nowrap}
 .dv-meta{display:grid;gap:4px}
 .dv-meta i{color:var(--muted)}
 .dv-list{columns:2 280px;column-gap:24px;max-height:52vh;overflow:auto;border-top:1px solid var(--line);padding-top:8px}

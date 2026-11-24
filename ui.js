@@ -447,8 +447,8 @@
         renderChat();
       },
     });
-    S.chat = [{ who: 'yuna', text: SWU.lang === 'zh' ? '嘿嘿，請多指教～我會認真打的喔 (｡･ω･｡)' : "Hehe, let's have a good game~ I'll do my best!" }];
-    const g = new SWU.Game([mk(mine, SWU.playerName()), mk(yuna, SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
+    S.chat = [{ who: 'yuna', text: SWU.friendMode() ? t('friendHello') : SWU.lang === 'zh' ? '嘿嘿，請多指教～我會認真打的喔 (｡･ω･｡)' : "Hehe, let's have a good game~ I'll do my best!" }];
+    const g = new SWU.Game([mk(mine, SWU.playerName()), mk(yuna, SWU.friendMode() ? 'AI' : SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
     attachGame(g);
   }
   // ---------- 回上一步：用同一個亂數種子重播到上一個檢查點 ----------
@@ -515,7 +515,7 @@
           for (const x of [...P0.discard, ...P0.units, ...P0.units.flatMap((u) => u.upgrades || [])]) if (x && x.card && x.owner === 0 && !/Token/.test(x.card.t)) S.match.seen.push(x.card);
           renderBoard();
         }
-        S.chat.push({ who: 'yuna', text: SWU.lang === 'zh' ? (win ? '唔…輸給你了，你好厲害！再來一局嘛 (≧▽≦)' : '嘿嘿，這局是我贏了～要再練一次嗎？') : win ? 'Aww, you win! Great game!' : 'Hehe, I win this one~ Again?' });
+        S.chat.push({ who: 'yuna', text: SWU.friendMode() ? t(win ? 'friendWin' : 'friendLose') : SWU.lang === 'zh' ? (win ? '唔…輸給你了，你好厲害！再來一局嘛 (≧▽≦)' : '嘿嘿，這局是我贏了～要再練一次嗎？') : win ? 'Aww, you win! Great game!' : 'Hehe, I win this one~ Again?' });
         renderChat();
       } else renderBoard();
     });
@@ -566,6 +566,7 @@
       h('main', { id: 'view' })
     );
     const v = $('#view');
+    document.title = t('appName');
     document.body.classList.toggle('ingame', S.tab === 'play' && !!S.game);
     document.body.classList.remove('sideopen');
     if (S.tab === 'play') S.game ? renderGameShell(v) : renderLobby(v);
@@ -1028,7 +1029,7 @@
       h(
         'div',
         { class: 'dialog deckview' },
-        h('div', { class: 'dv-head' }, h('h3', {}, d.name), h('button', { class: 'ghost', 'aria-label': t('close'), onclick: closeModal }, '✕')),
+        h('div', { class: 'dv-head' }, h('h3', {}, d.name), h('div', { class: 'dv-headbtns' }, h('button', { class: 'dimgbtn', onclick: () => openDeckImage(d) }, '🖼 ' + t('dimgBtn')), h('button', { class: 'ghost', 'aria-label': t('close'), onclick: closeModal }, '✕'))),
         h(
           'div',
           { class: 'dv-meta' },
@@ -1042,7 +1043,6 @@
         h(
           'div',
           { class: 'row dv-btns' },
-          h('button', { onclick: () => openDeckImage(d) }, '🖼 ' + t('dimgBtn')),
           h('button', { class: S.lobby.mine === d.id ? 'on' : '', onclick: () => pick('mine') }, t('dvP1')),
           h('button', { class: S.lobby.yuna === d.id ? 'on' : '', onclick: () => pick('yuna') }, t('dvP2')),
           h(
