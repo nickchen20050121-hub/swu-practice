@@ -560,9 +560,9 @@ Deck
 3 Bestial Bond
 Sideboard
 1 Direct Hit`;
-    if (!D._presets || D._presetsLang !== SWU.lang) {
-      D._presets = [mk(SWU.t('presetPQ'), pq, 'preset-pq'), mk(SWU.t('presetA2'), a2, 'preset-a2'), ...(window.SWU_META_DECKS || []).map((d) => ({ ...JSON.parse(JSON.stringify(d)), name: (SWU.lang === 'zh' ? '🏆 ' : '🏆 ') + d.name }))];
-      D._presetsLang = SWU.lang;
+    if (!D._presets || D._presetsLang !== SWU.lang + (SWU.AI && SWU.AI.settings.owner ? '+me' : '')) {
+      D._presets = [...(SWU.AI && SWU.AI.settings.owner ? [mk(SWU.t('presetPQ'), pq, 'preset-pq'), mk(SWU.t('presetA2'), a2, 'preset-a2')] : []), ...(window.SWU_META_DECKS || []).map((d) => ({ ...JSON.parse(JSON.stringify(d)), name: (SWU.lang === 'zh' ? '🏆 ' : '🏆 ') + d.name }))];
+      D._presetsLang = SWU.lang + (SWU.AI && SWU.AI.settings.owner ? '+me' : '');
     }
     return JSON.parse(JSON.stringify(D._presets));
   };

@@ -20,7 +20,7 @@
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
-    needDecks: '先到組牌器建一副牌，或直接用內建的路克牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
+    needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
     yourTurn: '輪到你', yunaTurn: '由奈思考中…', hand: '手牌', deck: '牌庫', discard: '棄牌', resources: '資源', ground: '地面', space: '太空',
     tapTwice: '點兩下卡牌直接打出／攻擊', setAutoSingle: '只有一個合法目標時', setAutoSingleOff: '一律讓我點（預設）', setAutoSingleOn: '自動幫我選', distLeft: '還剩 {0} 點', distHint: '點場上發亮的單位或基地，每點一下分配 1 點', distReset: '重新分配', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
@@ -31,7 +31,7 @@
     manualTools: '手動調整', gameOverWin: '你贏了！', gameOverLose: '由奈贏了～', again: '再來一局', viewLog: '看紀錄',
     // 組牌器
     myDecks: '我的牌組', newDeck: '新牌組', import: '匯入', presets: '內建牌組', importHint: '貼上 SWUDB 匯出的 JSON，或文字清單（每行「3 卡名 - 副標」，可用 Leader:/Base: 開頭標出領袖和基地）', doImport: '匯入',
-    type_Leader: '領袖', type_Base: '基地', type_Unit: '單位', type_Event: '事件', type_Upgrade: '升級', mode_single: '單局', mode_bo3: '三戰兩勝（BO3）', bo3Hint: '照比賽規則：第一局隨機一方決定誰先手，之後由上一局輸的人決定；局間可以用備牌換牌（主牌至少 50 張、備牌最多 10 張）。由奈也會依你的牌型換備牌。', matchScore: '第 {0} 局後　柏偉 {1} : {2} 由奈', matchWin: '你贏下這場比賽！', matchLose: '這場比賽由奈贏了', nextGame: '換備牌，開始第 {0} 局', sideTitle: '第 {0} 局前換備牌', sideHint: '點按鈕在主牌和備牌之間移動。換好後主牌至少 50 張、備牌最多 10 張。', sideReset: '還原', sideConfirm: '確定，開始下一局', yunaSided: '嘿嘿，我針對你的牌換了 {0} 張備牌喔～', yunaNoSide: '這局我不換牌，用原本的牌組繼續～', addTo: '點卡片加到：', randomMeta: '🎲 隨機一套比賽得名牌組', randomMetaHint: '開打時隨機挑一套 🏆 比賽牌組（開局才知道是哪套，跟真正比賽一樣）', sortBy: '排序', sort_number: '卡號', sort_cost: '費用', sort_name: '名稱', sort_aspect: '屬性', sort_type: '類型', sort_power: '戰力', sort_hp: '生命', sort_price: '價格', allSets: '全部系列', setsLabel: '系列（可多選）：', allArenas: '地面＋太空', arenaGround: '只看地面', arenaSpace: '只看太空', allTraits: '全部特性', allKw: '全部關鍵字', groupBy: '分組顯示', aspAll: '同時有選的屬性', aspAny: '有任一選的屬性', aspNone: '無屬性', showing: '顯示 {0} / {1}', clearFilters: '清除篩選', noAspect: '無屬性', search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
+    type_Leader: '領袖', type_Base: '基地', type_Unit: '單位', type_Event: '事件', type_Upgrade: '升級', mode_single: '單局', mode_bo3: '三戰兩勝（BO3）', bo3Hint: '照比賽規則：第一局隨機一方決定誰先手，之後由上一局輸的人決定；局間可以用備牌換牌（主牌至少 50 張、備牌最多 10 張）。由奈也會依你的牌型換備牌。', matchScore: '第 {0} 局後　{3} {1} : {2} 由奈', matchWin: '你贏下這場比賽！', matchLose: '這場比賽由奈贏了', nextGame: '換備牌，開始第 {0} 局', sideTitle: '第 {0} 局前換備牌', sideHint: '點按鈕在主牌和備牌之間移動。換好後主牌至少 50 張、備牌最多 10 張。', sideReset: '還原', sideConfirm: '確定，開始下一局', yunaSided: '嘿嘿，我針對你的牌換了 {0} 張備牌喔～', yunaNoSide: '這局我不換牌，用原本的牌組繼續～', addTo: '點卡片加到：', randomMeta: '🎲 隨機一套比賽得名牌組', randomMetaHint: '開打時隨機挑一套 🏆 比賽牌組（開局才知道是哪套，跟真正比賽一樣）', setName: '你的名字', setNamePh: '例如：小明', setNameHint: '由奈會用這個名字叫你（只存在這台裝置）', noOwnDecks: '你還沒有自己的牌組：可以先到「組牌器」組一副（或匯入 SWUDB 牌表），也可以直接選一套 🏆 比賽得名牌組來打。', sortBy: '排序', sort_number: '卡號', sort_cost: '費用', sort_name: '名稱', sort_aspect: '屬性', sort_type: '類型', sort_power: '戰力', sort_hp: '生命', sort_price: '價格', allSets: '全部系列', setsLabel: '系列（可多選）：', allArenas: '地面＋太空', arenaGround: '只看地面', arenaSpace: '只看太空', allTraits: '全部特性', allKw: '全部關鍵字', groupBy: '分組顯示', aspAll: '同時有選的屬性', aspAny: '有任一選的屬性', aspNone: '無屬性', showing: '顯示 {0} / {1}', clearFilters: '清除篩選', noAspect: '無屬性', search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
     deckName: '牌組名稱', leader: '領袖', base: '基地', main: '主牌', side: '備牌', toSide: '移到備牌', toMain: '移到主牌', save: '儲存', saved: '已儲存', del: '刪除', confirmDel: '再按一次刪除',
     exportText: '匯出文字', exportJson: '匯出 SWUDB JSON', copied: '已複製', copyFail: '請手動複製下面的文字',
     autoBuild: '由奈幫我組', autoBuildQuick: '快速自動組（不用 AI）', wishes: '想要的風格（可不填，例如：偏快攻、多放哨兵）', building: '由奈組牌中…',
@@ -49,12 +49,12 @@
     setDelay: '由奈出牌間隔（毫秒）', setImages: '顯示官方卡圖（需要網路）', setData: '資料備份', exportAll: '匯出全部牌組', importAll: '匯入備份', backupHint: '把這段文字存起來，換電腦時貼回來即可。',
     logAiSkip: '由奈略過了 {0} 的效果（沒有 API 金鑰）', aiError: '由奈連不上 Claude，先用內建打法：{0}',
     helpBody:
-      '<h3>怎麼玩</h3><ol><li>到「組牌器」建立或匯入牌組（已內建你的路克牌組）。</li><li>回到「對戰」選雙方牌組，按開始。</li><li>輪到你時，點手牌打出、點自己的單位攻擊，或用下方按鈕。需要選目標時，可選的東西會亮起來。</li><li>卡片效果還沒自動化時會跳出「手動處理」視窗，用工具調整，或請由奈判讀。</li></ol><h3>規則自動化</h3><p>回合流程、資源與罰費、攻擊與哨兵、突襲、回復、壓制、破壞、堅毅、伏擊、護盾、隱匿、支援、剝削、走私、唯一性都會自動處理；你的路克牌組所有卡片效果都已寫好。其他卡的文字效果會用手動處理或由奈判讀。</p><h3>由奈的 AI</h3><p>在「設定」輸入 Claude API 金鑰後，由奈會用 Claude 決定行動並說話；沒有金鑰時用內建打法。</p>',
+      '<h3>怎麼玩</h3><ol><li>到「組牌器」建立或匯入牌組（也內建 9 套 🏆 比賽得名牌組可以直接用）。</li><li>回到「對戰」選雙方牌組，按開始。</li><li>輪到你時，點手牌打出、點自己的單位攻擊，或用下方按鈕。需要選目標時，可選的東西會亮起來。</li><li>卡片效果還沒自動化時會跳出「手動處理」視窗，用工具調整，或請由奈判讀。</li></ol><h3>規則自動化</h3><p>回合流程、資源與罰費、攻擊與哨兵、突襲、回復、壓制、破壞、堅毅、伏擊、護盾、隱匿、支援、剝削、走私、唯一性都會自動處理；你的路克牌組所有卡片效果都已寫好。其他卡的文字效果會用手動處理或由奈判讀。</p><h3>由奈的 AI</h3><p>在「設定」輸入 Claude API 金鑰後，由奈會用 Claude 決定行動並說話；沒有金鑰時用內建打法。</p>',
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
-    needDecks: 'Build a deck in the deck builder first, or use the built-in Luke deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
+    needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
     tapTwice: 'Double-click a card to play / attack', setAutoSingle: 'When there is only one legal target', setAutoSingleOff: 'Always let me click (default)', setAutoSingleOn: 'Choose it automatically', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
     round: 'Round {0}', phase_setup: 'Setup', phase_action: 'Action phase', phase_regroup: 'Regroup', initiative: 'Initiative', taken: 'taken',
     yourTurn: 'Your turn', yunaTurn: 'Yuna is thinking…', hand: 'Hand', deck: 'Deck', discard: 'Discard', resources: 'Resources', ground: 'Ground', space: 'Space',
@@ -64,7 +64,7 @@
     toolBounce: 'Return to hand', toolBuffUp: '+1/+1 this phase', toolBuffDown: '-1/-1 this phase', toolDraw: 'I draw 1', toolResTop: 'Resource top card', toolToken: 'Create token', toolForce: 'Force',
     manualTools: 'Manual tools', gameOverWin: 'You win!', gameOverLose: 'Yuna wins!', again: 'Play again', viewLog: 'View log',
     myDecks: 'My decks', newDeck: 'New deck', import: 'Import', presets: 'Built-in decks', importHint: 'Paste SWUDB JSON or a text list ("3 Name - Subtitle" per line, Leader:/Base: lines for leader and base)', doImport: 'Import',
-    type_Leader: 'Leader', type_Base: 'Base', type_Unit: 'Unit', type_Event: 'Event', type_Upgrade: 'Upgrade', mode_single: 'Single game', mode_bo3: 'Best of three', bo3Hint: 'Tournament style: in game 1 a random player chooses who goes first, afterwards the previous loser chooses; between games you may side in cards (main at least 50, sideboard at most 10). Yuna sides against your deck too.', matchScore: 'After game {0}: Nick {1} : {2} Yuna', matchWin: 'You won the match!', matchLose: 'Yuna won the match', nextGame: 'Sideboard and start game {0}', sideTitle: 'Sideboarding before game {0}', sideHint: 'Move cards between main deck and sideboard. Main deck at least 50, sideboard at most 10.', sideReset: 'Reset', sideConfirm: 'Confirm and start next game', yunaSided: 'Hehe, I sided in {0} cards against you~', yunaNoSide: "I'm keeping my deck as is~", addTo: 'Click adds to:', randomMeta: '🎲 Random tournament deck', randomMetaHint: 'A random 🏆 tournament deck is picked when the game starts, like a real event.', sortBy: 'Sort', sort_number: 'Set #', sort_cost: 'Cost', sort_name: 'Name', sort_aspect: 'Aspect', sort_type: 'Type', sort_power: 'Power', sort_hp: 'HP', sort_price: 'Price', allSets: 'All sets', setsLabel: 'Sets (multi):', allArenas: 'Ground + Space', arenaGround: 'Ground only', arenaSpace: 'Space only', allTraits: 'All traits', allKw: 'All keywords', groupBy: 'Group', aspAll: 'Has all selected', aspAny: 'Has any selected', aspNone: 'No aspect', showing: 'Showing {0} / {1}', clearFilters: 'Clear filters', noAspect: 'Colorless', search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
+    type_Leader: 'Leader', type_Base: 'Base', type_Unit: 'Unit', type_Event: 'Event', type_Upgrade: 'Upgrade', mode_single: 'Single game', mode_bo3: 'Best of three', bo3Hint: 'Tournament style: in game 1 a random player chooses who goes first, afterwards the previous loser chooses; between games you may side in cards (main at least 50, sideboard at most 10). Yuna sides against your deck too.', matchScore: 'After game {0}: {3} {1} : {2} Yuna', matchWin: 'You won the match!', matchLose: 'Yuna won the match', nextGame: 'Sideboard and start game {0}', sideTitle: 'Sideboarding before game {0}', sideHint: 'Move cards between main deck and sideboard. Main deck at least 50, sideboard at most 10.', sideReset: 'Reset', sideConfirm: 'Confirm and start next game', yunaSided: 'Hehe, I sided in {0} cards against you~', yunaNoSide: "I'm keeping my deck as is~", addTo: 'Click adds to:', randomMeta: '🎲 Random tournament deck', randomMetaHint: 'A random 🏆 tournament deck is picked when the game starts, like a real event.', setName: 'Your name', setNamePh: 'e.g. Alex', setNameHint: 'Yuna calls you by this name (stored on this device only)', noOwnDecks: 'You have no decks yet: build one in the Deck builder (or import from SWUDB), or just pick a 🏆 tournament deck.', sortBy: 'Sort', sort_number: 'Set #', sort_cost: 'Cost', sort_name: 'Name', sort_aspect: 'Aspect', sort_type: 'Type', sort_power: 'Power', sort_hp: 'HP', sort_price: 'Price', allSets: 'All sets', setsLabel: 'Sets (multi):', allArenas: 'Ground + Space', arenaGround: 'Ground only', arenaSpace: 'Space only', allTraits: 'All traits', allKw: 'All keywords', groupBy: 'Group', aspAll: 'Has all selected', aspAny: 'Has any selected', aspNone: 'No aspect', showing: 'Showing {0} / {1}', clearFilters: 'Clear filters', noAspect: 'Colorless', search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
     deckName: 'Deck name', leader: 'Leader', base: 'Base', main: 'Main deck', side: 'Sideboard', toSide: 'To sideboard', toMain: 'To main', save: 'Save', saved: 'Saved', del: 'Delete', confirmDel: 'Click again to delete',
     exportText: 'Export text', exportJson: 'Export SWUDB JSON', copied: 'Copied', copyFail: 'Copy the text below',
     autoBuild: 'Yuna, build it for me', autoBuildQuick: 'Quick auto-build (no AI)', wishes: 'Style wishes (optional, e.g. aggressive, lots of Sentinels)', building: 'Yuna is building…',
@@ -82,7 +82,7 @@
     setDelay: "Delay between Yuna's moves (ms)", setImages: 'Show official card images (needs internet)', setData: 'Backup', exportAll: 'Export all decks', importAll: 'Import backup', backupHint: 'Save this text; paste it back on another computer.',
     logAiSkip: "Yuna skipped {0}'s effect (no API key)", aiError: "Yuna couldn't reach Claude, using the built-in strategy: {0}",
     helpBody:
-      '<h3>How to play</h3><ol><li>Build or import a deck in the deck builder (your Luke deck is built in).</li><li>On Play, pick both decks and start.</li><li>On your turn, click a hand card to play it, click your unit to attack, or use the buttons below. Valid choices light up.</li><li>Effects that are not automated open a manual window: use the tools, or ask Yuna.</li></ol><h3>Automation</h3><p>Round flow, resources and penalties, attacks and Sentinel, Raid, Restore, Overwhelm, Saboteur, Grit, Ambush, Shields, Hidden, Support, Exploit, Smuggle and uniqueness are automatic, and every card in your Luke deck is scripted. Other card text uses manual tools or Yuna.</p><h3>Yuna\'s AI</h3><p>Add a Claude API key in Settings and Yuna decides and talks with Claude; without a key she uses a built-in strategy.</p>',
+      '<h3>How to play</h3><ol><li>Build or import a deck in the deck builder (9 🏆 tournament decks are built in).</li><li>On Play, pick both decks and start.</li><li>On your turn, click a hand card to play it, click your unit to attack, or use the buttons below. Valid choices light up.</li><li>Effects that are not automated open a manual window: use the tools, or ask Yuna.</li></ol><h3>Automation</h3><p>Round flow, resources and penalties, attacks and Sentinel, Raid, Restore, Overwhelm, Saboteur, Grit, Ambush, Shields, Hidden, Support, Exploit, Smuggle and uniqueness are automatic, and every card in your Luke deck is scripted. Other card text uses manual tools or Yuna.</p><h3>Yuna\'s AI</h3><p>Add a Claude API key in Settings and Yuna decides and talks with Claude; without a key she uses a built-in strategy.</p>',
   });
 
   // ---------- 狀態 ----------
@@ -345,7 +345,7 @@
       },
     });
     S.chat = [{ who: 'yuna', text: SWU.lang === 'zh' ? '嘿嘿，請多指教～我會認真打的喔 (｡･ω･｡)' : "Hehe, let's have a good game~ I'll do my best!" }];
-    const g = new SWU.Game([mk(mine, SWU.lang === 'zh' ? '柏偉' : 'Nick'), mk(yuna, SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
+    const g = new SWU.Game([mk(mine, SWU.playerName()), mk(yuna, SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
     attachGame(g);
   }
   // ---------- 回上一步：用同一個亂數種子重播到上一個檢查點 ----------
@@ -469,7 +469,7 @@
   function renderLobby(v) {
     const decks = allDecks();
     if (!S.lobby.mine || !deckById(S.lobby.mine)) S.lobby.mine = decks[0] && decks[0].id;
-    if (!S.lobby.yuna || (S.lobby.yuna !== 'random-meta' && !deckById(S.lobby.yuna))) S.lobby.yuna = (decks.find((d) => d.meta) || decks[1] || decks[0] || {}).id;
+    if (!S.lobby.yuna || (S.lobby.yuna !== 'random-meta' && !deckById(S.lobby.yuna))) S.lobby.yuna = decks.some((d) => d.meta) ? 'random-meta' : (decks[1] || decks[0] || {}).id;
     const sel = (key) =>
       h(
         'select',
@@ -496,6 +496,7 @@
         'section',
         { class: 'panel lobby' },
         h('h2', {}, t('lobbyTitle')),
+        !S.decks.length ? h('p', { class: 'muted small' }, t('noOwnDecks')) : null,
         h('div', { class: 'lobby-grid' }, h('div', {}, h('label', { for: 'lobby-mine' }, t('yourDeck')), sel('mine'), deckCard(S.lobby.mine)), h('div', { class: 'vs' }, 'VS'), h('div', {}, h('label', { for: 'lobby-yuna' }, t('yunaDeck')), sel('yuna'), deckCard(S.lobby.yuna))),
         h(
           'div',
@@ -880,7 +881,7 @@
           'div',
           { class: 'promptbar over' },
           h('b', {}, g.G.winner === 0 ? t('gameOverWin') : t('gameOverLose')),
-          h('span', { class: 'matchscore' }, t('matchScore', M.game, M.wins[0], M.wins[1])),
+          h('span', { class: 'matchscore' }, t('matchScore', M.game, M.wins[0], M.wins[1], SWU.playerName())),
           done ? h('b', {}, M.wins[0] >= 2 ? t('matchWin') : t('matchLose')) : null,
           done
             ? h('button', { class: 'primary', onclick: () => ((S.game = null), (S.match = null), render()) }, t('again'))
@@ -1949,6 +1950,13 @@
             h('button', { class: st.autoSingle ? 'on' : '', onclick: () => ((st.autoSingle = true), save(), render()) }, t('setAutoSingleOn'))
           )
         ),
+        h(
+          'div',
+          { class: 'field' },
+          h('label', { for: 'pname' }, t('setName')),
+          h('input', { id: 'pname', type: 'text', value: st.playerName || '', maxlength: '20', placeholder: t('setNamePh'), onchange: (e) => ((st.playerName = e.target.value.trim()), save()) }),
+          h('p', { class: 'muted small' }, t('setNameHint'))
+        ),
         h('div', { class: 'field' }, h('label', {}, t('setLang')), h('div', { class: 'row' }, h('button', { class: SWU.lang === 'zh' ? 'on' : '', onclick: () => (SWU.setLang('zh'), render()) }, '繁體中文'), h('button', { class: SWU.lang === 'en' ? 'on' : '', onclick: () => (SWU.setLang('en'), render()) }, 'English'))),
         h(
           'div',
@@ -2044,6 +2052,22 @@
 
   // ---------- 啟動 ----------
   SWU.boot = function () {
+    // 主人模式：網址加 ?me=nick 打開（只存在這台裝置）；?me=off 關閉
+    try {
+      const q = new URLSearchParams(location.search);
+      const me = q.get('me');
+      if (me) {
+        const st = SWU.AI.settings;
+        if (me === 'off') st.owner = false;
+        else {
+          st.owner = true;
+          if (!st.playerName) st.playerName = '柏偉';
+        }
+        SWU.AI.save();
+        q.delete('me');
+        history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+      }
+    } catch (e) {}
     SWU.initDB(window.SWU_CARDS);
     SWU.markVanillaKeywordCards();
     document.documentElement.lang = SWU.lang === 'zh' ? 'zh-Hant' : 'en';
