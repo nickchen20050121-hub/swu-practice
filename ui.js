@@ -19,7 +19,7 @@
 
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
-    lvName: '第 {0} 級', lv1: '剛學會規則，幾乎都是亂出牌、亂選目標', lv2: '常常亂出，偶爾會想一下', lv3: '大多照基本打法，偶爾失誤', lv4: '照基本打法：先下費用合適的牌、挑好打的目標攻擊', lv5: '每一步都先預想結果，會推測你手上可能有什麼牌', lv6: '會把最好的幾個行動推演到回合結束再決定', lv7: '推演更多次，比較少被你的手牌嚇到或騙到', lv8: '最強：從你的領袖、基地、出過的牌和比賽環境推測你的牌組，每個候選行動推演 6 次，算利益也算風險',
+    dimgBtn: '牌組圖片', dimgDownload: '下載圖片', dimgMaking: '正在產生圖片…', dimgDone: '已下載', dimgTextOnly: '已下載（有些卡圖讀不到，改用文字版）', dimgFail: '產生圖片失敗，請再試一次', lvName: '第 {0} 級', lv1: '剛學會規則，幾乎都是亂出牌、亂選目標', lv2: '常常亂出，偶爾會想一下', lv3: '大多照基本打法，偶爾失誤', lv4: '照基本打法：先下費用合適的牌、挑好打的目標攻擊', lv5: '每一步都先預想結果，會推測你手上可能有什麼牌', lv6: '會把最好的幾個行動推演到回合結束再決定', lv7: '推演更多次，比較少被你的手牌嚇到或騙到', lv8: '最強：從你的領袖、基地、出過的牌和比賽環境推測你的牌組，每個候選行動推演 6 次，算利益也算風險',
     setSound: '音效', setVolume: '音量', setZoom: '滑鼠指到卡片時放大顯示（手機長按）', lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
     needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
@@ -55,7 +55,7 @@
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
-    lvName: 'Level {0}', lv1: 'Just learned the rules; plays and targets almost at random', lv2: 'Often random, sometimes thinks', lv3: 'Mostly solid basics with occasional mistakes', lv4: 'Solid basics: plays on curve and attacks good targets', lv5: 'Looks one step ahead and guesses what is in your hand', lv6: 'Plays out the best few actions to the end of the round before deciding', lv7: 'Plays out more rounds; harder to bluff', lv8: 'Strongest: reads your deck from your leader, base, played cards and the tournament meta, plays out each candidate 6 times and weighs gain against risk',
+    dimgBtn: 'Deck image', dimgDownload: 'Download image', dimgMaking: 'Making image…', dimgDone: 'Downloaded', dimgTextOnly: 'Downloaded (some card art could not be loaded, used text instead)', dimgFail: 'Could not make the image, please try again', lvName: 'Level {0}', lv1: 'Just learned the rules; plays and targets almost at random', lv2: 'Often random, sometimes thinks', lv3: 'Mostly solid basics with occasional mistakes', lv4: 'Solid basics: plays on curve and attacks good targets', lv5: 'Looks one step ahead and guesses what is in your hand', lv6: 'Plays out the best few actions to the end of the round before deciding', lv7: 'Plays out more rounds; harder to bluff', lv8: 'Strongest: reads your deck from your leader, base, played cards and the tournament meta, plays out each candidate 6 times and weighs gain against risk',
     setSound: 'Sound effects', setVolume: 'Volume', setZoom: 'Enlarge cards on hover (long-press on phones)', lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
@@ -779,6 +779,226 @@
       )
     );
   }
+  // ---------- 牌組圖片：整副牌的卡圖＋張數，可下載成 PNG ----------
+  function deckImageGroups(d) {
+    const order = ['ground', 'space', 'event', 'upgrade', 'other'];
+    const gk = (c) => (c.t === 'Unit' ? (c.ar === 'Space' ? 'space' : 'ground') : c.t === 'Event' ? 'event' : c.t === 'Upgrade' ? 'upgrade' : 'other');
+    const sortL = (a) => a.sort((x, y) => order.indexOf(gk(x[0])) - order.indexOf(gk(y[0])) || (x[0].c || 0) - (y[0].c || 0) || x[0].n.localeCompare(y[0].n));
+    const list = (o) => sortL(Object.entries(o || {}).map(([k, n]) => [SWU.Deck.card(k), n]).filter((x) => x[0] && x[1] > 0));
+    return { L: SWU.Deck.card(d.leader), B: SWU.Deck.card(d.base), main: list(d.main), side: list(d.side) };
+  }
+  function openDeckImage(d) {
+    const old = document.querySelector('.viewpop');
+    if (old) old.remove();
+    const { L, B, main, side } = deckImageGroups(d);
+    const tile = ([c, n]) => h('div', { class: 'dimg-card' }, cardFace(c, 'card'), h('b', { class: 'dimg-n' }, '×' + n));
+    const status = h('span', { class: 'muted small' });
+    const el = h(
+      'div',
+      { class: 'viewpop', onclick: (e) => e.target === el && el.remove() },
+      h(
+        'div',
+        { class: 'dialog deckimg' },
+        h('div', { class: 'dv-head' }, h('h3', {}, d.name), h('button', { class: 'ghost', 'aria-label': t('close'), onclick: () => el.remove() }, '✕')),
+        h('div', { class: 'dimg-top' }, L ? cardFace(L, 'card') : null, B ? cardFace(B, 'card') : null, h('div', { class: 'muted small' }, t('dvDraw') + ' ' + SWU.Deck.count(d) + (side.length ? '　' + t('dl_side') + ' ' + side.reduce((s, x) => s + x[1], 0) : ''))),
+        h('div', { class: 'dimg-grid' }, ...main.map(tile)),
+        side.length ? h('h4', {}, t('dl_side')) : null,
+        side.length ? h('div', { class: 'dimg-grid' }, ...side.map(tile)) : null,
+        h(
+          'div',
+          { class: 'row end' },
+          status,
+          h(
+            'button',
+            {
+              class: 'primary',
+              onclick: async (e) => {
+                const btn = e.currentTarget;
+                btn.disabled = true;
+                status.textContent = t('dimgMaking');
+                try {
+                  const r = await renderDeckPng(d);
+                  const a = h('a', { href: r.url, download: ((d.name || 'deck').replace(/[^\p{L}\p{N} ()._-]+/gu, ' ').replace(/\s+/g, ' ').trim() || 'deck') + '.png' });
+                  document.body.append(a);
+                  a.click();
+                  a.remove();
+                  status.textContent = r.textOnly ? t('dimgTextOnly') : t('dimgDone');
+                } catch (err) {
+                  status.textContent = t('dimgFail');
+                } finally {
+                  btn.disabled = false;
+                }
+              },
+            },
+            '⬇ ' + t('dimgDownload')
+          ),
+          h('button', { onclick: () => el.remove() }, t('close'))
+        )
+      )
+    );
+    document.body.append(el);
+  }
+  // 卡圖要能跨網域讀取才能畫進圖片；讀不到的卡改畫文字版
+  function loadCardImg(url) {
+    return new Promise((res) => {
+      if (!url || !SWU.AI.settings.images) return res(null);
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      const to = setTimeout(() => res(null), 8000);
+      img.onload = () => (clearTimeout(to), res(img));
+      img.onerror = () => (clearTimeout(to), res(null));
+      img.src = url;
+    });
+  }
+  async function renderDeckPng(d) {
+    const { L, B, main, side } = deckImageGroups(d);
+    const cw = 150, ch = 210, gap = 12, cols = 10, pad = 24;
+    const W = pad * 2 + cols * cw + (cols - 1) * gap;
+    const rowsOf = (n) => Math.ceil(n / cols);
+    const wideW = 294, wideH = 210;
+    const headH = 70 + wideH + 24;
+    const sideH = side.length ? 44 + rowsOf(side.length) * (ch + gap) : 0;
+    const H = headH + rowsOf(main.length) * (ch + gap) + sideH + pad + 24;
+    const cv = document.createElement('canvas');
+    cv.width = W;
+    cv.height = H;
+    const x = cv.getContext('2d');
+    x.fillStyle = '#0e1c2d';
+    x.fillRect(0, 0, W, H);
+    x.fillStyle = '#e3edf5';
+    x.font = 'bold 30px "Noto Sans TC", sans-serif';
+    x.fillText(d.name || '', pad, 46);
+    x.font = '16px "Noto Sans TC", sans-serif';
+    x.fillStyle = '#8ea3b7';
+    x.textAlign = 'right';
+    x.fillText(t('dvDraw') + ' ' + SWU.Deck.count(d) + (side.length ? '  ' + t('dl_side') + ' ' + side.reduce((s, q) => s + q[1], 0) : '') + '  ·  ' + t('appName'), W - pad, 46);
+    x.textAlign = 'left';
+    const all = [L, B, ...main.map((q) => q[0]), ...side.map((q) => q[0])].filter(Boolean);
+    const imgs = new Map();
+    await Promise.all([...new Set(all)].map(async (c) => imgs.set(c.key, await loadCardImg(c.img))));
+    let textOnly = false;
+    const ASPC = { Vigilance: '#3b78d6', Command: '#3b9653', Aggression: '#d0463a', Cunning: '#ddb02c', Heroism: '#efe9d8', Villainy: '#26262c' };
+    const rr = (px, py, w, hh, r) => {
+      x.beginPath();
+      x.roundRect ? x.roundRect(px, py, w, hh, r) : x.rect(px, py, w, hh);
+    };
+    const drawText = (c, px, py, w, hh) => {
+      textOnly = true;
+      rr(px, py, w, hh, 10);
+      x.fillStyle = '#f3f8fb';
+      x.fill();
+      x.lineWidth = 4;
+      x.strokeStyle = ASPC[(c.a || [])[0]] || '#cbdbe5';
+      x.stroke();
+      x.fillStyle = '#10233d';
+      x.font = 'bold 15px "Noto Sans TC", sans-serif';
+      const words = (c.n || '').split(' ');
+      let line = '', ly = py + 46;
+      for (const wd of words) {
+        if (x.measureText(line + wd).width > w - 20 && line) {
+          x.fillText(line, px + 10, ly);
+          line = '';
+          ly += 19;
+        }
+        line += wd + ' ';
+      }
+      x.fillText(line, px + 10, ly);
+      if (c.s) {
+        x.font = '12px "Noto Sans TC", sans-serif';
+        x.fillStyle = '#5a6d82';
+        x.fillText(c.s.slice(0, 22), px + 10, ly + 18);
+      }
+      if (c.c != null && c.t !== 'Base') {
+        x.fillStyle = '#10233d';
+        x.beginPath();
+        x.arc(px + 20, py + 20, 13, 0, Math.PI * 2);
+        x.fill();
+        x.fillStyle = '#fff';
+        x.font = 'bold 15px sans-serif';
+        x.textAlign = 'center';
+        x.fillText(String(c.c), px + 20, py + 25);
+        x.textAlign = 'left';
+      }
+      (c.a || []).forEach((a, i) => {
+        x.fillStyle = ASPC[a];
+        x.beginPath();
+        x.arc(px + w - 16 - i * 16, py + 18, 6, 0, Math.PI * 2);
+        x.fill();
+      });
+      if (c.p != null || c.h != null) {
+        x.font = 'bold 18px monospace';
+        x.fillStyle = '#d0463a';
+        if (c.p != null) x.fillText(String(c.p), px + 10, py + hh - 12);
+        x.fillStyle = '#3b78d6';
+        x.textAlign = 'right';
+        if (c.h != null) x.fillText(String(c.h), px + w - 10, py + hh - 12);
+        x.textAlign = 'left';
+      }
+    };
+    const drawCard = (c, px, py, w, hh) => {
+      const im = imgs.get(c.key);
+      if (im) {
+        x.save();
+        rr(px, py, w, hh, 10);
+        x.clip();
+        x.drawImage(im, px, py, w, hh);
+        x.restore();
+      } else drawText(c, px, py, w, hh);
+    };
+    const badge = (n, px, py) => {
+      const s = '×' + n;
+      x.font = 'bold 20px sans-serif';
+      const bw = x.measureText(s).width + 14;
+      rr(px + cw - bw - 4, py + ch - 34, bw, 28, 8);
+      x.fillStyle = 'rgba(0,0,0,.78)';
+      x.fill();
+      x.fillStyle = '#fff';
+      x.fillText(s, px + cw - bw + 3, py + ch - 13);
+    };
+    if (L) drawCard(L, pad, 70, wideW, wideH);
+    if (B) drawCard(B, pad + wideW + gap * 2, 70, wideW, wideH);
+    const grid = (list, y0) => {
+      list.forEach(([c, n], i) => {
+        const px = pad + (i % cols) * (cw + gap), py = y0 + Math.floor(i / cols) * (ch + gap);
+        drawCard(c, px, py, cw, ch);
+        badge(n, px, py);
+      });
+    };
+    grid(main, headH);
+    if (side.length) {
+      const sy = headH + rowsOf(main.length) * (ch + gap) + 8;
+      x.fillStyle = '#e3edf5';
+      x.font = 'bold 22px "Noto Sans TC", sans-serif';
+      x.fillText(t('dl_side'), pad, sy + 22);
+      grid(side, sy + 36);
+    }
+    let url;
+    try {
+      const blob = await new Promise((res, rej) => {
+        try {
+          cv.toBlob((bl) => (bl ? res(bl) : rej(new Error('blob'))), 'image/png');
+        } catch (e) {
+          rej(e);
+        }
+      });
+      url = URL.createObjectURL(blob);
+    } catch (e) {
+      // 圖片網站不允許跨網域讀取：整張改成文字版
+      imgs.clear();
+      return renderDeckPngTextOnly(d);
+    }
+    return { url, textOnly };
+  }
+  async function renderDeckPngTextOnly(d) {
+    const st = SWU.AI.settings.images;
+    SWU.AI.settings.images = false;
+    try {
+      const r = await renderDeckPng(d);
+      return { url: r.url, textOnly: true };
+    } finally {
+      SWU.AI.settings.images = st;
+    }
+  }
   // 點牌組：顯示牌表（領袖、基地、屬性、分類），可選 P1／P2、編輯、刪除
   function openDeckView(d) {
     const m = $('#modal');
@@ -822,6 +1042,7 @@
         h(
           'div',
           { class: 'row dv-btns' },
+          h('button', { onclick: () => openDeckImage(d) }, '🖼 ' + t('dimgBtn')),
           h('button', { class: S.lobby.mine === d.id ? 'on' : '', onclick: () => pick('mine') }, t('dvP1')),
           h('button', { class: S.lobby.yuna === d.id ? 'on' : '', onclick: () => pick('yuna') }, t('dvP2')),
           h(
@@ -2118,6 +2339,7 @@
           t('save') + (d.dirty ? ' •' : '')
         ),
         h('button', { onclick: () => doExport(SWU.Deck.toText(d)) }, t('exportText')),
+        h('button', { onclick: () => openDeckImage(d) }, '🖼 ' + t('dimgBtn')),
         h('button', { onclick: () => doExport(SWU.Deck.toSwudb(d)) }, t('exportJson')),
         S.decks.some((x) => x.id === d.id)
           ? h(

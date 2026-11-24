@@ -273,6 +273,12 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .zoom .zimg{position:absolute;inset:0;z-index:1}
 .zlink{text-decoration:underline dotted;text-underline-offset:3px;cursor:help}
 .dl-sec li[data-zoom]:hover,.drow:hover,.siderow:hover{background:var(--panel2)}
+.deckimg{max-width:min(96vw,1200px)!important;width:100%}
+.dimg-top{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;--cw:130px}
+.dimg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;--cw:100%}
+.dimg-card{position:relative}
+.dimg-card .face{width:100%}
+.dimg-n{position:absolute;right:4px;bottom:4px;background:rgba(0,0,0,.78);color:#fff;font-family:var(--f-num);border-radius:6px;padding:1px 7px;font-size:14px}
 .sndbtn{cursor:pointer;margin-left:auto}
 .modal[hidden]{display:none}
 .modal{position:fixed;inset:0;background:rgba(5,15,25,.55);display:grid;place-items:center;z-index:50;padding:16px}
