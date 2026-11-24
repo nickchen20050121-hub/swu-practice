@@ -23,6 +23,7 @@
     needDecks: '先到組牌器建一副牌，或直接用內建的路克牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
     yourTurn: '輪到你', yunaTurn: '由奈思考中…', hand: '手牌', deck: '牌庫', discard: '棄牌', resources: '資源', ground: '地面', space: '太空',
+    tapTwice: '點兩下卡牌直接打出／攻擊', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
     confirm: '確定', skip: '略過', cancel: '取消', done: '完成', select: '選擇', log: '對戰紀錄', chat: '由奈',
     manualTitle: '需要手動處理的效果', manualHint: '這個效果還沒自動化。用下面的工具照卡片文字調整，或請由奈幫你判讀。', manualAsk: '請由奈幫我處理',
     toolTarget: '先點選目標（單位或基地）', toolDmg: '+1 傷害', toolHeal: '回復 1', toolShield: '護盾', toolExp: '經驗', toolDefeat: '擊敗', toolExhaust: '橫置', toolReady: '準備',
@@ -54,6 +55,7 @@
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or use the built-in Luke deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
+    tapTwice: 'Double-click a card to play / attack', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
     round: 'Round {0}', phase_setup: 'Setup', phase_action: 'Action phase', phase_regroup: 'Regroup', initiative: 'Initiative', taken: 'taken',
     yourTurn: 'Your turn', yunaTurn: 'Yuna is thinking…', hand: 'Hand', deck: 'Deck', discard: 'Discard', resources: 'Resources', ground: 'Ground', space: 'Space',
     confirm: 'Confirm', skip: 'Skip', cancel: 'Cancel', done: 'Done', select: 'Select', log: 'Game log', chat: 'Yuna',
@@ -142,11 +144,36 @@
     } else wrap.append(textFrame(card, side, opts.stats));
     return wrap;
   }
+  // 點兩下判定（電腦 dblclick／手機連點兩下都適用）
+  let lastTap = { id: null, t: 0 };
+  let peekTimer = null;
+  function tapTwice(id) {
+    const now = Date.now();
+    const two = lastTap.id === id && now - lastTap.t < 450;
+    lastTap = two ? { id: null, t: 0 } : { id, t: now };
+    return two;
+  }
+  const primaryAct = (acts) => acts.find((a) => a.type === 'attack') || acts.find((a) => a.type === 'play' && !a.from) || acts.find((a) => a.type === 'play') || acts.find((a) => a.type === 'deploy') || acts[0];
+  function doPrimary(acts) {
+    if (!acts.length) return false;
+    clearTimeout(peekTimer);
+    hidePeek();
+    const a = primaryAct(acts);
+    const same = acts.filter((x) => x.type === a.type);
+    if (a.type === 'play' && acts.filter((x) => x.type === 'play').length > 1) openMenu(acts.filter((x) => x.type === 'play'));
+    else if (same.length > 1 && a.type !== 'attack') openMenu(same);
+    else settle(a);
+    return true;
+  }
   const isTouch = () => window.matchMedia && matchMedia('(max-width:720px), (pointer:coarse)').matches;
   function setPreview(card, side, acts) {
     S.preview = { card, side };
     renderPreview();
-    if (isTouch() && S.tab === 'play' && S.game) showPeek(card, side, acts || []);
+    if (isTouch() && S.tab === 'play' && S.game) {
+      // 稍等一下再跳說明，讓「連點兩下」的第二下能點到卡片本身
+      clearTimeout(peekTimer);
+      peekTimer = setTimeout(() => showPeek(card, side, acts || []), 330);
+    }
   }
   // 手機：點卡片時從下方滑出的小卡片說明（可直接按按鈕打出）
   function showPeek(card, side, acts) {
@@ -174,6 +201,7 @@
     if (!acts.length) S.peekTimer = setTimeout(hidePeek, 7000);
   }
   function hidePeek() {
+    clearTimeout(peekTimer);
     const el = $('#peek');
     if (el) el.hidden = true;
   }
@@ -211,6 +239,7 @@
         S.pending = { type: 'choose', req, sel: [], resolve };
         renderBoard();
         if (req.kind === 'cards') openCardsModal();
+        else if (!req.options.some((o) => o.uid != null) && (req.max || 1) === 1) openEffectModal();
       });
     },
     resolveManual(g, p, info) {
@@ -226,6 +255,7 @@
     const pd = S.pending;
     if (!pd) return;
     S.pending = null;
+    S.selUid = null;
     closeModal();
     hidePeek();
     pd.resolve(val);
@@ -435,7 +465,15 @@
       { id: 'status', class: 'status' },
       h('span', { class: 'chip' }, t('round', G.round)),
       h('span', { class: 'chip' }, t('phase_' + G.phase)),
-      h('span', { class: 'chip ' + (G.initiative === 0 ? 'me' : 'them') }, t('initiative') + '：' + g.P(G.initiative).name + (G.initiativeTaken ? '（' + t('taken') + '）' : '')),
+      (() => {
+        const init = S.pending && S.pending.type === 'action' && S.pending.acts.find((a) => a.type === 'initiative');
+        return h(
+          init ? 'button' : 'span',
+          { class: 'chip inittok ' + (G.initiative === 0 ? 'me' : 'them') + (init ? ' take' : ''), title: init ? t('initTokenTake') : '', onclick: init ? () => askInitiative(init) : null },
+          h('span', { class: 'coin' }, '★'),
+          t('initiative') + '：' + g.P(G.initiative).name + (G.initiativeTaken ? '（' + t('taken') + '）' : '')
+        );
+      })(),
       G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null
     );
   }
@@ -461,7 +499,7 @@
     const el = h(
       'div',
       {
-        class: 'unit' + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (selected || toolSel ? ' sel' : '') + (u.isLeader ? ' leaderunit' : ''),
+        class: 'unit' + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (selected || toolSel || S.selUid === u.uid ? ' sel' : '') + (u.isLeader ? ' leaderunit' : ''),
         tabindex: opt || acts.length ? '0' : null,
         onmouseenter: () => setPreview(card, side),
         onclick: () => clickUnit(u, opt, acts),
@@ -501,8 +539,10 @@
       return;
     }
     if (opt) return pickOption(opt.id);
-    if (acts.length === 1) return settle(acts[0]);
-    if (acts.length > 1) return openMenu(acts);
+    if (tapTwice('u' + u.uid) && doPrimary(acts)) return;
+    S.selUid = u.uid;
+    setPreview(u.card, u.isLeader ? 'unit' : 'card', acts);
+    renderBoard();
   }
   function pickOption(id) {
     const pd = S.pending;
@@ -568,7 +608,11 @@
           {
             class: 'leadercard' + (L.exhausted ? ' exhausted' : '') + (leaderActs.length ? ' act' : ''),
             onmouseenter: () => setPreview(L.card, 'card'),
-            onclick: () => (leaderActs.length === 1 ? settle(leaderActs[0]) : leaderActs.length ? openMenu(leaderActs) : null),
+            onclick: () => {
+              if (tapTwice('L') && doPrimary(leaderActs)) return;
+              setPreview(L.card, 'card', leaderActs);
+              if (!isTouch() && leaderActs.length) openMenu(leaderActs);
+            },
           },
           cardFace(L.card, 'card'),
           h('span', { class: 'badge' }, (L.epicUsed ? '✓ ' : '') + (L.card.c || ''))
@@ -612,10 +656,15 @@
         return h(
           'div',
           {
-            class: 'handcard' + (acts.length ? ' act' : ''),
+            class: 'handcard' + (acts.length ? ' act' : '') + (S.selUid === c.uid ? ' sel' : ''),
             tabindex: acts.length ? '0' : null,
             onmouseenter: () => setPreview(c.card, 'card'),
-            onclick: () => (isTouch() ? setPreview(c.card, 'card', acts) : acts.length === 1 ? settle(acts[0]) : acts.length ? openMenu(acts) : setPreview(c.card, 'card')),
+            onclick: () => {
+              if (tapTwice('h' + c.uid) && doPrimary(acts)) return;
+              S.selUid = c.uid;
+              setPreview(c.card, 'card', acts);
+              renderBoard();
+            },
             onkeydown: (e) => e.key === 'Enter' && acts.length && settle(acts[0]),
           },
           cardFace(c.card, 'card'),
@@ -637,13 +686,19 @@
     }
     if (!pd) return h('div', { class: 'promptbar idle' }, S.thinking ? h('span', { class: 'spinner' }) : null, t('yunaTurn'));
     if (pd.type === 'action') {
-      const other = pd.acts.filter((a) => !a.uid || a.type === 'ability' || a.type === 'manualAbility');
+      const other = pd.acts.filter((a) => (!a.uid || a.type === 'ability' || a.type === 'manualAbility') && a.type !== 'pass' && a.type !== 'initiative');
+      const pass = pd.acts.find((a) => a.type === 'pass');
+      const init = pd.acts.find((a) => a.type === 'initiative');
       return h(
         'div',
         { class: 'promptbar' },
         h('b', {}, t('yourTurn')),
-        ...other.map((a) => h('button', { class: a.type === 'pass' ? 'ghost' : a.type === 'initiative' ? 'warnbtn' : '', onclick: () => settle(a) }, a.label)),
-        h('button', { class: 'ghost', onclick: () => openManualModal(true) }, t('manualTools'))
+        h('span', { class: 'muted hint' }, t('tapTwice')),
+        ...other.map((a) => h('button', { onclick: () => settle(a) }, a.label)),
+        h('span', { class: 'grow' }),
+        h('button', { class: 'ghost', onclick: () => openManualModal(true) }, t('manualTools')),
+        init ? h('button', { class: 'inittok take', title: t('initTokenTake'), onclick: () => askInitiative(init) }, h('span', { class: 'coin' }, '★'), t('initToken')) : null,
+        pass ? h('button', { class: 'passbtn', onclick: () => settle(pass) }, t('passBig')) : null
       );
     }
     if (pd.type === 'choose') {
@@ -651,10 +706,12 @@
       const min = req.min == null ? 1 : req.min;
       const boardOpts = req.options.filter((o) => o.uid != null);
       const listOpts = req.options.filter((o) => o.uid == null);
+      const src = S.game && S.game.srcCard;
       return h(
         'div',
-        { class: 'promptbar asking' },
-        h('b', {}, req.prompt),
+        { class: 'promptbar asking effpop' + (boardOpts.length ? ' board' : '') },
+        src ? h('div', { class: 'effsrc', onmouseenter: () => setPreview(src, 'card') }, cardFace(src, 'card')) : null,
+        h('div', { class: 'effq' }, src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null, h('b', {}, req.prompt)),
         req.kind === 'cards' ? h('button', { onclick: openCardsModal }, t('select')) : null,
         ...listOpts.map((o) => h('button', { class: pd.sel.includes(o.id) ? 'on' : '', onclick: () => pickOption(o.id) }, o.label)),
         ...(boardOpts.length && boardOpts.length <= 8 ? boardOpts.map((o) => h('button', { class: 'ghost small', onmouseenter: () => hilite(o.uid), onclick: () => pickOption(o.id) }, o.label)) : []),
@@ -664,6 +721,43 @@
     }
     if (pd.type === 'manual') return h('div', { class: 'promptbar asking' }, h('b', {}, t('manualTitle')), h('button', { onclick: () => openManualModal() }, t('manualTools')));
     return h('div', { class: 'promptbar' });
+  }
+  // 效果發動時跳出的視窗（是／否、選項）
+  function openEffectModal() {
+    const pd = S.pending;
+    if (!pd || pd.type !== 'choose') return;
+    const req = pd.req;
+    const src = S.game && S.game.srcCard;
+    const min = req.min == null ? 1 : req.min;
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    m.append(
+      h(
+        'div',
+        { class: 'dialog small effdlg' },
+        src ? h('div', { class: 'effdlg-card' }, cardFace(src, 'card')) : null,
+        src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null,
+        h('h3', {}, req.prompt),
+        ...req.options.map((o, i) => h('button', { class: 'wide' + (req.kind === 'yesno' && i === 0 ? ' primary' : ''), onclick: () => settle([o.id]) }, o.label)),
+        min === 0 && req.kind !== 'yesno' ? h('button', { class: 'ghost wide', onclick: () => settle([]) }, t('skip')) : null
+      )
+    );
+  }
+  function askInitiative(a) {
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    m.append(
+      h(
+        'div',
+        { class: 'dialog small' },
+        h('h3', {}, t('takeInitTitle')),
+        h('p', { class: 'muted' }, t('takeInitBody')),
+        h('button', { class: 'primary wide', onclick: () => settle(a) }, t('takeInitYes')),
+        h('button', { class: 'ghost wide', onclick: closeModal }, t('cancel'))
+      )
+    );
   }
   function hilite(uid) {
     document.querySelectorAll('.unit.flash').forEach((e) => e.classList.remove('flash'));

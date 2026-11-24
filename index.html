@@ -284,6 +284,22 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .field>label{font-weight:700}
 .help{max-width:720px;margin:0 auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.promptbar .grow{flex:1}
+.promptbar .hint{font-size:12px}
+.passbtn{background:var(--accent);color:#fff;font-weight:700;font-size:16px;min-width:96px;min-height:44px;border-radius:999px;letter-spacing:.05em}
+.inittok{display:inline-flex;align-items:center;gap:6px}
+.inittok .coin{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#f6d365,#d4a017);color:#5a3d00;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+button.inittok.take{border:2px dashed var(--warn);animation:initpulse 1.6s ease-in-out infinite}
+@keyframes initpulse{50%{box-shadow:0 0 0 4px rgba(230,160,0,.25)}}
+.handcard.sel,.unit.sel{outline:3px solid var(--accent);outline-offset:2px}
+.promptbar.effpop{position:sticky;top:8px;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.3);background:var(--panel);animation:popin .18s ease-out}
+.promptbar.effpop .effsrc{--cw:64px;width:64px;flex:0 0 auto}
+.promptbar.effpop .effq{display:grid;gap:2px;min-width:0;flex:1 1 200px}
+@keyframes popin{from{transform:translateY(-6px) scale(.98);opacity:0}}
+.effdlg{text-align:center;justify-items:center}
+.effdlg .wide{width:100%}
+.effdlg-card{--cw:150px;width:150px}
 </style>
 </head>
 <body>

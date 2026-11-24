@@ -1032,6 +1032,16 @@
     return picks;
   }
   async function runSteps(ctx, steps) {
+    const g0 = ctx.g;
+    const prevSrc = g0.srcCard;
+    if (ctx.card) g0.srcCard = ctx.card;
+    try {
+      return await runSteps0(ctx, steps);
+    } finally {
+      g0.srcCard = prevSrc;
+    }
+  }
+  async function runSteps0(ctx, steps) {
     for (const st of steps) {
       if (ctx.g.G.winner != null) return;
       if (ctx.stop) return;

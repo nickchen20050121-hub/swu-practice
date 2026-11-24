@@ -43,13 +43,13 @@ const out = process.argv[2];
     }
     const hand = await pg.$('.handcard.act');
     if (hand) {
-      await hand.click();
+      await hand.dblclick();
       await pg.waitForTimeout(500);
       continue;
     }
     const unit = await pg.$('.zone.p0 .unit.act');
     if (unit) {
-      await unit.click();
+      await unit.dblclick();
       await pg.waitForTimeout(400);
       continue;
     }
@@ -59,7 +59,7 @@ const out = process.argv[2];
       await pg.waitForTimeout(400);
       continue;
     }
-    const pass = await pg.$('.promptbar button:has-text("跳過")');
+    const pass = await pg.$('.promptbar .passbtn, .promptbar button:has-text("跳過")');
     if (pass) {
       await pass.click();
       await pg.waitForTimeout(800);

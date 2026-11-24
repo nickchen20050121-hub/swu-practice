@@ -25,6 +25,12 @@ const out = process.argv[2] || './';
       await pg.waitForTimeout(300);
       continue;
     }
+    const effNo = await pg.$('#modal:not([hidden]) .effdlg button:last-of-type');
+    if (effNo) {
+      await effNo.tap();
+      await pg.waitForTimeout(300);
+      continue;
+    }
     const no = await pg.$('.promptbar.asking button:has-text("否")');
     if (no) {
       await no.tap();
@@ -33,7 +39,7 @@ const out = process.argv[2] || './';
     }
     const hand = await pg.$('.handcard.act');
     if (hand && i > 6) break;
-    const pass = await pg.$('.promptbar button:has-text("跳過")');
+    const pass = await pg.$('.passbtn, .promptbar button:has-text("跳過")');
     if (pass) {
       await pass.tap();
       await pg.waitForTimeout(900);
