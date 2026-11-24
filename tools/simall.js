@@ -2,7 +2,7 @@
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const dir = path.join(__dirname, '..');
 global.window = global; global.localStorage = { getItem: () => null, setItem: () => {} };
-for (const f of ['cards.js', 'engine.js', 'i18n.js', 'effects.js', 'gfx.js', 'deck.js', 'ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir, f), 'utf8'), { filename: f });
+for (const f of ['cards.js', 'engine.js', 'i18n.js', 'effects.js', 'gfx.js', 'programs.js', 'deck.js', 'ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir, f), 'utf8'), { filename: f });
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
 const leaders = SWU.DB.list.filter((c) => c.t === 'Leader');
 const bases = SWU.DB.list.filter((c) => c.t === 'Base');

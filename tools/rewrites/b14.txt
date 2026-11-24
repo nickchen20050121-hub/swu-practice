@@ -1,0 +1,144 @@
+= Power of the Dark Side#card
+Note: The opponent chooses a unit they control and defeats it.
+= Pre Vizsla | Power Hungry#card
+!
+= Pre Vizsla | Pursuing the Throne#leader
+Action [C=1, Exhaust]: Deal 1 damage to a unit.
+= Pre Vizsla | Pursuing the Throne#unit
+~
+~
+= Pre Vizsla | Strong-Willed Ruler#card
+When Played: Defeat a non-leader unit with 3 or less remaining HP. If you do, create a Mandalorian token.
+= PreMor Personnel Carrier#card
+When Played: Give an Experience token to this unit.
+= Precision Fire#card
+Attack with a unit. It gains Saboteur for this attack.
+= Premonition of Doom#card
+!
+= Price on Your Head#card
+Attached unit gains: "Bounty - Resource the top card of your deck."
+= Prime Minister Almec | Scheming Populist#card
+When Played: Give a friendly unit +2/+2 for this phase. Exhaust an enemy unit with 2 or less power.
+= Princess Leia | Calculated Distraction#card
+When Played/On Attack: Exhaust up to 2 units that cost 2 or less.
+= Princess Leia | On a Diplomatic Mission#leader
+Action [C=1, Exhaust]: Draw a card. Discard a card from your hand.
+= Princess Leia | On a Diplomatic Mission#unit
+On Attack: Draw a card. Discard a card from your hand.
+= Prisoner of War#card
+A friendly unit captures an enemy non-leader unit.
+= Private Manufacturing#card
+Draw 2 cards.
+= Privateer Crew#card
+~
+= Profundity | We Fight!#card
+When Played/When Defeated: Each opponent discards a card from their hand.
+= Protect the Pod#card
+A friendly unit deals damage equal to its power to an enemy unit.
+= Protector of the Throne#card
+While this unit is upgraded, this unit gains Sentinel.
+= Psychometry#card
+Search the top 5 cards of your deck for a card, reveal it, and draw it.
+= Public Enemy#card
+Attached unit gains: "Bounty - Give a Shield token to a unit."
+= Purrgil Ultra#card
+!
+= Pursue the Lead#card
+Each opponent discards a card from their hand.
+= Putting a Team Together#card
+Search the top 8 cards of your deck for a unit, reveal it, and draw it.
+= Pyrrhic Assault#card
+!
+= Qi'ra | I Alone Survived#leader
+Action [C=1, Exhaust]: Deal 2 damage to a friendly unit. Give a Shield token to it.
+= Qi'ra | I Alone Survived#unit
+!
+= Qi'ra | Playing Her Part#card
+When Played: Look at an opponent's hand.
+= Qi'ra | Survivor#card
+~
+= Qimir | Everyone Has a Weakness#card
+When Defeated: You may give a Weakness token to an enemy unit.
+= Queen Amidala | Championing Her People#card
+~
+= Queen Amidala | Retaking Theed#card
+~
+= Queen Soruna | Willing to Fight#card
+When Played/On Attack: You may deal 3 damage to a unit.
+= Qui-Gon Jinn | Influencing Chance#card
+When Played/On Attack: You may discard a card from your deck.
+= Qui-Gon Jinn | Student of the Living Force#leader
+!
+= Qui-Gon Jinn | Student of the Living Force#unit
+!
+= Qui-Gon Jinn | The Negotiations will be Short#card
+When Defeated: You may return a non-leader ground unit to its owner's hand.
+= Qui-Gon Jinn's Aethersprite | Guided by the Force#card
+~
+= Qui-Gon Jinn's Lightsaber#card
+When Played: If attached unit is Qui-Gon Jinn, exhaust up to 2 units that cost 3 or less.
+= Quinlan Vos | Dark Disciple#card
+On Attack: You may deal 2 damage to an enemy base.
+= Quinlan Vos | Sticking the Landing#leader
+When you play a unit: You may exhaust this leader. If you do, deal 1 damage to an enemy unit.
+= Quinlan Vos | Sticking the Landing#unit
+When you play a unit: You may deal 1 damage to an enemy unit.
+= R2-D2 | Artooooooooo!#card
+~
+~
+= R2-D2 | Full of Solutions#card
+When Played: You may discard a card from your hand. If you do, search the top 3 cards of your deck for a card, reveal it, and draw it.
+= R2-D2 | Getting His Chance#card
+When Played: You may deal 2 damage to an enemy base. If you do, each opponent draws a card.
+= R2-D2 | Ignoring Protocol#card
+~
+= R2-D2 | Part of the Plan#card
+When Played: Search the top 5 cards of your deck for a unit, reveal it, and draw it.
+= R2-D2 | The First Protagonist#card
+{"trigger":"onAttack","text":"Choose one","steps":[{"op":"chooseOne","options":[{"label":"Ready a resource","steps":[{"op":"readyResource","n":1}]},{"label":"Deal 1 damage to a ground unit","steps":[{"op":"damage","n":1,"target":{"sel":"choose","side":"any","f":{"arena":"Ground"}}}]},{"label":"Discard top card of deck","steps":[{"op":"mill","n":1}]}]}]}
+= R5-D4 | Built for Adventure#card
+On Attack: Defeat an upgrade.
+= Raddus | Holdo's Final Command#card
+~
+= Raddus | Hope of the Resistance#card
+~
+= Radiant VII | Ambassadors' Arrival#card
+~
+= Raiding Party#card
+When Played: You may exhaust a ground unit.
+= Rallying Cry#card
+Give each friendly unit Raid 2 for this phase.
+= Rampart | Enjoy the Exit#card
+~
+= Rancor Keeper#card
+~
+= Rash Action#card
+Attack with a unit. It gets +1/+0 for this attack.
+= Ravage#card
+Give a Weakness token to a unit. Give a Weakness token to a unit. Give a Weakness token to a unit.
+= Ravager | Final Imperial Command#card
+~
+= Raze to Ruin#card
+!
+= Razor Crest | Ride For Hire#card
+~
+= Razor Crest | Stay Off the Ice#card
+!
+= Reanimated Night Trooper#card
+When Defeated: You may discard a card from your deck.
+= Rebel Operation#card
+~
+Draw 2 cards.
+= Reckless Sacrifice#card
+Discard a card from your hand. If you do, deal 5 damage to a unit.
+= Reckoning#card
+!
+= Reconnaissance#card
+Draw 2 cards.
+= Red Leader | Form Up#card
+~
+~
+= Red Leader | Strike the Reactor#card
+~
+= Redemption | Medical Frigate#card
+When Played: Heal up to 4 damage from your base. Heal up to 4 damage from a unit.

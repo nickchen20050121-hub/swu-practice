@@ -2,6 +2,7 @@
 global.window = global;
 global.localStorage = { getItem: () => null, setItem: () => {} };
 for (const f of ['cards', 'engine', 'i18n', 'effects', 'gfx']) require('../' + f + '.js');
+try { require('../programs.js'); } catch (e) {}
 const SWU = window.SWU;
 SWU.initDB(window.SWU_CARDS);
 SWU.markVanillaKeywordCards();

@@ -1,0 +1,144 @@
+= The Desolation of Hoth#card
+Defeat an enemy unit that costs 3 or less. Defeat an enemy unit that costs 3 or less.
+= The Elite Squad | Neutralizing Insurgents#card
+When Played: You may deal 2 damage to another unit.
+= The Emperor's Legion#card
+!
+= The Eye of Aldhani#card
+!
+= The Father | Maintaining Balance#card
+~
+= The First Legion | Vader's Fist#card
+~
+= The Force Is With Me#card
+Give 2 Experience tokens to a friendly unit. You may attack with a unit.
+= The Galleon | Marauding Pirate Ship#card
+When Played: You may disclose Aggression Aggression Villainy. If you do, create 3 Spy tokens.
+= The Ghost | Heart of the Family#card
+~
+While this unit is upgraded, this unit gains Sentinel.
+= The Ghost | Whale Watching#card
+~
+= The Great Mothers | With Strange Magicks#card
+!
+= The Great Progenitor | First of the Drengir#card
+~
+= The Inquisitor's TIE | Would Rather Win#card
+On Attack: Each opponent discards a card from their hand.
+= The Invasion of Christophsis#card
+~
+!
+= The Invisible Hand | Confederate Might#card
+!
+= The Invisible Hand | Crawling With Vultures#card
+When Played: You may search the top 8 cards of your deck for a Droid unit, reveal it, and draw it.
+= The Invisible Hand | Imposing Flagship#card
+~
+= The Legacy Run | Doomed Debris#card
+When Defeated: Deal 3 damage to an enemy unit. Deal 3 damage to an enemy unit.
+= The Mandalorian | Cleaning Up Nevarro#card
+When this unit attacks and defeats a unit: A friendly unit captures an enemy non-leader unit.
+= The Mandalorian | Devoted Rescuer#card
+~
+= The Mandalorian | From the Shadows#card
+On Attack: If the defending unit is exhausted, give the defending unit -4/-0 for this attack.
+= The Mandalorian | Let's See the Puck#card
+~
+= The Mandalorian | Weathered Pilot#card
+When Played: Exhaust up to 2 ground units.
+~
+= The Mandalorian's Rifle#card
+When Played: If attached unit is The Mandalorian, a friendly unit captures an enemy non-leader unit.
+= The Marauder | A New Home#card
+~
+= The Marauder | Shuttling the Bad Batch#card
+~
+= The Master Codebreaker | High Stakes#card
+~
+= The Sarlacc of Carkoon | Horror of the Dune Sea#card
+On Attack: Deal 3 damage to an enemy ground unit.
+= The Son | Embodiment of Darkness#card
+~
+= The Starhawk | Prototype Battleship#card
+!
+= The Stranger | No Survivors#card
+~
+= The Student Guides the Master#card
+Give a friendly unit +2/+0 for this phase.
+= The Tarkin Doctrine | Protect and Punish#card
+~
+~
+= The Tragedy of Plagueis#card
+Note: The opponent chooses a unit they control and defeats it.
+= The Tree Remembers#card
+Defeat an enemy unit that costs 3 or less.
+= The Warrior | Deft Duelist#leader
+Action [C=1, Exhaust]: Play a unit from your hand. Give it Ambush for this phase.
+= The Way of the Mand'alor#card
+~
+= The Will of the Force#card
+Return a non-leader unit to its owner's hand. You may use the Force. If you do, each opponent discards a random card from their hand.
+= The Wrong Ride#card
+!
+= Theed Security#card
+When Played: Give an Experience token to a unit.
+= There Is No Conflict#card
+~
+= There Is No Escape#card
+!
+= Therm Scissorpunch | Boastful Gambler#card
+~
+= Thermal Detonator#card
+Attached unit gains: "When Defeated: Deal 2 damage to each enemy ground unit."
+= Thermal Oscillator | Starkiller Base#card
+~
+= They Hate That Ship#card
+Play a Vehicle unit from your hand. It costs 3 less. An opponent creates 2 TIE Fighter tokens.
+= Third Sister | Cycle of Vengeance#card
+When Played: You may deal 2 damage to a unit.
+= Third Sister | Seething With Ambition#unit
+~
+= This Is The Way#card
+Search the top 8 cards of your deck for a card, reveal it, and draw it.
+= Time of Crisis#card
+!
+= Timely Reinforcements#card
+Create an X-Wing token. Create an X-Wing token.
+= Tireless Magnaguard#card
+~
+= Tobias Beckett | I Trust No One#card
+~
+= Tobias Beckett | People are Predictable#leader
+!
+= Tobias Beckett | People are Predictable#unit
+~
+= Tomb of Eilram | Zeffo#card
+!
+= Top Target#card
+Attached unit gains: "Bounty - Heal 4 damage from a unit or base."
+= Trace Martez | Trusting Sister#card
+Attached unit gains: "On Attack: You may heal 2 damage from a unit."
+= Trade Route Taxation#card
+!
+= Traitorous#card
+!
+= Trandoshan Hunters#card
+~
+= Tranquility | Inspiring Flagship#card
+~
+= Transmission Jamming#card
+!
+= Trap Field#card
+~
+= Treacherous Minefield#card
+!
+= Trench Run#card
+Attack with a Fighter unit. It gets +4/+0 for this attack.
+= Tribunal | Grave of the 332nd#card
+~
+= Triple Dark Raid#card
+Search the top 7 cards of your deck for a Vehicle unit and play it. It costs 5 less.
+= Trust Your Instincts#card
+Use the Force. If you do, attack with a unit. It gets +2/+0 for this attack.
+= Trust Yourself#card
+Give a Shield token to a unit. Search the top 3 cards of your deck for a card, reveal it, and draw it.

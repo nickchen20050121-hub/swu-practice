@@ -1,0 +1,142 @@
+= K-2SO | Evacuate the Vault Door#card
+When Defeated: Deal 5 damage to each enemy unit. Deal 5 damage to each enemy base.
+= Kachirho Militia#card
+~
+= Kalani | Analytical General#card
+On Attack: You may give another unit +2/+2 for this phase.
+= Kanan Jarrus | Revealed Jedi#card
+On Attack: Heal 1 damage from your base.
+= Kanan Jarrus | Spectre One#card
+When Played: You may return a non-leader unit that costs 2 or less to its owner's hand.
+= Karabast#card
+A friendly unit deals damage equal to its power to an enemy unit.
+= Karis Nemik | Freedom is a Pure Idea#card
+When Defeated: You may disclose Aggression Heroism. If you do, create a Spy token.
+= Kashyyyk Defender#card
+When Played: Heal up to 2 damage from another unit.
+= Kaydel Connix | For Our Survival#card
+When Played: You may defeat an upgrade.
+= Kazuda Xiono | Best Pilot in the Galaxy#leader
+!
+= Kazuda Xiono | Best Pilot in the Galaxy#unit
+~
+= Kazuda Xiono | I'm Not A Spy#card
+While you control fewer resources than an opponent, this unit gets +2/+0.
+= Keep Them Talking#card
+Exhaust up to 2 units that cost 3 or less.
+= Keeper of Skara Nal | Awoken#card
+~
+= Kelleran Beq | Where are the Others?#card
+~
+= Kelnacca | Solitary Master#card
+!
+= Khetanna | Upon the Dune Sea#card
+~
+= Ki-Adi-Mundi | Composed and Confident#card
+~
+= Kimoglia Heavy Fighter#card
+When Played: Deal 3 damage to an enemy base.
+= King Grakchawwaa | King of Kashyyyk#card
+When Played: Resource the top card of your deck.
+= Kit Fisto | Focused Jedi Master#leader
+Action [C=1, Exhaust]: If you've attacked with a unit this phase, deal 2 damage to a unit.
+= Kit Fisto's Aethersprite | Good Hunting#card
+When Played: You may defeat an upgrade.
+= Knobby White Ice Spider#card
+When Played: Give an Advantage token to this unit for each enemy unit.
+= Koska Reeves | Loyal Nite Owl#card
+On Attack: If this unit is upgraded, you may deal 2 damage to a ground unit.
+= Koska Reeves | Warrior of Mandalore#card
+When Played: If a friendly unit was defeated this phase, create a Mandalorian token.
+= Kouhun Assassination#card
+Discard a card from your hand. Give a non-Vehicle unit -8/-8 for this phase.
+= Kragan Gorr | Warbird Captain#card
+~
+= Krayt Dragon#card
+~
+= Kreia's Whispers#card
+Draw 2 cards.
+= Krrsantan | Hit and Run#card
+!
+= Krrsantan | Muscle for Hire#card
+~
+On Attack: You may deal damage equal to the damage on this unit to a ground unit.
+= Krrsantan | Santo#card
+!
+= Kuiil | I Have Spoken#card
+On Attack: Discard a card from your deck.
+= Kylo Ren | I Know Your Story#card
+~
+= Kylo Ren | Killing the Past#card
+~
+On Attack: Give a unit +2/+0 for this phase.
+= Kylo Ren | Rash and Deadly#leader
+!
+= Kylo Ren | Relentless#card
+~
+= Kylo Ren | Supreme Leader#leader
+!
+= Kylo Ren | We're Not Done Yet#leader
+Action [Exhaust]: Discard a card from your hand.
+= Kylo Ren | We're Not Done Yet#unit
+~
+= Kylo Ren's Lightsaber#card
+~
+= Kylo's TIE Silencer | Follow My Lead#card
+~
+= Kylo's TIE Silencer | Ruthlessly Efficient#card
+~
+= L3-37 | Droid Revolutionary#card
+When Played: Give a Shield token to this unit.
+= L3-37 | Get Out of My Seat#card
+~
+= L3-37 | Radical Instigator#card
+When Played: Search the top 10 cards of your deck for a unit that costs 5 or less and play it for free.
+= L3-37 | We're Programmed to Learn#card
+~
+= Lakeside Shaaks#card
+When Played: Ready a resource.
+= Lama Su | We Modified Their Genetics#leader
+!
+= Lama Su | We Modified Their Genetics#unit
+~
+= Landing Pad#card
+~
+= Lando Calrissian | Buying Time#leader
+Action [C=1, Exhaust]: Play a unit from your hand.
+= Lando Calrissian | Buying Time#unit
+~
+= Lando Calrissian | Check This Out#card
+!
+= Lando Calrissian | Eyes Open#card
+~
+= Lando Calrissian | Full Sabacc#leader
+Action [C=1, Exhaust]: Discard a card from your deck. Create a Credit token.
+= Lando Calrissian | Full Sabacc#unit
+When Deployed: Create 2 Credit tokens.
+= Lando Calrissian | Responsible Businessman#card
+!
+= Lando Calrissian | Trust Me#card
+When Played: Heal 6 damage from your base. Note: The enemy unit captures one of your other non-leader units.
+= Lando Calrissian | With Impeccable Taste#leader
+!
+= Lando Calrissian | With Impeccable Taste#unit
+!
+= Lang | Arrogant Mercenary#card
+Action [Exhaust]: This unit deals damage equal to its power to a ground unit.
+= Last Words#card
+If a friendly unit was defeated this phase, give 2 Experience tokens to a unit.
+= Lawbringer | Shadow Over Lothal#card
+When Played/On Attack: Give an enemy unit -2/-2 for this phase.
+= Legal Authority#card
+When Played: A friendly unit captures an enemy non-leader unit.
+= Leia Organa | Defiant Princess#card
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"text":"Ready resource or exhaust","steps":[{"op":"chooseOne","options":[{"label":"Ready a resource","steps":[{"op":"readyResource","n":1}]},{"label":"Exhaust a unit","steps":[{"op":"exhaust","target":{"sel":"choose","side":"any","f":{}}}]}]}]}
+= Leia Organa | Extraordinary#card
+~
+= Leia Organa | Get to Your Transports!#unit
+On Attack: Heal 1 damage from a friendly unit. Heal 1 damage from a friendly unit.
+= Leia Organa | Of A Secret Bloodline#leader
+Action [C=1, Exhaust]: Give an Experience token to a unit.
+= Leia Organa | Of A Secret Bloodline#unit
+On Attack: You may give an Experience token to a unit.

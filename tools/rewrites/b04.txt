@@ -1,0 +1,149 @@
+= Coruscanti Spy#card
+When Played: Heal 2 damage from your base.
+= Corvus | Inferno Squadron Raider#card
+~
+= Count Dooku | Face of the Confederacy#leader
+Action [Exhaust]: Play a Separatist card from your hand. It costs 2 less.
+= Count Dooku | Face of the Confederacy#unit
+~
+= Count Dooku | Fallen Jedi#card
+~
+= Count Dooku | Offering Aid#leader
+Action [Exhaust]: Heal 1 damage from your base. Create a Battle Droid token.
+= Count Dooku | Silver-Tongued#card
+~
+= Covetous Rivals#card
+When Played/On Attack: You may deal 2 damage to an enemy unit.
+= Crackshot V-Wing#card
+When Played: If you control 1 or more Fighter units, deal 0 damage to this unit.
+= Criminal Muscle#card
+When Played: You may defeat an upgrade that costs 3 or less.
+= Cripple Authority#card
+Draw a card. If you control fewer resources than an opponent, each opponent discards a card from their hand.
+= Crix Madine | Strike Team Strategist#card
+When Played: You may play a Heroism unit from your hand. It costs 2 less.
+= Crosshair | Following Orders#card
+Action [Exhaust]: This unit deals damage equal to its power to an enemy ground unit.
+= Crosshair | I've Changed#card
+When this unit is dealt damage and survives: Draw a card. Each opponent draws a card.
+~
+= Cunning#card
+Choose two
+- Return a non-leader unit with 4 or less power to its owner's hand.
+- Give a unit +4/+0 for this phase.
+- Exhaust up to 2 units.
+- An opponent discards a random card from their hand.
+= Cunning Ploy#card
+Exhaust an enemy unit. You may attack with a unit. It gets +3/+0 for this attack.
+= Curious Flock#card
+When Played: You may pay 2 resources. If you do, give 2 Experience tokens to this unit.
+= D'Qar Cargo Frigate#card
+This unit gets -1/-0 for each damage on this unit.
+= DDC Defender#card
+Attached unit gains: "When this unit is attacked: You may deal 1 damage to an enemy unit and exhaust it."
+= DJ | Blatant Thief#card
+~
+= DJ | Need a Lift?#leader
+Action [Exhaust]: Play a unit from your hand. It costs 1 less.
+= DJ | Need a Lift?#unit
+~
+= Daring Delve#card
+Discard 2 cards from your deck. You may return an Aggression card from your discard pile to your hand.
+= Dark Sanctum#card
+!
+= Darth Maul | Revenge At Last#card
+~
+= Darth Maul | Sith Revealed#leader
+Action [Exhaust, use the Force]: Deal 1 damage to a unit. Deal 1 damage to another unit.
+= Darth Maul | Sith Revealed#unit
+On Attack: Deal 1 damage to a unit. Deal 1 damage to another unit.
+= Darth Maul's Lightsaber#card
+When Played: If attached unit is Darth Maul, you may attack with attached unit. It gains Overwhelm for this attack. It can't attack bases for this attack.
+= Darth Nihilus | Lord of Hunger#card
+When Played/On Attack: Deal 3 damage to another unit. If it is a non-Vehicle unit, give an Experience token to this unit.
+= Darth Revan | Scourge of the Old Republic#leader
+When a friendly unit's attack ends: If the defending unit was defeated, you may exhaust this leader. If you do, give an Experience token to it.
+= Darth Revan | Scourge of the Old Republic#unit
+When a friendly unit's attack ends: If the defending unit was defeated, you may give an Experience token to it.
+= Darth Revan's Lightsaber#card
+While attached unit is a Sith unit, attached unit gains Grit.
+= Darth Revan's Lightsabers#card
+While attached unit is a Sith unit, attached unit gains Grit.
+= Darth Sidious | Move Against the Jedi#card
+~
+= Darth Sidious | There is no Mercy#leader
+~
+= Darth Sidious | There is no Mercy#unit
+~
+= Darth Sidious | Under a Cloak of Darkness#card
+When a non-token unit is defeated: Create a Battle Droid token.
+= Darth Sion | Lord of Pain#card
+When Played: Give an Experience token to this unit for each enemy unit defeated this phase.
+~
+= Darth Traya | Lord of Betrayal#card
+~
+= Darth Tyranus | Servant of Sidious#card
+While the Force is with you, this unit gains Ambush.
+= Darth Vader | Any Methods Necessary#card
+When Played: Search the top 8 cards of your deck for up to 2 units that cost 4 or less and play them for free. Deal 2 damage to each of them.
+= Darth Vader | Commanding the First Legion#card
+When Played: Search the top 10 cards of your deck for a Villainy unit that costs 3 or less and play it for free.
+= Darth Vader | Dark Lord of the Sith#leader
+Action [C=1, Exhaust]: If you've played a Villainy card this phase, deal 1 damage to a unit and 1 damage to a base.
+= Darth Vader | Meet Your Destiny#card
+While this unit is ready, this unit gains Sentinel.
+= Darth Vader | No One to Stop Us#leader
+Action [C=1, Exhaust]: Defeat a friendly unit. If you do, draw a card and heal 2 damage from your base.
+= Darth Vader | Scourge of Squadrons#card
+~
+= Darth Vader | Twilight of the Apprentice#card
+When Played: Give a Shield token to a friendly unit. Give a Shield token to an enemy unit.
+= Darth Vader | Unstoppable#leader
+Action [Exhaust]: Discard a card from your hand. If you do, deal 1 damage to a unit or base.
+= Darth Vader | Unstoppable#unit
+On Attack: You may discard a card from your hand. If you do, deal 1 damage to a unit or base.
+= Darth Vader | Victor Squadron Leader#leader
+Action [Exhaust]: If you've attacked with a non-token Vehicle unit this phase, create a TIE Fighter token.
+= Darth Vader | Victor Squadron Leader#unit
+~
+= Data Vault | Scarif#card
+~
+= Dathomiri Magicks#card
+If you control a Force unit, this event costs 1 less to play.
+Play a non-Vehicle unit that costs 2 or less from your discard pile for free.
+= Daughter of Dathomir#card
+While this unit is undamaged, this unit gains Restore 2.
+= Deadly Vulnerability#card
+~
+~
+= Death Field#card
+Deal 2 damage to each enemy non-Vehicle unit. If you control a Force unit, draw a card.
+= Death Mark#card
+Attached unit gains: "Bounty - Draw 2 cards."
+= Death Star Plans#card
+~
+~
+= Deceptive Shade#card
+~
+= Decimator of Dissidents#card
+~
+= Dedra Meero | Not Wasting Time#leader
+Action [C=1, Exhaust]: Draw a card.
+= Dedra Meero | Not Wasting Time#unit
+~
+= Defiant Hammerhead#card
+On Attack: If this unit is attacking a unit, you may give this unit +4/+0 for this attack.
+= Defiant Scrapper#card
+~
+= Defoliator Tank#card
+On Attack: You may pay 2 resources. If you do, give 2 Weakness tokens to the defending unit.
+= Del Meeko | Providing Overwatch#card
+~
+= Dengar | Crude and Slovenly#card
+~
+= Dengar | Take Your Shot#card
+When an enemy unit is defeated: Create a Credit token. Use this ability only once each round.
+= Dengar | The Demolisher#card
+~
+= Detention Block Rescue#card
+Deal 3 damage to a unit.

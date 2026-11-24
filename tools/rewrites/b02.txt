@@ -1,0 +1,146 @@
+= Boba Fett's Armor#card
+!
+= Boba Fett's Rancor | Emotionally Complex Creature#card
+When Played: Deal 5 damage to your base. Deal 5 damage to an enemy ground unit. Deal 5 damage to it.
+On Attack: You may deal 1 damage to a base for each 5 damage on your base.
+= Bog Down in Procedure#card
+Exhaust a unit. You may exhaust another unit.
+= Boga | Loyal Varactyl#card
+When Played/When Defeated: You may play a non-Vehicle unit from your discard pile. It costs 1 less.
+= Bold Resistance#card
+Give up to 3 units +2/+0 for this phase.
+= Bombing Run#card
+Choose one
+- Deal 3 damage to each ground unit.
+- Deal 3 damage to each space unit.
+= Booma Ball#card
+When Played: You may defeat an upgrade that costs 3 or less.
+= Boonta Eve Flagbearer#card
+When a friendly unit attacks: Heal 2 damage from your base. Use this ability only once each round.
+= Boss Lyonie | Hypnotized#card
+When Played/On Attack: You may give a Shield token to another unit with a Shield token on it.
+= Boss Nass | Otoh Gunga Boss#card
+When Played/On Attack: You may pay 1 resource. If you do, create a Beast token and give a Shield token to it.
+= Bossk | Cruel Hunter#leader
+Action [Exhaust]: Heal 1 damage from a damaged enemy unit and give a Weakness token to it.
+= Bossk | Cruel Hunter#unit
+On Attack: You may deal 2 damage to an upgraded unit.
+= Bossk | Hunting His Prey#leader
+Action [Exhaust]: Deal 1 damage to a unit. You may give it +1/+0 for this phase.
+= Bossk | Hunting His Prey#unit
+~
+= Bothan-5 | New Republic Prison Ship#card
+~
+= Bounty Hunter Crew#card
+When Played: You may return an event from your discard pile to your hand.
+= Bounty Hunter's Quarry#card
+Attached unit gains: "Bounty - Search the top 5 cards of your deck for a unit that costs 3 or less and play it for free."
+= Bounty Posting#card
+Search the top 10 cards of your deck for an upgrade, reveal it, and draw it.
+= Brain Invaders#card
+~
+= Bravado#card
+If an enemy unit was defeated this phase, this event costs 2 less to play.
+Ready a unit.
+= Breach#card
+A friendly unit deals damage equal to its power to an enemy unit.
+= Broken Horn | Vizago's Pride#card
+When Played: Draw a card.
+= Brothers#card
+Attack with a unique unit. It gets +0/+10 for this attack. Attack with another unique unit. It gets +0/+10 for this attack.
+= Brutal Traditions#card
+!
+= C-3P0 | Anything I Might Do?#card
+Action [Exhaust]: Give a unit +2/+2 for this phase. Return this unit to its owner's hand.
+= C-3P0 | Die, Jedi Dogs!#card
+!
+= C-3P0 | Protocol Droid#card
+When Played/On Attack: Search the top 1 cards of your deck for a card that costs 2 or less, reveal it, and draw it.
+= C-3P0 | Translation Protocol#card
+On Attack: You may give an Experience token to another non-leader unit.
+= C-3PO | Impulse Buy#card
+Action [Exhaust]: Give an Experience token to another unit.
+= Cad Bane | He Who Needs No Introduction#leader
+When you play an Underworld card: You may exhaust this leader. If you do, deal 1 damage to an enemy unit.
+= Cad Bane | He Who Needs No Introduction#unit
+When you play an Underworld card: Deal 2 damage to an enemy unit. Use this ability only once each round.
+= Cad Bane | Hostage Taker#card
+When Played: This unit captures an enemy non-leader unit with 4 or less remaining HP.
+~
+= Cad Bane | Now it's My Turn#card
+On Attack: Give an Experience token to this unit for each Credit token you control.
+= Cal Kestis | I Can't Keep Hiding#leader
+Action [Exhaust, use the Force]: Exhaust an enemy ready unit.
+= Cal Kestis | I Can't Keep Hiding#unit
+On Attack: Exhaust an enemy ready unit.
+= Calculated Lethality#card
+Defeat a non-leader unit that costs 3 or less. Give an Experience token to a friendly unit.
+= Camtono#card
+Attached unit gains: "When Attack Ends: Search the top 1 cards of your deck for a card that costs 2 or less and play it for free."
+= Canto Bight Security#card
+When this unit is attacked: Create a Credit token.
+= Cantwell Arrestor Cruiser#card
+When Played: You may exhaust an enemy unit.
+= Canyon Frontrunner#card
+On Attack: You may give a unit -2/-0 for this phase.
+= Captain Enoch | Captain of the Guard#card
+This unit gets +1/+0 for each Trooper unit in your discard pile.
+= Captain Pellaeon | Plotting from the Shadows#card
+~
+= Captain Phasma | Chrome Dome#leader
+Action [Exhaust]: If you've played a First Order card this phase, deal 1 damage to a base.
+= Captain Phasma | Chrome Dome#unit
+On Attack: If you've played a First Order card this phase, you may deal 1 damage to a unit. If you do, deal 1 damage to a base.
+= Captain Rex | Fighting For His Brothers#leader
+Action [C=2, Exhaust]: If you've attacked with a unit this phase, create a Clone Trooper token.
+= Captain Rex | Into the Firefight#card
+When Played/When this unit completes an attack: Give this unit Sentinel for this phase. Give an enemy unit Sentinel for this phase.
+= Captain Vaughn | Search the Tunnels#card
+When Defeated: Search the top 3 cards of your deck for a card, reveal it, and draw it.
+= Carbonite Chamber#card
+!
+= Caretaker Matron#card
+Action [Exhaust]: If you've played a Force card this phase, draw a card.
+= Carrion Spike | Harbinger of Tyranny#card
+~
+= Carson Teva | There's Something Going On#card
+~
+= Cassian Andor | Climb!#leader
+~
+= Cassian Andor | Climb!#unit
+~
+= Cassian Andor | Dedicated to the Rebellion#leader
+Action [C=1, Exhaust]: Draw a card.
+= Cassian Andor | Dedicated to the Rebellion#unit
+When this unit deals damage to a base: You may draw a card.
+= Cassian Andor | Lay Low#card
+~
+= Cassian Andor | Rebellions Are Built On Hope#card
+~
+= Cassian Andor | Threading the Eye#card
+Attached unit gains: "On Attack: Each opponent discards a card from their deck."
+= Cat and Mouse#card
+Exhaust an enemy unit. If you do, ready a friendly unit.
+= Catch the Scent#card
+Create 2 Beast tokens. Ready a friendly token unit.
+= Caught in the Crossfire#card
+!
+= Chain Code Collector#card
+~
+= Chairman Papanoida | Undaunted Diplomat#card
+~
+= Cham Syndulla | Hammer of Ryloth#leader
+~
+= Cham Syndulla | Hammer of Ryloth#unit
+~
+= Cham Syndulla | Rallying Ryloth#card
+When Played: If you control fewer resources than an opponent, you may resource the top card of your deck.
+= Chancellor Palpatine | How Liberty Dies#leader
+Action [C=1, Exhaust]: Search the top 5 cards of your deck for a card, reveal it, and draw it.
+= Chancellor Palpatine | How Liberty Dies#unit
+~
+= Chancellor Palpatine | I Am the Senate#card
+When Played: If you control a leader unit, create 2 Spy tokens.
+= Chancellor Palpatine | Wartime Chancellor#card
+~
+On Attack: If a unit was defeated this phase, create a Clone Trooper token.

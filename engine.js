@@ -320,7 +320,9 @@
     }
     costOf(p, card, opts = {}) {
       let base = opts.baseCost != null ? opts.baseCost : card.c || 0;
-      let cost = base + (opts.ignoreAspect ? 0 : this.aspectPenalty(p, card));
+      let pen = opts.ignoreAspect ? 0 : this.aspectPenalty(p, card);
+      if (pen && this.sources(p).some(({ src, e }) => e.ignorePenalty && e.ignorePenalty(this, src, card))) pen = 0;
+      let cost = base + pen;
       const e = SWU.EFFECTS.get(card, 'card');
       if (e && e.costMod) cost += e.costMod(this, p) || 0;
       // 場上的減費光環
@@ -527,6 +529,7 @@
       if (e && e.cantBeDefeatedBy && e.cantBeDefeatedBy(this, u, why)) return;
       P.units = P.units.filter((x) => x !== u);
       this.log('logDefeat', u.card.n);
+      (this.G.defeated = this.G.defeated || []).push({ uid: u.uid, ctrl, card: u.card, phaseId: this.G.phaseId, unique: !!u.card.u });
       if (u.captured && u.captured.length) this.rescue(u);
       // 升級卡回各自擁有者棄牌堆，代幣消失
       for (const up of u.upgrades) if (!/Token/.test(up.card.t)) this.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
@@ -847,6 +850,7 @@
       } else if (from === 'hand') P.hand = P.hand.filter((x) => x !== c);
       this.log('logPlay', P.name, card.n, cost);
       this.G.playedThisPhase[p].push(card);
+      await this.fire(1 - p, 'onEnemyPlay', card);
       const inst = { uid: c.uid, card, owner: c.owner };
       const e = SWU.EFFECTS.get(card, 'card');
       if (card.t === 'Unit') {
@@ -943,6 +947,7 @@
         atk.base = target.base != null;
         if (opts.power || opts.hp) this.buff(attacker, opts.power || 0, opts.hp || 0, 'attack');
         if (opts.kw) attacker.mods.push({ p: 0, h: 0, kw: opts.kw, until: 'attack', attackId: atk.id });
+        (G.attackers = G.attackers || []).push({ uid: attacker.uid, ctrl: p, u: attacker, phaseId: G.phaseId });
         this.log(atk.base ? 'logAttackBase' : 'logAttackUnit', attacker.card.n, atk.defender ? atk.defender.card.n : this.opp(p).name);
         this.emit({ type: 'attack', atk });
         // On Attack
@@ -963,6 +968,7 @@
         if (opts.onAttackExtra) await this.safe(() => opts.onAttackExtra(atk));
         // 其他友方「當友方單位攻擊時」
         await this.fire(p, 'onFriendlyAttack', atk);
+        await this.fire(1 - p, 'onEnemyAttack', atk);
         if (atk.defender && this.findUnit(atk.defender.uid)) {
           const de = this.eff(atk.defender);
           if (de && de.whenAttacked) await this.safe(() => de.whenAttacked(this, atk.defender, atk));
@@ -1112,6 +1118,14 @@
       G.phaseId++;
       this.log('logRegroup');
       for (const q of [G.initiative, 1 - G.initiative]) await this.fire(q, 'onRegroupStart');
+      for (const P of G.players)
+        for (const u of [...P.units])
+          if (u.returnCtrl != null && u.ctrl !== u.owner) {
+            P.units = P.units.filter((x) => x !== u);
+            u.ctrl = u.owner;
+            delete u.returnCtrl;
+            this.P(u.owner).units.push(u);
+          }
       for (const p of [G.initiative, 1 - G.initiative]) this.draw(p, 2);
       this.emit({ type: 'update' });
       for (const p of [G.initiative, 1 - G.initiative]) {

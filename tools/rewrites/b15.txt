@@ -1,0 +1,145 @@
+= Reforge#card
+!
+= Regional Governor#card
+~
+= Regulations Bureaucrat#card
+!
+= Rehabilitation#card
+Take control of an enemy non-leader unit until the regroup phase.
+= Reinforcement Walker#card
+When Played/On Attack: Draw a card.
+= Relentless | Konstantine's Folly#card
+~
+= Relentless Pursuit#card
+A friendly unit captures an enemy non-leader unit.
+= Relief Frigate#card
+When Played: Heal 3 damage from your base.
+= Relief Request#card
+Heal 3 damage from a unit. You may disclose Vigilance. If you do, heal 3 damage from another unit.
+= Remnant Lookouts#card
+When Played: Look at an opponent's hand. You may discard a card from it. If you do, each opponent draws a card.
+= Remove the Chip#card
+Deal 2 damage to a unit.
+= Renew#card
+Heal 3 damage from your base.
+= Reprocess#card
+Create 2 Battle Droid tokens.
+= Republic Attack Pod#card
+While you control 3 or more units, this unit costs 1 less to play.
+= Republic Defense Carrier#card
+~
+= Reputable Hunter#card
+~
+= Resistance X-Wing#card
+~
+= Resolute | Under Anakin's Command#card
+~
+When Played/On Attack: Deal 2 damage to an enemy unit.
+= Resonate#card
+Heal 4 damage from a unit or base.
+= Restock#card
+~
+= Restore Freedom#card
+Play a unit from your hand. It costs 1 less.
+= Resupply#card
+Resource the top card of your deck.
+= Retaliation#card
+Defeat an enemy non-leader unit.
+= Retrofitted Airspeeder#card
+~
+~
+= Reveal Intentions#card
+Look at an opponent's hand. Discard a card from it. Draw a card. Each opponent draws a card.
+= Rex | No Other Option#leader
+!
+= Rex | No Other Option#unit
+~
+= Rex | Outserved His Purpose#card
+~
+= Rex's DC-17s#card
+~
+= Rey | Embracing Destiny#card
+Action [C=1]: Discard a card from your hand. If you do, attack with a unit. It gets +2/+0 for this attack.
+= Rey | Keeping the Past#card
+~
+On Attack: You may heal 2 damage from a unit.
+= Rey | More Than a Scavenger#leader
+Action [C=1, Exhaust]: Give an Experience token to a unit with 2 or less power.
+= Rey | Nobody#leader
+Action [Exhaust]: If you've played a card this phase, deal 1 damage to a unit.
+= Rey | Nobody#unit
+~
+= Rey | With Palpatine's Power#card
+~
+= Rhydonium Detonation#card
+!
+= Rich Reward#card
+Attached unit gains: "Bounty - Give an Experience token to a unit."
+= Rickety Quadjumper#card
+On Attack: You may give an Experience token to another unit.
+= Rio Durant | Beckett's Right Hands#card
+When Played: You may return a non-leader unit that costs 3 or less to its owner's hand.
+= Rish Loo | Traitorous Minister#card
+When Played: Take control of an enemy non-leader unit until the regroup phase.
+= Ritual Dragon#card
+~
+= Rodian Bondsman#card
+When Defeated: Create a Credit token. Note: The opponent also creates a Credit token.
+= Roger Roger#card
+~
+= Rogue One | At Any Cost#card
+~
+= Rose Tico | Dedicated to the Cause#card
+~
+= Rose Tico | Now it's Worth It#card
+~
+= Rose Tico | Saving What We Love#leader
+Action [Exhaust]: Heal 2 damage from a Vehicle unit.
+= Rotunda Senate Guards#card
+While this unit is undamaged, this unit gains Sentinel.
+= Rukh | Thrawn's Assassin#card
+!
+= Rule with Respect#card
+A friendly unit captures an enemy non-leader unit.
+= Rune Haako | Scheming Second#card
+When Played: If a friendly unit was defeated this phase, you may give a unit -1/-1 for this phase.
+= Rush Clovis | Banking Clan Scion#card
+~
+= Ryder Azadi | Restored Governor#card
+~
+= Ryyk Blademaster#card
+~
+= Sabine Wren | Bargaining on Belief#leader
+!
+= Sabine Wren | Bargaining on Belief#unit
+~
+= Sabine Wren | Explosives Artist#card
+~
+On Attack: You may deal 1 damage to the defending unit.
+= Sabine Wren | I Learned the Hard Way#card
+~
+= Sabine Wren | Liberator of Krownest#card
+When Played: Discard 2 cards from your deck. You may deal 2 damage to a unit.
+= Sabine Wren | You Can Count On Me#card
+~
+On Attack: You may discard a card from your deck. If you do, deal 2 damage to a ground unit.
+= Sabine's Lightsaber | Not Alone#card
+While attached unit is a Force unit, attached unit gains Restore 2.
+= Sabine's Masterpiece | Crazy Colorful#card
+On Attack: Heal 2 damage from your base.
+= Sabé | Queen's Shadow#leader
+~
+= Sabé | Queen's Shadow#unit
+When this unit deals combat damage to a base: Look at an opponent's hand. You may discard a card from it. If you do, each opponent draws a card.
+= Salacious Crumb | Cackling Companion#card
+~
+= Salacious Crumb | Obnoxious Pet#card
+!
+= Salvaged Blaster#card
+~
+= Salvaged Materials#card
+!
+= San Hill | Chairman of the Banking Clan#card
+On Attack: If a friendly unit was defeated this phase, ready a resource.
+= Sandcrawler Sales Team#card
+~

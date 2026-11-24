@@ -1,0 +1,143 @@
+= Ephant Mon | Head of Security#card
+On Attack: A friendly unit captures an enemy non-leader unit.
+= Equalize#card
+Give a unit -2/-2 for this phase. If you control fewer units than an opponent, give another unit -2/-2 for this phase.
+= Escape Pod#card
+~
+= Evade Arrest#card
+Exhaust up to 3 non-unique units.
+= Every Day, More Lies#card
+Discard a card from your hand. Each opponent discards a card from their hand.
+= Evidence of the Crime#card
+!
+= Evil is Everywhere#card
+Defeat a unit that costs 3 or less.
+= Eviscerator | Burn Them Away#card
+~
+= Execute Order 66#card
+Deal 6 damage to each Jedi unit.
+= Executioner's Arena | Geonosis#card
+Epic Action: You may deal 2 damage to a unit.
+= Executor | Final Destruction of the Alliance#card
+~
+= Exiled from the Force#card
+~
+= Expendable Mercenary#card
+~
+= Exploit Advantage#card
+Defeat a friendly upgrade. If you do, draw 2 cards.
+= Eye of Sion | Delivered from Exile#card
+Action [Exhaust]: Search the top 8 cards of your deck for a unit that costs 4 or less and play it for free. Ready it.
+= Ezra Bridger | It's Now or Never#leader
+When a friendly unit's attack ends: If it's attacking a base, you may exhaust this leader. If you do, give an Advantage token to another unit.
+= Ezra Bridger | It's Now or Never#unit
+When a friendly unit's attack ends: If it's attacking a base, you may give an Advantage token to another unit.
+= Ezra Bridger | Resourceful Troublemaker#card
+When this unit completes an attack: Search the top 1 cards of your deck for a card and play it.
+= Ezra Bridger | The Force is All I Need#card
+On Attack: If this unit is upgraded, you may give a unit -3/-0 for this phase.
+= Face Off#card
+You may ready an enemy unit. If you do, ready a friendly unit.
+= Faith in Your Friends#card
+Search the top 3 cards of your deck for a card, reveal it, and draw it. You may disclose Cunning Cunning Cunning Heroism Heroism. If you do, create 2 Spy tokens.
+= Faith in the Empire#card
+~
+= Fallen Lightsaber#card
+Attached unit gains: "On Attack: If this unit is a Force unit, deal 1 damage to each enemy ground unit."
+= Familiar Strategem#card
+Attack with a unit. It gets +2/+0 for this attack.
+= Fateful Goodbye#card
+If a friendly unit was defeated this phase, give 3 Advantage tokens to a friendly unit.
+= Fear and Dead Men#card
+Deal 4 damage to each enemy ground unit.
+= Fearless Attack#card
+Attack with a unit. It gets +1/+0 for this attack for each enemy unit.
+= Fenn Rau | Protector of Concord Dawn#card
+~
+= Fennec Shand | Honoring the Deal#leader
+Action [C=1, Exhaust]: Play a unit that costs 4 or less from your hand. Give it Ambush for this phase.
+= Fennec Shand | Honoring the Deal#unit
+Action: Play a unit that costs 4 or less from your hand. Give it Ambush for this phase.
+= Fennec Shand | Loyal Sharpshooter#card
+On Attack: Deal 2 damage to the defending unit.
+= Fennec Shand | Ready for War#leader
+Action [C=1, Exhaust]: Exhaust a friendly unit. If you do, play a unit from your hand. Ready it.
+= Fennec Shand | Ready for War#unit
+Action [C=1]: Exhaust a friendly unit. If you do, play a unit from your hand. Ready it.
+= Ferrix Uprising#card
+Deal damage to a unit equal to 2 times the number of friendly units.
+= Fett's Firespray | Feared Silhouette#card
+When Played/On Attack: Deal 1 indirect damage to each opponent.
+= Fett's Firespray | Pursuing the Bounty#card
+When Played: If you control a unit named Boba Fett, ready this unit.
+Action [C=2]: Exhaust a non-unique unit.
+= Fett's Firespray | Settling the Score#card
+~
+= Fiery Alliance#card
+When Played: You may deal 1 damage to another friendly unit. If you do, attack with it.
+= Fifth Brother | Fear Hunter#card
+This unit gets +1/+0 for each damage on this unit.
+= Fight Fire With Fire#card
+Deal 3 damage to a friendly unit. Deal 3 damage to an enemy unit.
+= Figure of Unity#card
+~
+= Final Showdown#card
+!
+= Finalizer | Might of the First Order#card
+When Played: A friendly unit captures an enemy non-leader unit.
+= Finn | On the Run#card
+~
+= Finn | Stand and Fight#card
+While this unit is upgraded, this unit gains Restore 2.
+= Finn | This is a Rescue#leader
+Action [Exhaust]: Defeat an upgrade. If you do, give a Shield token to a friendly unit.
+= Finn | This is a Rescue#unit
+On Attack: You may defeat an upgrade. If you do, give a Shield token to a friendly unit.
+= Fire Across the Galaxy#card
+!
+= First Battle Memorial | Coruscant#card
+Epic Action: Give an Experience token to a unit.
+= First Legion Snowtrooper#card
+~
+= Fives | I Have Proof!#card
+~
+= Flash the Vents#card
+Attack with a unit. It gets +2/+0 and gains Overwhelm for this attack.
+= Fleet Lieutenant#card
+When Played: You may attack with a unit. It gets +2/+0 for this attack.
+= Flight of the Inquisitor#card
+Return a Force unit from your discard pile to your hand. Return an upgrade from your discard pile to your hand.
+= Fly Casual#card
+Ready a Vehicle unit.
+= Focus Fire#card
+A friendly Vehicle unit deals damage equal to its power to an enemy unit.
+= Follow Me#card
+Attack with a unit. Give 3 Advantage tokens to a unit.
+= Follower of The Way#card
+While this unit is upgraded, this unit gets +1/+1.
+= Following the Path#card
+Search the top 8 cards of your deck for a Force unit, reveal it, and draw it.
+= For The Republic#card
+While you control 3 or more Republic units, this upgrade costs 2 less to play.
+While you control 3 or more units, attached unit gains Restore 2.
+= For a Cause I Believe In#card
+Deal 2 damage to each enemy base.
+= Force Choke#card
+If you control a Force unit, this event costs 1 less to play.
+Deal 5 damage to a non-Vehicle unit. Each opponent draws a card.
+= Force Lightning#card
+You may pay 2 resources. If you do, deal 4 damage to a unit.
+= Force Speed#card
+Attack with a unit.
+= Force Throw#card
+Each opponent discards a card from their hand. If you control a Force unit, you may deal 3 damage to a unit.
+= Forced Pacification#card
+Defeat a friendly unit. If you do, exhaust up to 2 enemy units.
+= Forced Surrender#card
+Draw 2 cards. If you've attacked with a unit this phase, each opponent discards 2 cards from their hand.
+= Foresight#card
+~
+= Foundling#card
+~
+= Frisk | Vanguard Loudmouth#card
+~

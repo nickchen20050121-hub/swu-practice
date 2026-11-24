@@ -1,0 +1,145 @@
+= Mechanize#card
+!
+= Medal Ceremony#card
+Give an Experience token to a friendly unit. Give an Experience token to a friendly unit. Give an Experience token to a friendly unit.
+= Mercenary Gunship#card
+~
+= Merciless Contest#card
+Defeat a friendly non-leader unit. Note: The opponent chooses a non-leader unit they control and defeats it.
+= Midnight Repairs#card
+Heal up to 4 damage from a unit. Heal up to 4 damage from a unit.
+= Migrate#card
+Create a Beast token.
+= Migs Mayfeld | How About a Toast?#card
+On Attack: Deal 1 damage to the defending unit.
+= Migs Mayfeld | Triggerman#card
+~
+= Military Academy#card
+~
+= Millennium Falcon | Bucket of Bolts#card
+~
+= Millennium Falcon | Get Out And Push#card
+~
+~
+= Millennium Falcon | Lando's Pride#card
+~
+= Millennium Falcon | Piece Of Junk#card
+~
+~
+= Millennium Falcon | Ya-Hoo!#card
+!
+= Mind Trick#card
+Exhaust up to 2 units with 2 or less power.
+= Miraj Scintel | The Weak Deserve to Kneel#card
+~
+= Mission Briefing#card
+Draw 2 cards.
+= Mist Hunter | The Findsman's Pursuit#card
+On Attack: If you've played a card this phase, you may draw a card.
+= Mister Bones | I Performed Violence#card
+On Attack: You may deal 3 damage to a ground unit.
+= Moff Gideon | Cold Calling#card
+While a friendly unit was defeated this phase, this unit costs 2 less to play.
+= Moff Gideon | Formidable Commander#leader
+Action [Exhaust]: Attack with a unit that costs 3 or less.
+= Moff Gideon | Formidable Commander#unit
+~
+= Moff Gideon | I Know Everything#card
+~
+= Moff Gideon | Indomitable Warlord#leader
+Action [Exhaust]: If a friendly unit was defeated this phase, play a unit from your hand. It costs 1 less.
+= Moff Gideon | Indomitable Warlord#unit
+~
+= Moff Gideon | Remnant Commander#card
+When Defeated: You may return a unit from your discard pile to your hand.
+= Moff Jerjerrod | We Shall Redouble Our Efforts#card
+~
+= Mon Cal Cruiser#card
+!
+= Mon Mothma | Clinging to Hope#card
+When Played: You may attack with a unit, even if it's exhausted. It can't attack bases for this attack.
+= Mon Mothma | Forming a Coalition#leader
+~
+= Mon Mothma | Forming a Coalition#unit
+~
+= Mon Mothma | Truth is an Abyss#card
+When Played: You may attack with another unit, even if it's exhausted. It gains Overwhelm for this attack. It can't attack bases for this attack.
+= Moralo Eval | Infamous Murderer#card
+~
+= Morgan Elsbeth | Following the Call#leader
+Action [Exhaust]: Play a unit from your hand. It costs 1 less.
+= Morgan Elsbeth | Following the Call#unit
+~
+= Morgan Elsbeth | Tales Based on Truths#card
+On Attack: Discard a card from your deck.
+= Mos Espa Watermonger#card
+When Played: You may draw a card. If you do, discard a card from your hand.
+= Mother Talzin | Power Through Magick#leader
+Action [Exhaust, use the Force]: Give a unit -1/-1 for this phase.
+= Mother Talzin | Stealing the Spirit#card
+When Defeated: Look at an opponent's hand. Discard a card from it. Each opponent draws a card.
+= Mother Talzin | The Time Has Come#card
+!
+= Mouse Droid#card
+~
+= Muckraker Crab Droid#card
+~
+= Mysterious Disappearance#card
+Defeat an enemy non-leader unit. Its controller creates a Beast token.
+= Mystic Monastery | Mortis#card
+Epic Action: The Force is with you.
+= Mystic Reflection#card
+Give an enemy unit -2/-0 for this phase. If you control a Force unit, give an enemy unit -0/-2 for this phase.
+= Mythosaur | Folklore Awakened#card
+~
+~
+= Nabat Village | Ryloth#card
+!
+= Naboo Security Force#card
+When Played/When Defeated: You may disclose Command. If you do, give a friendly unit Sentinel for this phase.
+= Nala Se | Chief Medical Scientist#card
+On Attack: You may disclose Vigilance Vigilance. If you do, heal up to 4 damage from another unit.
+= Nala Se | Clone Engineer#leader
+~
+= Nala Se | Clone Engineer#unit
+~
+~
+= Nameless Terror#card
+~
+= Nebula Ignition#card
+!
+= Neel | The Cutest Boy#card
+~
+= Negotiator | Prepare the Troops#card
+On Attack/When Defeated: Resource the top card of your deck.
+= Nemik's Manifesto#card
+~
+= Never Tell Me the Odds#card
+Discard 3 cards from your deck. Deal 3 damage to a unit.
+= New Tactics#card
+Return a non-leader unit to its owner's hand.
+= Nien Nunb | Loyal Co-Pilot#card
+~
+~
+= Nightbrother | Maul's Gauntlet#card
+!
+= Niman Strike#card
+Attack with a Force unit, even if it's exhausted. It gets +1/+0 for this attack. It can't attack bases for this attack.
+= Nimble Prowess#card
+When Played: You may exhaust a unit.
+= Ninth Sister | Hulking Inquisitor#card
+When Played: Each opponent discards a card from their hand. You may deal 2 damage to a unit.
+= No Disintegrations#card
+!
+= No Good to Me Dead#card
+Exhaust a unit.
+= No One Ever Knew#card
+Exhaust an enemy unit.
+= Nothing Left to Fear#card
+Give a friendly unit +2/+2 for this phase. You may defeat a non-leader unit with 3 or less power.
+= Now There Are Two of Them#card
+Play a unit from your hand. It costs 5 less.
+= Noxious Refinery#card
+~
+= Numa | Still Fighting#card
+~

@@ -1,0 +1,145 @@
+= Nute Gunray | Perfectly Legal#card
+When Played: Deal 1 damage to each enemy unit.
+= Nute Gunray | Vindictive Viceroy#leader
+Action [Exhaust]: If a friendly unit was defeated this phase, create a Battle Droid token.
+= Nuvo Vindi | Blue Shadow Perfected#card
+~
+= Obi-Wan Kenobi | Courage Makes Heroes#leader
+Action [Exhaust, use the Force]: Give an Experience token to a unit.
+= Obi-Wan Kenobi | Finding What Doesn't Exist#card
+~
+= Obi-Wan Kenobi | Following Fate#card
+When Defeated: Give 2 Experience tokens to another friendly unit.
+= Obi-Wan Kenobi | I Sense a Trap#card
+When Played: Give a unit that entered play this phase -5/-5 for this phase.
+= Obi-Wan Kenobi | Patient Mentor#unit
+On Attack: Heal 1 damage from a unit. If you do, deal 1 damage to a unit.
+= Obi-Wan Kenobi | Protective Padawan#card
+~
+= Obi-Wan Kenobi | Protector of Felucia#card
+~
+= Occupation Officer#card
+When Played: If you control 6 or more resources, you may give a Weakness token to a unit.
+= Oggdo Bogdo | Bogano Brute#card
+~
+= Old Access Codes#card
+When Played: If you control fewer units than an opponent, draw a card.
+= Old Daka | Oldest and Wisest#card
+!
+= Omega | Close Your Eyes and Focus#leader
+Action [C=1, Exhaust]: Attack with a Heroism unit.
+= Omega | Close Your Eyes and Focus#unit
+~
+= Omega | Part of the Squad#card
+~
+= On Top of Things#card
+~
+= One Must Destroy to Create#card
+!
+= One Way Out#card
+Attack with a unit. It gets +1/+0 and gains Overwhelm for this attack.
+= One in a Million#card
+!
+= Oppo Rancisis | Ancient Councilor#card
+~
+~
+= Oppression Breeds Rebellion#card
+If a friendly unit was defeated this phase, draw 3 cards.
+= Origin Tree Shyyyo#card
+!
+= Orn Free Taa | Political Power Broker#card
+~
+= Osha | Haunted by Her Past#leader
+!
+= Osha | Haunted by Her Past#unit
+!
+= Osi Sobeck | Warden of the Citadel#card
+When Played: A friendly unit captures an enemy non-leader unit that costs 3 or less.
+= Outcast | Mercenary Starship#card
+~
+= Outmaneuver#card
+Choose one
+- Exhaust each ground unit.
+- Exhaust each space unit.
+= Overcharged Transport#card
+When Played/When Defeated: You may defeat an upgrade.
+= Overwhelming Barrage#card
+Give a friendly unit +2/+2 for this phase. It deals damage equal to its power to an enemy unit.
+= Pack Guardian#card
+~
+= Padawan Starfighter#card
+While you control a Force unit, this unit gets +1/+1.
+= Padmé Amidala | Follow My Lead#leader
+Action [Exhaust]: Attack with a unit, even if it's exhausted. It can't attack bases for this attack.
+= Padmé Amidala | What Do You Have to Hide?#leader
+~
+= Padmé Amidala | What Do You Have to Hide?#unit
+~
+= Palpatine's Return#card
+!
+= Pantoran Starship Thief#card
+~
+~
+= Partisan U-Wing#card
+When Played: If a friendly unit was defeated this phase, create a Credit token.
+= Patient Hunter#card
+~
+= Payroll Heist#card
+Create a Credit token.
+= Paz Vizsla | Unyielding Warrior#card
+~
+= Pegasus Tri-Wing#card
+When Played: You may defeat a friendly upgrade. If you do, ready this unit.
+= Peli Motto | You Bring the Cash?#card
+~
+= Pelta Relief Frigate#card
+When Played: Heal 2 damage from your base. Heal 2 damage from a friendly unit.
+= Peppi Bow | Shaak Herder#card
+While this unit is upgraded, this unit gets +1/+1.
+= Persecutor | Fire Over Scarif#card
+When Played/On Attack: You may deal 3 damage to each enemy ground unit.
+= Phantom II | Modified to Dock#card
+~
+= Phase-III Dark Trooper#card
+~
+= Phee Genoa | Liberator of Ancient Wonders#card
+~
+= Piercing Shot#card
+Deal 3 damage to a unit.
+= Pillage#card
+Each opponent discards 2 cards from their hand.
+= Pillio Star Compass#card
+When Played: Search the top 3 cards of your deck for a unit, reveal it, and draw it.
+= Pit Droid Team#card
+~
+= Planetary Bombardment#card
+Deal 8 damage to an enemy base.
+= Planetary Invasion#card
+~
+Ready up to 3 units. Give them +1/+0 and Overwhelm for this phase.
+= Plo Koon | I Don't Believe in Chance#card
+~
+= Poe Dameron | I Can Fly Anything#leader
+~
+= Poe Dameron | I Can Fly Anything#unit
+~
+= Poe Dameron | I'll Come Back For You#card
+~
+= Poe Dameron | One Hell of a a Pilot#card
+When Played: Create an X-Wing token.
+= Poe Dameron | Quick to Improvise#card
+On Attack: You may discard a card from your hand. If you do, deal 2 damage to a unit or base.
+= Poggle the Lesser | Secret Designs#card
+~
+= Pointless to Resist#card
+~
+= Political Pressure#card
+Create 2 Battle Droid tokens.
+= Pong Krell | It's Treason, Then#card
+When this unit completes an attack: You may defeat a unit with 3 or less remaining HP.
+= Populist Advisor#card
+~
+= Power Failure#card
+Defeat an upgrade.
+= Power from Pain#card
+!

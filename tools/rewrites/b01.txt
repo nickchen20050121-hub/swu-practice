@@ -1,0 +1,142 @@
+= Asajj Ventress | No Time for Regret#unit
+Action: Attack with a unit.
+= Asajj Ventress | Unparalleled Adversary#leader
+Action [Exhaust]: Attack with a unit.
+= Asajj Ventress | Unparalleled Adversary#unit
+On Attack: If you've played an event this phase, this unit gets +1/+0 for this attack.
+= Astromech Pilot#card
+~
+= At Attin Safety Droid#card
+!
+= Attack From All Sides#card
+Deal 3 damage to a unit.
+= Attack Pattern Delta#card
+Give a friendly unit +3/+3 for this phase. Give another friendly unit +2/+2 for this phase. Give another friendly unit +1/+1 for this phase.
+= Aurra Sing | Crackshot Sniper#card
+When an enemy unit attacks: Ready this unit.
+= Avar Kriss | Marshal of Starlight#unit
+While the Force is with you, this unit gets +4/+0 and gains Overwhelm.
+= Avenger | Hunting Star Destroyer#card
+When Played/On Attack: Note: An opponent chooses a non-leader unit they control and defeats it.
+= Awakened Exogorth#card
+On Attack: Give the defending unit -3/-0 for this attack.
+= Axe Woves | Accomplished Warrior#card
+This unit gets +1/+1 for each upgrade on this unit.
+= Axe Woves | Undaunted#card
+At the start of the regroup phase: Give an Advantage token to this unit.
+= B2EM0 | That's Two Lies#card
+On Attack: You may give a unit Sentinel for this phase.
+= BB-8 | Happy Beeps#card
+~
+= BD-1 | Beep Boo Boo Bweep#card
+When Played: Give another friendly unit +1/+0 and Saboteur for this phase.
+= BT-1 | Blastomech#card
+On Attack: Discard a card from your deck. If it is an Aggression card, you may deal 1 damage to a ground unit.
+= Babu Frik | Heyyy!#card
+Action [Exhaust]: You may attack with a friendly Droid unit.
+= Babwa Venomor | Burning Kashyyyk#card
+When Played: An opponent creates a Beast token.
+= Backed by the Hutts#card
+Create a Credit token. You may deal 2 damage to a unit.
+= Backed by the Pykes#card
+Give an Experience token to a friendly unit. You may deal 2 damage to a unit.
+= Bacta Tank#card
+!
+= Bail Organa | Doing Everything He Can#leader
+Action [C=1, Exhaust]: If a friendly unit was defeated this phase, resource the top card of your deck.
+= Bail Organa | Doing Everything He Can#unit
+~
+= Bamboozle#card
+Exhaust a unit.
+= Banshee | Scream Machine#card
+~
+= Bardottan Ornithopter#card
+When Played: You may draw a card.
+= Barrel Roll#card
+Attack with a space unit. You may exhaust a space unit.
+= Barriss Offee | It's Only a Matter of Time#card
+~
+= Barriss Offee | Redeeming Herself#card
+When Played: Heal up to 2 damage from a unit. Give 2 Advantage tokens to it.
+= Barriss Offee | Unassuming Apprentice#card
+Each friendly damaged unit gets +0/+0.
+= Barriss Offee | We Have Become Villains#leader
+Action [Exhaust, use the Force]: Play an event from your hand. It costs 1 less.
+= Baylan Skoll | Enigmatic Master#card
+When Played: You may use the Force. If you do, return a non-leader unit that costs 4 or less to its owner's hand.
+= Baylan Skoll | Fallen Jedi#card
+When Played/When Attack Ends: Give an Advantage token to a unit.
+= Baylan Skoll | Power Beyond Dream#leader
+Action [C=1, Exhaust]: Give a friendly unit +2/+2 for this phase.
+= Baylan Skoll | Power Beyond Dream#unit
+On Attack: You may give a friendly unit +2/+2 and Sentinel for this phase.
+= Baze Malbus | Good Luck#card
+~
+= Bazine Netal | Spy for the First Order#card
+When Played: Look at an opponent's hand. You may discard a card from it. If you do, each opponent draws a card.
+= Beast Lair#card
+!
+= Beguile#card
+Return an enemy non-leader unit that costs 6 or less to its owner's hand.
+= Beilert Valance | Target: Vader#card
+On Attack: Draw a card. You may deal 2 damage to a ground unit.
+= Ben Solo | Facing the Light#card
+When Played/When Defeated: Ready another friendly unit.
+= Bendu | The One in the Middle#card
+~
+= Betrayed Trust#card
+Give an enemy unit -8/-0 for this phase.
+= Bib Fortuna | Jabba's Majordomo#card
+Action [Exhaust]: Play an event from your hand. It costs 1 less.
+= Biggs Darklighter | They'll Never Stop Us#card
+~
+= Black One | Scourge of Starkiller Base#card
+~
+= Black One | Straight At Them#card
+While this unit is upgraded, this unit gets +1/+0.
+On Attack: If you control a unit named Poe Dameron, you may deal 1 damage to a unit.
+= Black Squadron Scout Wing#card
+~
+= Blade Squadron B-Wing#card
+When Played: If an opponent controls 3 or more exhausted units, give a Shield token to a unit.
+= Blade Three | Bane of the Devastator#card
+~
+= Blade of Talzin | A Gift of Shadows#card
+~
+= Blizzard Assault AT-AT#card
+When this unit attacks and defeats a unit: You may deal 2 damage to an enemy ground unit.
+= Bo-Katan Kryze | Death Watch Lieutenant#card
+While you control another Mandalorian unit, this unit gains Overwhelm and Saboteur.
+While you control another Trooper unit, this unit gets +1/+0.
+= Bo-Katan Kryze | Fighting For Mandalore#card
+When Defeated: Draw a card.
+= Bo-Katan Kryze | Princess in Exile#leader
+Action [Exhaust]: If you've attacked with a Mandalorian unit this phase, deal 1 damage to a unit.
+= Bo-Katan Kryze | Princess in Exile#unit
+On Attack: You may deal 1 damage to a unit. If you've attacked with another Mandalorian unit this phase, you may deal 1 damage to a unit.
+= Bo-Katan Kryze | Reclaiming Mandalore#leader
+Action [C=2, Exhaust]: If you control a ground unit and a space unit, create a Mandalorian token.
+= Bo-Katan Kryze | Reclaiming Mandalore#unit
+On Attack: If you control a ground unit and a space unit, create a Mandalorian token.
+= Bo-Katan's Gauntlet | Reinforce from Above#card
+!
+= BoShek | Charismatic Smuggler#card
+~
+= Boba Fett | Any Methods Necessary#leader
+~
+= Boba Fett | Any Methods Necessary#unit
+~
+= Boba Fett | Collecting the Bounty#leader
+When an enemy unit is defeated: You may exhaust this leader. If you do, ready a resource.
+= Boba Fett | Collecting the Bounty#unit
+When this unit completes an attack: If an enemy unit was defeated this phase, ready 2 resources.
+= Boba Fett | Daimyo#leader
+When you play a unit: You may exhaust this leader. If you do, give a friendly unit +1/+0 for this phase.
+= Boba Fett | Daimyo#unit
+~
+= Boba Fett | Disintegrator#card
+On Attack: If the defending unit is exhausted, deal 3 damage to the defending unit.
+= Boba Fett | Family Found#card
+~
+= Boba Fett | Feared Bounty Hunter#card
+~

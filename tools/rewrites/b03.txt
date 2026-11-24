@@ -1,0 +1,150 @@
+= Chancellor Palpatine // Darth Sidious | Playing Both Sides#leader
+~
+Action [Exhaust]: If a friendly unit was defeated this phase, draw a card. Heal 2 damage from your base.
+= Chancellor Palpatine // Darth Sidious | Playing Both Sides#unit
+Action [Exhaust]: If you've played a Villainy card this phase, create a Clone Trooper token. Deal 2 damage to each enemy base.
+= Chancellor Valorum | Civil Servant#card
+When this unit completes an attack: You may disclose Command Command Command. If you do, resource the top card of your deck.
+= Change of Heart#card
+Take control of a non-leader unit until the regroup phase.
+= Chaotic Diversion#card
+Give a Shield token to a friendly unit.
+= Charged with Corruption#card
+You may disclose Command Command. If you do, a friendly unit captures an enemy non-leader unit.
+= Charged with Espionage#card
+You may disclose Cunning Cunning. If you do, look at an opponent's hand. Discard a unit from it.
+= Charged with Murder#card
+You may disclose Vigilance Vigilance. If you do, defeat a damaged non-leader unit.
+= Charged with Treason#card
+You may disclose Aggression Aggression. If you do, deal 5 damage to a unit.
+= Chewbacca | Cool Backpack#card
+While this unit is damaged, this unit gets +4/+0.
+= Chewbacca | Faithful First Mate#card
+~
+~
+= Chewbacca | Hero of Kessel#leader
+Action [C=1, Exhaust]: Deal 2 damage to a unit and create a Credit token.
+= Chewbacca | Hero of Kessel#unit
+On Attack: You may pay 1 resource. If you do, deal 2 damage to a unit and create a Credit token.
+= Chewbacca | Loyal Companion#card
+When this unit is attacked: Ready this unit.
+= Chewbacca | Mighty Rescuer#card
+When Attack Ends: If the defending unit was defeated, give an Experience token to this unit and heal 3 damage from this unit.
+= Chewbacca | Resourceful Wookiee#card
+~
+~
+= Chewbacca's Bowcaster | Handcrafted Tradition#card
+When Played: If attached unit is Chewbacca, resource the top card of your deck.
+= Chimaera | A Frightening Reality#card
+When Played: You may defeat a friendly non-leader unit. If you do, defeat an enemy non-leader unit.
+= Chimaera | Flagship of the Seventh Fleet#card
+On Attack: Look at an opponent's hand. Discard a card from it.
+= Chimaera | Grand Admiral's Might#card
+When Played: Give an Experience token to an upgraded friendly unit.
+= Chimaera | Reinforcing the Center#card
+!
+= Chio Fain | Four-Armed Slicer#card
+On Attack: You may draw a card.
+= Chirrut Îmwe | Blind, but not Deaf#card
+When this unit is attacked: You may use the Force. If you do, give the attacker -2/-0 for this attack.
+= Chirrut Îmwe | I Don't Need Luck#card
+When this unit deals combat damage to a base: You may heal 4 damage from another unit.
+= Chirrut Îmwe | One With the Force#leader
+Action [Exhaust]: Give a unit +0/+2 for this phase.
+= Chirrut Îmwe | One With the Force#unit
+~
+= Choke on Aspirations#card
+Deal 3 damage to a friendly non-Vehicle unit. Heal 3 damage from your base.
+= Choose Sides#card
+Take control of an enemy non-leader unit. Note: Give one of your non-leader units to the opponent.
+= Chopper | Metal Menace#card
+On Attack: Each opponent discards a card from their deck.
+= Chopper | Spectre Three#card
+When Played: Give an Experience token to this unit. If you control a Cunning or Vigilance unit, give 2 Experience tokens to this unit instead.
+= Chopper | War Hero#card
+When this unit deals combat damage to a base: Discard a card from your hand. Each opponent discards a card from their hand.
+= Cid Scaleback | Can't Be Trusted#card
+When Played: Give a Weakness token to an enemy unit.
+= Cikatro Vizago | Business is What Matters#card
+On Attack: Draw a card.
+= Cin Drallig | Esteemed Blademaster#card
+When Played: You may play a Lightsaber upgrade from your hand for free. If you do, ready this unit.
+= Cinta Kaz | Stone Cold and Fearless#card
+While this unit is upgraded, this unit gains Sentinel.
+= Citadel Research Center | Scarif#card
+Epic Action [C=1]: Resource the top card of your deck.
+= Clan Challengers#card
+While this unit is upgraded, this unit gains Overwhelm.
+= Clan Wren Loyalist#card
+When Played: Search the top 5 cards of your deck for a card, reveal it, and draw it.
+= Clear the Field#card
+Return a non-leader unit that costs 3 or less to its owner's hand.
+= Clone#card
+~
+= Clone Cohort#card
+Attached unit gains Raid 2.
+Attached unit gains: "When Defeated: Create a Clone Trooper token."
+= Clone Commander Cody | Loyal to the Republic#card
+When another friendly Republic unit enters play: Give an Experience token to it.
+= Close the Shield Gate#card
+Heal 3 damage from your base.
+= Cobb Vanth | The Marshal#card
+When Defeated: Search the top 10 cards of your deck for a unit that costs 2 or less and play it for free.
+= Coleman Trebor | Jedi Rescuer#card
+When Played: Deal 1 damage to each enemy base. Heal 1 damage from your base.
+= Collateral Damage#card
+Deal 2 damage to a unit. Deal 2 damage to a unit or base.
+= Colonel Yularen | ISB Director#card
+When you play a Command unit: Heal 1 damage from your base.
+= Colonel Yularen | This is Why We Plan#leader
+Action [Exhaust]: Attack with a unit. You may attack with another unit.
+= Colossus | Castilon#card
+~
+= Command#card
+Choose two
+- Give 2 Experience tokens to a unit.
+- A friendly unit deals damage equal to its power to a non-unique enemy unit.
+- Resource the top card of your deck.
+- Return a unit from your discard pile to your hand.
+= Commandeer#card
+Take control of a non-leader Vehicle unit that costs 6 or less until the regroup phase. Ready it.
+= Commander Gree | Of the 41st Elite Corps#card
+While you control 3 or more Command units, this unit gains Raid 4.
+= Commence Patrol#card
+Create an X-Wing token.
+= Commence the Festivities#card
+Attack with a unit. It gains Saboteur for this attack.
+= Commission#card
+Search the top 10 cards of your deck for a card, reveal it, and draw it.
+= Common Cause#card
+Give a unit +2/+2 for this phase.
+= Compassionate Senator#card
+Action [C=2, Exhaust]: Heal 2 damage from a unit or base.
+= Condemn#card
+~
+= Confederate Tri-Fighter#card
+~
+= Confidence in Victory#card
+!
+= Congress of Malastare#card
+~
+= Consolidation of Power#card
+!
+= Constructed Lightsaber#card
+While attached unit is a Heroism unit, attached unit gains Restore 2.
+While attached unit is a Villainy unit, attached unit gains Raid 2.
+~
+= Conveyex Security Captain#card
+~
+= Corellian Hounds#card
+When Played: If an opponent controls no ground units, ready this unit.
+= Corner the Prey#card
+Attack with a unit. It gets +1/+0 for this attack for each damage on the defender.
+= Corona Four | Justice for Alderaan#card
+When Defeated: You may defeat a non-leader unit with 0 or less power.
+= Corporate Defense Shuttle#card
+~
+= Corrupt Politician#card
+While you control more units than an opponent, this unit gains Sentinel.
+= Corrupted Saber#card
+Attached unit gains: "On Attack: Give the defending unit -2/-0 for this attack."

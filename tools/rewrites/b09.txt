@@ -1,0 +1,148 @@
+= Impossible Escape#card
+You may exhaust a friendly unit. If you do, exhaust an enemy unit and draw a card.
+= Imprisoned#card
+~
+= Impropriety Among Thieves#card
+Take control of an enemy ready non-leader unit until the regroup phase.
+= Improvise#card
+Search the top 1 cards of your deck for a card and play it. It costs 1 less.
+= Improvised Identity#card
+~
+= In Debt to Crimson Dawn#card
+~
+= In Defense of Kamino#card
+Give each friendly Republic unit Restore 2 for this phase.
+= In the Heat of Battle#card
+Give each unit Sentinel for this phase.
+= Incinerator Trooper#card
+~
+= Independent Senator#card
+Action [C=2, Exhaust]: Exhaust a unit with 4 or less power.
+= Independent Smuggler#card
+Attached unit gains Raid 1.
+= Inferno Four | Unforgetting#card
+~
+= Infused Brawler #card
+~
+= Inquisitor's Lightsaber#card
+~
+= Inspector's Shuttle#card
+~
+= Inspiring Senator#card
+~
+= Insurgent Camp#card
+~
+= Intelligence Agency#card
+~
+When Played: Look at an opponent's hand. You may discard a card from it. If you do, each opponent draws a card.
+= Interrogation Droid#card
+When Played: Exhaust an enemy unit.
+= Intimidator | Citadel Overwatch#card
+~
+= Invincible | Naval Adversary#card
+While you control a unique Separatist unit, this unit costs 1 less to play.
+~
+= Issue a Command#card
+Choose one
+- Search the top 1 cards of your deck for a unit, reveal it, and draw it.
+- Give an Experience token to a friendly unit.
+- Resource the top card of your deck.
+= It Binds All Things#card
+Heal up to 3 damage from a unit. If you control a Force unit, you may deal 3 damage to another unit.
+= It's Not Over Yet#card
+Choose one
+- You may ready a unit.
+- Create a Spy token.
+= It's a Trap#card
+If you control fewer space units than an opponent, ready each friendly space unit.
+= Jabba the Hutt | Bounties Left and Right#card
+Action [Exhaust]: Give an enemy unit -0/-3 for this phase.
+= Jabba the Hutt | Crime Boss#leader
+Action [C=1, Exhaust]: Create a Credit token.
+= Jabba the Hutt | Crime Boss#unit
+Action: Play an Underworld unit from your hand.
+= Jabba the Hutt | Eminence of Tatooine#card
+When Played: You may defeat an upgrade.
+= Jabba the Hutt | His High Exaltdeness#leader
+~
+= Jabba the Hutt | His High Exaltdeness#unit
+When Deployed: A friendly unit captures an enemy non-leader unit.
+~
+= Jabba the Hutt | Wonderful Human Being#leader
+Action [C=1, Exhaust]: A friendly damaged unit deals damage equal to its power to an enemy unit.
+= Jabba the Hutt | Wonderful Human Being#unit
+~
+= Jabba's Rancor | Pateesa#card
+While you control a unit named Jabba the Hutt, this unit costs 1 less to play.
+= Jabba's Rancor | Snack Time!#card
+On Attack: You may deal 7 damage to an enemy ground unit.
+= Jam Communications#card
+Look at an opponent's hand. Discard an event from it.
+= Jango Fett | Concealing the Conspiracy#leader
+~
+= Jango Fett | Concealing the Conspiracy#unit
+~
+= Jango Fett | Guarding the Count#card
+~
+= Jango Fett | Renowned Bounty Hunter#card
+~
+= Jango Fett | Wily Mercenary#card
+On Attack: If this unit is upgraded, exhaust an enemy unit.
+= Jar Jar Binks | Bombad General#leader
+Action [C=1, Exhaust]: Deal 1 damage to a unit and heal 1 damage from your base.
+= Jar Jar Binks | Bombad General#unit
+On Attack: You may deal 1 damage to a unit and heal 1 damage from your base.
+= Jar Jar Binks | Bumbling Representative#card
+On Attack: Discard a card from your deck.
+= Jar Jar Binks | Foolish Gungan#card
+On Attack: Deal 2 damage to a unit or base.
+= Jarek Yeager | Coordinating With The Resistance#card
+While you control a ground unit and a space unit, attached unit gains Sentinel.
+= Jaunty Light Freighter#card
+When Played: Give 2 Experience tokens to this unit.
+= Jedi Consular#card
+Action [Exhaust, use the Force]: Play a unit from your hand. It costs 2 less.
+= Jedi General#card
+When Played: If you control a leader unit, create a Clone Trooper token and give an Experience token to it.
+= Jedi Guardian#card
+This unit gets +2/+0 while defending.
+= Jedi Interceptor#card
+While you control 6 or more resources, this unit gets +2/+0.
+= Jedi Lightsaber#card
+Attached unit gains: "On Attack: If this unit is a Force unit, give the defending unit -2/-2 for this phase."
+= Jedi Sentinel#card
+While the Force is with you, this unit gains Sentinel.
+= Jedi Trials#card
+~
+= Jedi Vector#card
+While you control another Jedi unit, this unit gets +1/+0.
+= Jendirian Valley | Refugee Freighter#card
+When Played: Resource the top card of your deck.
+= Jesse | Hard-Fighting Patriot#card
+When Played: An opponent creates 2 Battle Droid tokens.
+= Jetpack#card
+When Played: Give a Shield token to attached unit.
+= Jocasta Nu | The Gift of Knowledge#card
+~
+= Jod Na Nawood | We Don't Want War#card
+When Played: You may pay 4 resources. If you do, exhaust each enemy ground unit.
+= Jump to Lightspeed#card
+Return a friendly non-leader space unit to its owner's hand.
+= Junior Senator#card
+When Played: You may defeat an upgrade that costs 3 or less.
+= Justifier | Relentless#card
+When Played/On Attack: You may deal 1 damage to a unit. If it was defeated, give an Advantage token to a unit.
+= Jyn Erso | Her Father's Revenge#card
+When Played: Ready up to 2 units. Give them Saboteur for this phase.
+= Jyn Erso | Resisting Oppression#unit
+~
+= Jyn Erso | Stardust#card
+While an enemy unit was defeated this phase, this unit gets +1/+0 and gains Saboteur.
+= Jyn Erso | Take the Next Chance#card
+When Played: Give an Experience token to a unit.
+= Jyn Erso | Time to Fight#leader
+Action [C=1, Exhaust]: If a friendly unit was defeated this phase, search the top 3 cards of your deck for a card, reveal it, and draw it.
+= Jyn Erso | Time to Fight#unit
+On Attack: If a friendly unit was defeated this phase, search the top 3 cards of your deck for a card, reveal it, and draw it.
+= K-2SO | Cassian's Counterpart#card
+When Defeated: Deal 3 damage to each enemy base.

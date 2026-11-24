@@ -1,0 +1,143 @@
+= Devastator | Hunting the Rebellion#card
+~
+= Dexter Jettster | OBI-WANNNN!!!#card
+~
+= Diplomatic Envoy#card
+~
+= Diplomatic Immunity#card
+Attached unit gains: "When this unit is attacked: You may disclose Vigilance Vigilance Heroism Heroism. If you do, give the attacker -2/-0 for this attack."
+= Diplomatic Pageantry#card
+Exhaust a friendly unit. Exhaust an enemy unit. Give 2 Advantage tokens to a friendly unit.
+= Director Krennic | Amidst My Achievement#leader
+Action [Exhaust]: Defeat a friendly unit. If you do, create a Credit token.
+= Director Krennic | Architect of Annihilation#card
+Action [Exhaust]: Play a unit that costs 7 or more from your hand. It costs 2 less.
+= Director Krennic | I Lose Nothing But Time#card
+When this unit is attacked: Discard a card from your deck. If it is a unit, you may return a unit from your discard pile to your hand.
+= Director Krennic | On the Verge Of Greatness#card
+~
+= Director Krennic | The Work has Stalled#card
+~
+= Disaffected Senator#card
+Action [C=2, Exhaust]: Deal 2 damage to a base.
+= Disciples' Devotion#card
+While attached unit is exhausted, attached unit gains Sentinel.
+= Dismantle the Conspiracy#card
+A friendly unit captures an enemy non-leader unit with 7 or less remaining HP.
+= Display Piece#card
+Defeat an enemy non-leader unit.
+= Disposable B1#card
+When Played: If you control another unit that entered play this phase, draw a card.
+= Disturbance in the Force#card
+If a friendly unit was defeated this phase, the Force is with you. You may give a Shield token to a unit.
+= Do or Do Not#card
+Draw a card. You may use the Force. If you do, draw a card.
+= Doctor Aphra | Digging For Answers#card
+On Attack: Discard 3 cards from your deck. You may return an Underworld card from your discard pile to your hand.
+= Doctor Aphra | Rapacious Archaeologist#unit
+~
+When Deployed: Return a card from your discard pile to your hand.
+= Doctor Hemlock | Emotion Has No Place Here#leader
+Action [C=1, Exhaust]: Give a Weakness token to a unit.
+= Doctor Pershing | Dedicated to Research#card
+On Attack: Draw a card.
+= Doctor Pershing | Experimenting With Life#card
+Action [Exhaust]: Deal 1 damage to a friendly unit. If you do, draw a card.
+= Domesticated Loth-Cat#card
+~
+= Don't Get Cocky#card
+Deal 4 damage to a unit.
+= Don't Touch Anything#card
+Deal 3 damage to an enemy unit.
+= Dooku | Corruption Must Be Eradicated#card
+When Played: You may ready another unit. If you do, heal 2 damage from your base.
+= Dooku | It is Too Late#card
+~
+= Dooku's Palace | Serenno#card
+Epic Action: Play a unit from your hand.
+= Dooku's Solar Sailer | Beautiful and Expensive#card
+~
+= Dornean Gunship#card
+When Played: Deal damage to an enemy base equal to the number of friendly Vehicle units.
+= Dorsal Turret#card
+Attached unit gains: "When this unit attacks and defeats a unit: Draw a card."
+= Double-Cross#card
+Take control of an enemy non-leader unit. Note: Give one of your non-leader units to the opponent (Credit tokens for the cost difference).
+= Dragonboat Freighter#card
+When Played: You may give a Weakness token to a unit. If it is a unique card, exhaust it.
+= Drengir Spawn#card
+When this unit attacks and defeats a unit: Give 2 Experience tokens to this unit.
+= Droid Cohort#card
+Attached unit gains: "When Defeated: Create a Battle Droid token."
+= Droid Manufactory | Geonosis#card
+~
+= Dryden Vos | I Get All Worked Up#card
+On Attack: You may give this unit +3/+0 for this attack.
+= Dryden Vos | I Never Ask Twice#leader
+Action [Exhaust]: Discard a card from your hand. If you do, play a unit that costs 5 or less from your hand.
+= Dryden Vos | I Never Ask Twice#unit
+Action: Discard a card from your hand. If you do, play a unit from your hand.
+= Dryden Vos | Offering No Escape#card
+~
+= Dryden Vos | Thumb-Spiking the Scale#card
+On Attack: You may deal 1 damage to a friendly unit. If you do, give an Experience token to it.
+= Duchess's Investigators#card
+When Played: You may disclose Cunning. If you do, an opponent discards a random card from their hand.
+= Easy Prey#card
+Create a Beast token.
+= Ebon Hawk | Cause and Effect#card
+On Attack: You may disclose Heroism. If you do, this unit gets +2/+0 for this attack. You may disclose Villainy. If you do, give the defending unit -4/-0 for this attack.
+= Echo | Restored#card
+When Played: You may discard a card from your hand. If you do, give 2 Experience tokens to a unit.
+= Eeth Koth | Spiritual Warrior#card
+When Defeated: You may use the Force. If you do, resource the top card of your deck.
+= Eject#card
+Draw a card.
+= Electrostaff#card
+~
+= Elia Kane | False Convert#card
+~
+= Elzar Mann | Haunted by a Vision#card
+~
+When Played: Give 2 Advantage tokens to another friendly unit.
+= Embo | Stoic and Resolute#card
+When this unit completes an attack: If the defending unit was defeated, heal up to 2 damage from a unit.
+= Emergency Powers#card
+You may pay 2 resources. If you do, give 2 Experience tokens to a non-leader unit.
+= Emerie Karr | For Your Own Good#card
+When Played: You may deal 1 damage to another ground unit.
+= Emissary's Sheathipede#card
+~
+= Emperor Palpatine | According to My Design#leader
+Action [Exhaust]: Give an Advantage token to an exhausted friendly unit for each other friendly unit.
+= Emperor Palpatine | According to My Design#unit
+On Attack: You may give an Advantage token to another exhausted friendly unit for each other friendly unit.
+= Emperor Palpatine | Galactic Ruler#leader
+Action [C=1, Exhaust]: Defeat a friendly unit. If you do, deal 1 damage to a unit and draw a card.
+= Emperor Palpatine | Master of the Dark Side#card
+When Played: Deal 2 damage to each of up to 3 enemy units.
+= Emperor's Royal Guard#card
+While you control a unit named Emperor Palpatine, this unit gets +0/+1.
+= Encircle#card
+This event costs 1 less to play for each friendly unit.
+A friendly unit captures an enemy non-leader unit.
+= Endless Legions#card
+!
+= Enfy Nest | Until We Can Go No Higher#leader
+~
+= Enfy Nest | Until We Can Go No Higher#unit
+~
+= Enfys Nest | Champion of Justice#card
+When Played/On Attack: You may return an enemy non-leader unit with 3 or less power to its owner's hand.
+= Enfys Nest | Marauder#card
+~
+= Enfys Nest | No More!#card
+~
+= Enoch | Solemn Servant#card
+~
+= Enterprising Lackeys#card
+~
+= Enticing Reward#card
+Attached unit gains: "Bounty - Search the top 10 cards of your deck for up to 2 events, reveal them, and draw them."
+= Entrenched#card
+~

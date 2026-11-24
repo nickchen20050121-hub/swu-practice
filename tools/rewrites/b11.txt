@@ -1,0 +1,143 @@
+= Leia Organa | Pilots, To Your Stations#card
+When Played: You may attack with a unit. It gets +1/+0 for this attack.
+= Leia Organa | Someone Who Loves You#leader
+Action [C=2, Exhaust]: Give a unit +1/+1 for this phase.
+= Leia Organa | Someone Who Loves You#unit
+When Deployed: Give an Experience token to a unit.
+= Leia's Disguise#card
+~
+When Played: If attached unit is Leia Organa, give a Shield token to a friendly unit.
+= Let the Wookiee Win#card
+Ready a friendly unit.
+= Let's Talk#card
+~
+A friendly unit captures an enemy non-leader unit.
+= Lethal Crackdown#card
+Defeat a non-leader unit.
+= Liberated by Darkness#card
+!
+= Libertine | Under New Ownership#card
+~
+When Played: Note: An enemy unit captures one of your non-leader units.
+= Liberty | Draw Their Fire!#card
+When Played/On Attack: Exhaust an enemy unit.
+= Lieutenant Childsen | Death Star Prison Warden#card
+When Played: Give an Experience token to this unit.
+= Lieutenant Gorn | I Deserve Worse#card
+~
+= Life Wind Sage#card
+~
+= Lightmaker | I Have An Idea#card
+When Defeated: Exhaust each enemy ground unit.
+= Lightsaber Throw#card
+Discard a card from your hand. If you do, deal 4 damage to a ground unit and draw a card.
+= Lightspeed Assault#card
+!
+= Local Support#card
+~
+= Log Trap#card
+Attack with a friendly unit.
+= Logray | Bright Tree Shaman#card
+~
+= Lom Pyke | Making a Withdrawal#card
+!
+= Look the Other Way#card
+Exhaust a unit.
+= Loth-Wolf#card
+~
+= Lothal E-Wing#card
+~
+= Lothal Insurgent#card
+When Played: Each opponent discards a random card from their hand.
+= Low Altitude Combat#card
+You may attack with a ground unit. It gets +2/+0 for this attack.
+= Low Altitude Gunship#card
+When Played: Deal damage to an enemy unit equal to the number of friendly Republic units.
+= Luke Skywalker | A Hero's Beginning#card
+~
+= Luke Skywalker | Dreaming Farmboy#card
+~
+= Luke Skywalker | Faithful Friend#unit
+On Attack: You may give a Shield token to another unit.
+= Luke Skywalker | Hero of Yavin#leader
+Action [Exhaust]: If you've attacked with a unit this phase, deal 1 damage to a unit.
+= Luke Skywalker | Hero of Yavin#unit
+~
+= Luke Skywalker | I Have to Face Him#leader
+~
+= Luke Skywalker | Jedi Knight#card
+When Played: Give an enemy unit -3/-3 for this phase.
+= Luke Skywalker | Overplaying His Hand#card
+!
+= Luke Skywalker | Profit or be Destroyed#card
+When Played: You may deal 5 damage to a unit.
+= Luke Skywalker | You Still With Me?#card
+~
+= Luke's Lightsaber#card
+When Played: If attached unit is Luke Skywalker, give a Shield token to attached unit.
+= Luminara Unduli | Soft-Spoken Master#card
+When Played: Heal 3 damage from your base.
+= Luminous Beings#card
+Give a unit +4/+4 for this phase.
+= Lurking TIE Phantom#card
+~
+= Luthen Rael | Don't You Want to Fight For Real?#leader
+~
+= Luthen Rael | Don't You Want to Fight For Real?#unit
+~
+= Luthen's Haulcraft | Countermeasures Armed#card
+When Defeated: You may disclose Aggression Aggression Heroism. If you do, each opponent discards 2 cards from their hand.
+= Lux Bonteri | Renegade Separatist#card
+~
+= Mace Windu | Party Crasher#card
+When this unit attacks and defeats a unit: Ready this unit.
+= Mace Windu | Vaapad Form Master#leader
+Action [C=1, Exhaust]: Deal 1 damage to an enemy unit.
+= Mace Windu's Lightsaber#card
+When Played: If attached unit is Mace Windu, draw 2 cards.
+= Malakili | Keeper of the Menagerie#card
+~
+= Malakili | Loving Rancor Keeper#card
+~
+= Malevolence | Grievous's Secret Weapon#card
+When Played: Give an enemy unit -4/-0 for this phase.
+= Mandalorian Armor#card
+When Played: If attached unit is a Mandalorian unit, give a Shield token to attached unit.
+= Mandalorian Scout#card
+~
+= Mando's N-1 Starfighter | Faster than a Fathier#card
+~
+= Marchion Ro | Eye of the Nihil#card
+!
+= Marrok | Mysterious Warrior#card
+~
+= Marrok's Fiend Fighter | Formidable Pursuer#card
+~
+= Masterstroke#card
+Attack with a unit. It gets +1/+0 for this attack for each enemy unit.
+= Mastery#card
+~
+= Maul | Collective Ambition#leader
+Action [Exhaust]: Give an Experience token to a unit. Deal 1 damage to it.
+= Maul | Collective Ambition#unit
+When Deployed/On Attack: Give an Experience token to a unit. Deal 1 damage to it.
+= Maul | Master of the Shadow Collective#card
+!
+= Maul | Old Master#unit
+!
+= Maul | Shadow Collective Visionary#card
+!
+= Max Rebo | Encore!#card
+!
+= Maximum Firepower#card
+A friendly Imperial unit deals damage equal to its power to an enemy unit. A friendly Imperial unit deals damage equal to its power to an enemy unit.
+= Mayor's Majordomo | No Problem Groveling#card
+!
+= Maz Kanata | Eclectic Pirate Queen#leader
+Action [Exhaust]: Play a Underworld unit from your hand. It costs 1 less.
+= Maz Kanata | Eclectic Pirate Queen#unit
+Action: Play a Underworld unit from your hand. It costs 1 less. Use this ability only once each round.
+= Maz Kanata | It Calls to You#card
+~
+= Maz Kanata | Where's My Boyfriend?#card
+!

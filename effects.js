@@ -90,6 +90,16 @@
     },
   });
   def('Gungi | Finding Himself', 'card', vanilla);
+  def('Origin Tree Shyyyo', 'card', {
+    discount(g, src, card) {
+      if (!card || card.t !== 'Unit' || g.G.phase !== 'action') return 0;
+      const base = g.P(src.ctrl).base;
+      const bc = base && base.card;
+      if (!bc || !(g.hasTrait(bc, 'KASHYYYK') || /Kashyyyk/i.test(bc.key || '') || /Kashyyyk/i.test(bc.st || ''))) return 0;
+      const n = (g.G.playedThisPhase[src.ctrl] || []).filter((c) => c.t === 'Unit').length;
+      return n < 3 ? n + 1 : 0;
+    },
+  });
   def('Huyang | Your Aptitude Falls Short', 'card', {
     async onAttack(g, u) {
       const t = await g.pickUnit(u.ctrl, T('promptHuyang'), (x) => g.isUpgraded(x), { optional: true });

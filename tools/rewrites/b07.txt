@@ -1,0 +1,146 @@
+= Frontier Trader#card
+When Played: You may resource the top card of your deck.
+= Frontline Shuttle#card
+Action: Defeat this unit. If you do, attack with a unit, even if it's exhausted. It can't attack bases for this attack.
+= Frozen in Carbonite#card
+~
+= Fulcrum#card
+~
+= Full of Surprises#card
+You may defeat an upgrade that costs 2 or less. Give a Shield token to a unit.
+= Fully Armed and Operational#card
+Play a unit from your hand. Give it Ambush for this phase.
+= GNK Power Droid#card
+~
+= Galactic Ambition#card
+Play a non-Heroism unit from your hand for free. Deal damage to your base equal to its cost.
+= Galactic Escalation#card
+Resource the top card of your deck.
+= Galen Erso | Destroying His Creation#card
+~
+= Galen Erso | You'll Never Win#card
+~
+= Gallius Rax | Counselor to the Empire#card
+~
+= Galvanized Leap#card
+Ready a damaged unit.
+= Gar Saxon | Coveting Power#card
+~
+= Gar Saxon | Viceroy of Mandalore#unit
+Each friendly upgraded unit gets +1/+0.
+= Garindan | Information Broker#card
+When Played: Look at an opponent's hand. Discard a card from it.
+= General Grievous | Crush Them!#card
+While this unit is undamaged, this unit gains Sentinel.
+= General Grievous | Four-Armed Menace#card
+~
+= General Grievous | Scourge of Dathomir#card
+~
+= General Grievous | Scuttling to Safety#card
+~
+= General Grievous | Separatist Warlord#leader
+Action [Exhaust]: Play a unit from your hand. Play a unit from your hand.
+= General Grievous | Separatist Warlord#unit
+While you control more units than an opponent, this unit gets +3/+0.
+= General Grievous | Trophy Collector#card
+~
+~
+= General Hux | No Terms, No Surrender#card
+Action [Exhaust]: If you've played a First Order card this phase, draw a card.
+= General Krell | Heartless Tactician#card
+~
+= General Rieekan | Defensive Strategist#card
+When Played/On Attack: Give a friendly unit Sentinel for this phase.
+= General's Blade#card
+~
+= Gentle Giant#card
+On Attack: You may heal 2 damage from another unit.
+= Giant Gorax#card
+On Attack/When Defeated: If you control an Endor base, deal 3 damage to an enemy unit or base.
+= Gideon's Light Cruiser | Dark Troopers' Station#card
+When Played: If you control a unit named Moff Gideon, play a Villainy unit that costs 3 or less from your hand for free.
+= Give In to Your Anger#card
+Deal 1 damage to an enemy unit.
+= Go Into Hiding#card
+Give a friendly unit +0/+2 for this phase.
+= Gold Leader | Fastest Ship in the Fleet#card
+~
+= Gorian Shard's Corsair | Pirate Warship#card
+~
+= Governor's Shuttle#card
+When Played: Defeat a friendly non-leader unit. Note: The opponent chooses a unit they control and defeats it.
+= Grand Admiral Sloane | Holding the Empire Together#leader
+{"trigger":"action","cost":{"res":0,"exhaust":true},"text":"Sentinel + Overwhelm","steps":[{"op":"chooseOne","options":[{"label":"Ground","steps":[{"op":"buff","p":0,"h":0,"kw":{"Sentinel":true,"Overwhelm":true},"until":"phase","target":{"sel":"each","side":"any","f":{"arena":"Ground"}}}]},{"label":"Space","steps":[{"op":"buff","p":0,"h":0,"kw":{"Sentinel":true,"Overwhelm":true},"until":"phase","target":{"sel":"each","side":"any","f":{"arena":"Space"}}}]}]}]}
+= Grand Admiral Thrawn | ...How Unfortunate#leader
+~
+= Grand Admiral Thrawn | ...How Unfortunate#unit
+~
+= Grand Admiral Thrawn | Grand Schemer#card
+When Played: Ready this unit.
+When Defeated: A friendly unit captures an enemy non-leader unit.
+= Grand Admiral Thrawn | Patient and Insightful#leader
+~
+Action [C=1, Exhaust]: Exhaust a unit that costs 3 or less.
+= Grand Admiral Thrawn | Patient and Insightful#unit
+~
+On Attack: You may exhaust a unit that costs 3 or less.
+= Grand Admiral Thrawn | Victory is Mine#leader
+Action [Exhaust]: Attack with a unit.
+= Grand Admiral Thrawn | Victory is Mine#unit
+On Attack: If you control more units than an opponent, you may defeat an enemy non-leader unit.
+= Grand Inquisitor | How the Mighty Will Fall#card
+While this unit is damaged, this unit gains Raid 3 and Saboteur.
+= Grand Inquisitor | Stories Travel Quickly#leader
+Action [Exhaust, use the Force]: Attack with a friendly unit.
+= Grand Moff Tarkin | Oversector Governor#leader
+Action [C=1, Exhaust]: Give an Experience token to an Imperial unit.
+= Grand Moff Tarkin | Taking Krennic's Achievement#card
+When Played: Take control of an enemy non-leader Vehicle unit.
+= Grand Moff Tarkin // The Death Star | Tyrant of the Outer Rim // Icon of Tyranny#leader
+~
+= Grand Moff Tarkin // The Death Star | Tyrant of the Outer Rim // Icon of Tyranny#unit
+~
+~
+= Grav Charge#card
+~
+= Great Pit of Carkoon | Tatooine#card
+~
+= Greater Sarlacc#card
+~
+= Greedo | Big-Timer#card
+~
+= Greedo | Slow on the Draw#card
+When Defeated: You may discard a card from your deck. If it is a non-unit card, deal 2 damage to a ground unit.
+= Greef Karga | Gracious Magistrate#leader
+When you play a unit: You may exhaust this leader. If you do, give an Advantage token to it.
+= Greef Karga | Gracious Magistrate#unit
+When you play a unit: Give an Advantage token to it.
+= Greef Karga | Introductions are in Order#card
+Action [C=1, Exhaust]: Create a Mandalorian token.
+= Grey Squadron Y-Wing#card
+On Attack: You may deal 2 damage to an enemy unit or base.
+= Grievous's Wheel Bike#card
+~
+= Grogu | Charming Companion#unit
+~
+~
+= Grogu | Mysterious Child#card
+Action [Exhaust]: Heal 2 damage from a unit. If you do, deal 2 damage to a unit.
+= Guardian of the Whills#card
+~
+= Guarding the Way#card
+Give a unit Sentinel for this phase. If you have the initiative, give it +2/+2 for this phase.
+= Guerilla Attack Pod#card
+When Played: Ready this unit.
+= Guerilla Insurgency#card
+Discard 2 cards from your hand. Each opponent discards 2 cards from their hand. Deal 4 damage to each ground unit.
+= Guerilla Soldier#card
+When Played: Deal 3 indirect damage to each opponent. Ready this unit.
+= Guild Target#card
+Attached unit gains: "Bounty - Deal 2 damage to a base."
+= Gunga City Guard#card
+While you control another Gungan unit, this unit gains Shielded.
+= HK-47 | Exclamation: Die, Meatbag!#card
+When an enemy unit is defeated: Deal 1 damage to an enemy base.
+= Han Solo | Audacious Smuggler#leader
+~

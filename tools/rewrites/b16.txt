@@ -1,0 +1,144 @@
+= Sando Aqua Monster#card
+!
+= Sandstorm#card
+~
+Give a Weakness token to an enemy unit.
+= Satine Kryze | Committed to Peace#card
+~
+= Satine Kryze | Standing on Principles#leader
+Action [Exhaust]: Heal up to 2 damage from a unit.
+= Savage Opress | Imbued With Hate#card
+When Played/When Defeated: You may use the Force. If you don't, deal 9 damage to your base.
+= Savage Opress | Monster#card
+When Played: If you control fewer units than an opponent, ready this unit.
+= Savage Opress | You Must Have Your Revenge#leader
+~
+= Saw Gerrera | Bring Down the Empire#leader
+Action [Exhaust]: Attack with a unit. It gets +2/+0 and gains Overwhelm for this attack.
+= Saw Gerrera | Bring Down the Empire#unit
+~
+= Saw Gerrera | Extremist#card
+~
+= Saw Gerrera | For the Cause#card
+On Attack: You may give another friendly unit +2/+0 for this phase.
+= Saw Gerrera | Shadowlands Insurgent#card
+~
+= Scanning Officer#card
+~
+= Scimitar | Sith Infiltrator#card
+While this unit is damaged, this unit gets +3/+0.
+= Scion Shuttle | At Morgan's Bidding#card
+~
+= Scramble Fighters#card
+Create a TIE Fighter token. Create a TIE Fighter token. Create a TIE Fighter token. Create a TIE Fighter token.
+= Screeching TIE Fighter#card
+~
+= Search Your Feelings#card
+Search the top 30 cards of your deck for a card, reveal it, and draw it.
+= Seasoned Fleet Admiral#card
+~
+= Seasoned Shoretrooper#card
+While you control 6 or more resources, this unit gets +2/+0.
+= Sebulba | Especially Dangerous Dug#leader
+Action [Exhaust]: Discard a card from your deck. Give a friendly unit Raid 1 for this phase.
+= Sebulba's Podracer | Taking the Lead#card
+~
+= Second Chance#card
+~
+= Second Sister | Seeking the Holocron#card
+On Attack: You may discard 2 cards from your deck. If you do, ready a resource.
+= Secret Battle of Pretend#card
+Exhaust a friendly unit. If you do, exhaust an enemy unit.
+= Secret Marriage#card
+Give a Shield token to a non-Vehicle unit. Give a Shield token to a non-Vehicle unit.
+~
+= Seismic Detonation#card
+!
+= Senate Warden#card
+When Defeated: You may disclose Vigilance. If you do, give an Experience token to a unit.
+= Sense Through the Force#card
+Search the top 5 cards of your deck for a card, reveal it, and draw it.
+= Separatist Council | Quarrelsome Holdouts#card
+When Played/On Attack: Create a Battle Droid token.
+= Separatist Harbinger#card
+When Played/On Attack: You may deal 2 damage to an enemy unit or base.
+= Seventh Sister | Implacable Inquisitor#card
+When this unit deals combat damage to a base: You may deal 3 damage to an enemy ground unit.
+= Shadow Caster | Just Business#card
+~
+= Shadow Collective Camp | Zanbar#card
+~
+= Shadow of Stygeon Prime#card
+~
+= Shadowed Intentions#card
+~
+= Shien Flurry#card
+Play a Force unit from your hand. Give it Ambush for this phase.
+= Shifty Suspects#card
+~
+= Shin Hati | Eager Adversary#leader
+~
+= Shin Hati | Eager Adversary#unit
+~
+= Shin Hati | Going Somewhere?#card
+~
+= Shin Hati's Fiend Fighter | Compact and Agile#card
+When Defeated: You may give 2 Advantage tokens to a unit.
+= Shipbreaking Yard | Bracca#card
+Epic Action: Discard 3 cards from your deck.
+= Shoot Down#card
+Deal 3 damage to a space unit. If it was defeated, you may deal 2 damage to a base.
+= Shoot First#card
+Attack with a unit. It gets +1/+0 for this attack.
+= Shuttle ST-149 | Under Krennic's Authority#card
+~
+= Shuttle Tydirium | Fly Casual#card
+On Attack: Discard a card from your deck.
+= Sidon Ithano | The Crimson Corsair#card
+~
+= Sifo-Dyas#card
+!
+= Silver Angel | Trace's Hope#card
+~
+= Single Reactor Ignition#card
+!
+= Sinister War Memorial#card
+~
+= Sith Traditions#card
+Attached unit gains: "On Attack: Give an Experience token to this unit."
+= Sith Trooper#card
+~
+= Size Matters Not#card
+~
+~
+= Slaver's Freighter#card
+~
+= Sly Moore | Cipher in the Dark#leader
+Action [C=1, Exhaust]: Create a Spy token.
+= Sly Moore | Secretive Advisor#card
+!
+= Sly Moore | Witness to Power#card
+~
+= Smoke and Cinders#card
+!
+= Snap Wexley | Resistance Recon Flier#card
+~
+~
+= Snapshot Reflexes#card
+When Played: You may attack with attached unit.
+= Sneak Attack#card
+Play a unit from your hand. It costs 3 less. Ready it.
+= Snowtrooper Lieutenant#card
+When Played: You may attack with a unit.
+= Soulless One | Customized for Grievous#card
+~
+= Soulless One | Soulless Fun#card
+~
+= Soulless One | Swift and Agile#card
+On Attack: You may disclose Cunning Cunning Villainy. If you do, ready 2 resources.
+= Spare the Target#card
+Return an enemy non-leader unit to its owner's hand.
+= Spark of Hope#card
+!
+= SpecForce Soldier#card
+~

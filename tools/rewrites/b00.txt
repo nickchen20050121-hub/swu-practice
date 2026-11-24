@@ -1,0 +1,146 @@
+= 501st Veteran#card
+While this unit is undamaged, this unit gains Sentinel.
+= A Fine Addition#card
+If an enemy unit was defeated this phase, play an upgrade from your hand, ignoring its aspect penalties.
+= A New Adventure#card
+Return a non-leader unit that costs 6 or less to its owner's hand.
+= A Precarious Predicament#card
+Return an enemy non-leader unit to its owner's hand.
+= AAT Incinerator#card
+When Played: Deal 1 damage to each of up to 4 other ground units.
+= Aayla Secura | Master of the Blade#card
+Coordinate - This unit gets +0/+3 while attacking.
+= Abandoned the Order#card
+Attached unit gains Restore 1.
+= Adamant Ewoks#card
+When Played: If you control another Ewok unit, you may deal 1 damage to a base and 1 damage to an enemy unit.
+= Adept of Anger#card
+Action [Exhaust, use the Force]: Exhaust a unit.
+= Adi Gallia | Stern and Focused#card
+When an opponent plays an event: Deal 1 damage to an enemy base.
+= Admiral Ackbar | Assume Attack Coordinates#card
+When Played: You may defeat this unit. If you do, search the top 10 cards of your deck for a space unit that costs 5 or less and play it for free.
+= Admiral Ackbar | Brilliant Strategist#card
+When Played: You may deal damage to a unit equal to the number of friendly units.
+= Admiral Holdo | We Are the Spark#card
+At the start of the regroup phase: Draw a card.
+= Admiral Holdo | We're Not Alone#leader
+Action [C=1, Exhaust]: Give a Resistance unit +2/+2 for this phase.
+= Admiral Holdo | We're Not Alone#unit
+On Attack: You may give another Resistance unit +2/+2 for this phase.
+= Admiral Ozzel | Overconfident#card
+Action [Exhaust]: Play an Imperial unit from your hand. Ready it.
+= Admiral Trench | Holding the Line#card
+When Played: Return up to 3 units from your discard pile to your hand.
+= Admiral Trench | chk-chk-chk-chk#leader
+Action [Exhaust]: Discard a card from your hand. If you do, draw a card.
+= Admiral Trench | chk-chk-chk-chk#unit
+When Deployed: Search the top 4 cards of your deck for a card, reveal it, and draw it.
+= Admiral Yularen | Fleet Coordinator#card
+Each friendly Vehicle unit gains Grit.
+= Adventurer Sniper Rifle#card
+Attached unit gains: "Action [Exhaust]: Give an undamaged non-leader ground unit -0/-4 for this phase."
+= Agent Kallus | Seeking the Rebels#card
+When another unique unit is defeated: You may draw a card. Use this ability only once each round.
+= Aggression#card
+Choose two
+- Draw a card.
+- Defeat an upgrade.
+- Ready a unit with 3 or less power.
+- Deal 4 damage to a unit.
+= Aggressive Negotiations#card
+Attack with a unit. It gets +1/+0 for this attack for each card in your hand.
+= Aggrieved Parliamentarian#card
+~
+= Ahsoka Tano | Always Ready For Trouble#card
+While you control fewer units than an opponent, this unit gains Ambush.
+Action [C=2]: Return this unit to its owner's hand.
+= Ahsoka Tano | Chasing Whispers#card
+When Played: An opponent discards a card from their hand. If it is a unit, you may exhaust a unit.
+= Ahsoka Tano | Fighting For Peace#leader
+Action [Exhaust, use the Force]: Give a friendly unit Sentinel for this phase.
+= Ahsoka Tano | I Have an Idea#leader
+When you play an event: You may exhaust this leader. If you do, search the top 1 cards of your deck for a card and play it.
+= Ahsoka Tano | I Have an Idea#unit
+When Attack Ends: Search the top 1 cards of your deck for a card and play it.
+= Ahsoka Tano | I Learned it From You#card
+When this unit completes an attack: You may attack with another unit.
+= Ahsoka Tano | Trust in the Force#leader
+Action [Exhaust]: Give a unit +2/+0 for this phase.
+= Ahsoka Tano | Trust in the Force#unit
+On Attack: You may give another unit +2/+0 for this phase.
+= Ahsoka's Lightsabers#card
+Attached unit gains: "On Attack/When Defeated: You may give a Shield token to an enemy unit."
+= Ahsoka's Padawan Lightsaber#card
+When Played: If attached unit is Ahsoka Tano, you may attack with a unit.
+= Aid from the Innocent#card
+Search the top 10 cards of your deck for up to 2 Heroism events, reveal them, and draw them.
+= Air Superiority#card
+If you control more space units than an opponent, deal 4 damage to an enemy ground unit.
+= All Wings Report In#card
+Exhaust up to 2 friendly space units. Create 2 X-Wing tokens.
+= Allegiant General Pryde | Heartless Efficiency#card
+When Defeated: Give an Experience token to a friendly unit.
+= Allegiant General Pryde | Ruthless and Loyal#card
+~
+= Alliance Outpost | Lowick#card
+Epic Action: Give an Experience token to a unit.
+= Alliance Shield Generator#card
+!
+= Altering the Deal#card
+!
+= Always Two#card
+Give 2 Shield tokens and 2 Experience tokens to a friendly unique Sith unit.
+= Always a Bigger Fish#card
+Defeat a friendly Creature unit. If you do, play a Creature unit from your hand for free.
+= Amnesty Officer#card
+When Played: You may exhaust a unit.
+= Anakin Skywalker | Champion of Mortis#card
+When Played: If there is a Heroism card in your discard pile, you may give a unit -3/-3 for this phase.
+When Played: If there is a Villainy card in your discard pile, you may give a unit -3/-3 for this phase.
+= Anakin Skywalker | Destined for Darkness#card
+~
+= Anakin Skywalker | I'll Try Spinning#card
+~
+= Anakin Skywalker | Prescient Podracer#card
+!
+= Anakin Skywalker | Protect Her At All Costs#leader
+Action [Exhaust]: Give a Shield token to a friendly unit that entered play this phase.
+= Anakin Skywalker | Secret Husband#card
+While you control a unit named Padmé Amidala, this unit gains Raid 2.
+= Anakin Skywalker | Tempted by the Dark Side#leader
+Action [Exhaust, use the Force]: Play a Villainy event from your hand, ignoring its aspect penalties.
+= Anakin Skywalker | Tempted by the Dark Side#unit
+Action [use the Force]: Play a Villainy event from your hand, ignoring its aspect penalties.
+= Anakin Skywalker | What it Takes to Win#leader
+Action [Exhaust]: Deal 2 damage to your base. Attack with a unit. It gets +2/+0 for this attack.
+= Anakin Skywalker | What it Takes to Win#unit
+This unit gets +1/+0 for each 5 damage on your base.
+= Anakin's Podracer | So Wizard!#card
+~
+= Annihilator | Tagge's Flagship#card
+When Played/When Defeated: You may defeat an enemy unit.
+= Arcana Star Map | Path to Peridea#card
+~
+= Arena Acklay | Screaming Predator#card
+When this unit is dealt damage and survives: Deal 2 damage to each enemy base.
+= Arms Deal#card
+Draw 2 cards. Each opponent draws 2 cards.
+= Arquitens Assault Cruiser#card
+When this unit attacks and defeats a unit: Resource the top card of your deck.
+= Arrest#card
+Note: Your base captures an enemy non-leader unit; at the start of the regroup phase its owner rescues it.
+= Arvel Skeen | Win and Walk Away#card
+When Played/On Attack: You may pay 1 resource. If you do, deal 1 damage to a unit or base.
+= As I Have Foreseen#card
+You may use the Force. If you do, search the top 1 cards of your deck for a card and play it. It costs 4 less.
+= Asajj Ventress | Ambitious Apprentice#unit
+While you have attacked with a token unit this phase, this unit gets +2/+0.
+= Asajj Ventress | Bald and Beautiful#leader
+Action [Exhaust]: Attack with a unit. You may ready a resource.
+= Asajj Ventress | Count Dooku's Assassin#card
+On Attack: If you've attacked with another Separatist unit this phase, this unit gets +3/+0 for this phase.
+= Asajj Ventress | Death From Above#card
+~
+= Asajj Ventress | No Time for Regret#leader
+Action [Exhaust]: Attack with a unit.

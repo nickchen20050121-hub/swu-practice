@@ -1,0 +1,142 @@
+= Han Solo | Audacious Smuggler#unit
+On Attack: Resource the top card of your deck. Ready a resource.
+= Han Solo | Gamblin' Man#card
+When Played: Search the top 10 cards of your deck for a card, reveal it, and draw it. Discard a card from your hand.
+= Han Solo | Has His Moments#card
+~
+= Han Solo | I Got a Really Good Feeling#leader
+Action [Exhaust]: Defeat a friendly token unit. If you do, deal 1 damage to a unit.
+= Han Solo | I Got a Really Good Feeling#unit
+On Attack: You may defeat a friendly token unit. If you do, deal 1 damage to a unit.
+= Han Solo | Never Tell Me the Odds#leader
+Action [Exhaust]: Attack with a unit.
+= Han Solo | Never Tell Me the Odds#unit
+~
+= Han Solo | Reluctant Hero#card
+~
+= Han Solo | Worth the Risk#leader
+Action [Exhaust]: Play a unit from your hand. It costs 1 less. Deal 2 damage to it.
+= Han's Golden Dice#card
+Attached unit gains: "On Attack: Discard a card from your deck. Create a Credit token."
+= Hardpoint Heavy Blaster#card
+Attached unit gains: "On Attack: If this unit is attacking a unit, you may deal 2 damage to a unit."
+= Headhunting#card
+Attack with a unit. It can't attack bases for this attack. Attack with a unit. It can't attack bases for this attack. Attack with a unit. It can't attack bases for this attack.
+= Heartless Tactics#card
+Exhaust a unit and give it -2/-0 for this phase.
+= Heavy Blaster Cannon#card
+When Played: You may deal 3 damage to a ground unit.
+= Heavy Ion Cannon#card
+!
+= Heirloom Lightsaber#card
+While attached unit is a Force unit, attached unit gains Restore 1.
+= Helgait | Dooku was a Visionary#card
+When Defeated: Give 2 Advantage tokens to a friendly unit.
+= Helix Starfighter#card
+When Played: Give a Shield token to this unit.
+= Hello There#card
+Give a unit that entered play this phase -4/-4 for this phase.
+= Hera Syndulla | Not Fighting Alone#leader
+While you control 2 or more units, ignore the aspect penalties on Heroism units you play.
+= Hera Syndulla | Not Fighting Alone#unit
+While you control 2 or more units, ignore the aspect penalties on Heroism units you play.
+= Hera Syndulla | Renegade General#card
+When this unit deals combat damage to a base: Heal 3 damage from your base.
+= Hera Syndulla | Spectre Two#leader
+Ignore the aspect penalties on Spectre cards you play.
+= Hera Syndulla | Spectre Two#unit
+Ignore the aspect penalties on Spectre cards you play.
+= Heroes on Both Sides#card
+Give up to 1 Republic unit +2/+2 and Saboteur for this phase. Give up to 1 Separatist unit +2/+2 and Saboteur for this phase.
+= Heroic Bravery#card
+When Played: If attached unit is a Heroism unit, give a Shield token to attached unit.
+= Heroic Purrgil#card
+~
+= Heroic Resolve#card
+Attached unit gains: "Action [C=2]: Attack with this unit. It gets +4/+0 and gains Overwhelm for this attack."
+= Heroic Sacrifice#card
+Draw a card. Attack with a unit. It gets +2/+0 for this attack. Defeat it.
+= Hijacked AT-ST#card
+~
+= Hired Slicer#card
+On Attack: You may exhaust a unit that costs 2 or less.
+= Hold For Questioning#card
+Exhaust an enemy unit. If you do, look at an opponent's hand. Discard a card from it.
+= Hold Them Off#card
+A friendly unit deals damage equal to its power to an enemy unit.
+= Hold-Out Blaster#card
+When Played: You may deal 1 damage to a ground unit.
+= Home One | On My Mark#card
+While an opponent controls 3 or more space units, this unit costs 3 less to play.
+= Homestead Militia#card
+While you control 6 or more resources, this unit gains Sentinel.
+= Hondo Ohnaka | Plays By His Own Rules#card
+~
+Action: Search the top 1 cards of your deck for a card and play it. Use this ability only once each round.
+= Hondo Ohnaka | Superfluous Swindler#card
+~
+= Hondo Ohnaka | That's Good Business#leader
+~
+= Hondo Ohnaka | That's Good Business#unit
+~
+= Honor-Bound Partisan#card
+~
+= Hotshot DL-44 Blaster#card
+~
+= Hotshot Maneuver#card
+Deal 2 damage to an enemy unit. Attack with a friendly unit.
+= Hound's Tooth | Hunters' Approach#card
+When this unit completes an attack: You may defeat a unit with 2 or less power.
+= Hound's Tooth | Reliable and Deadly#card
+~
+= Hunter | Extraordinary Tracker#card
+On Attack: If the defending unit is exhausted, give the defending unit -4/-0 for this attack.
+= Hunter | Outcast Sergeant#leader
+~
+= Hunter | Outcast Sergeant#unit
+~
+= Hunter For Hire#card
+~
+= Hunter of the Haxion Brood#card
+~
+= Hunter's Instinct#card
+While attached unit is a Creature unit, attached unit gains Grit.
+= Hunting Aggressor#card
+~
+= Hunting Assassin Droid#card
+While an opponent controls a damaged unit, this unit gains Raid 2.
+= Huyang | Enduring Instructor#card
+When Played: Give another friendly unit +2/+2 for this phase.
+= I Am Your Father#card
+Deal 7 damage to an enemy unit.
+= I Had No Choice#card
+Return a non-leader unit to its owner's hand.
+= I Have You Now#card
+Attack with a Vehicle unit. It gets +0/+20 for this attack.
+= I Have the High Ground#card
+Give a friendly unit +0/+4 for this phase.
+= I've Found Them#card
+Search the top 3 cards of your deck for a unit, reveal it, and draw it.
+= IG-11 | I Cannot Be Captured#card
+~
+= IG-88 | Murderous Phlutdroid#card
+While an opponent controls a damaged unit, this unit gets +3/+0.
+While an opponent controls a damaged unit, attached unit gets +3/+0.
+= IG-88 | Ruthless Bounty Hunter#leader
+Action [Exhaust]: Attack with a unit. If you control more units than an opponent, it gets +1/+0 for this attack.
+= ISB Agent#card
+When Played: You may deal 1 damage to a unit.
+= ISB Shuttle#card
+When Played: If a friendly unit was defeated this phase, create a Spy token.
+= Iden Versio | Adapt or Die#card
+~
+= Iden Versio | Infero Squad Commander#leader
+Action [Exhaust]: If an enemy unit was defeated this phase, heal 1 damage from your base.
+= Ima-Gun Di | Holding out for Resupply#card
+When Defeated: If you control fewer resources than an opponent, you may resource the top card of your deck.
+= Imperial Defector#card
+When Played: Look at an opponent's hand.
+= Implicate#card
+Give a unit Sentinel for this phase.
+= Imposing Scout Walker#card
+When Played: You may deal 3 damage to a ground unit. If it was defeated, give 3 Advantage tokens to this unit.

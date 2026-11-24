@@ -1,0 +1,199 @@
+= Turbolaser Salvo#card
+!
+= Turning the Tide#card
+Deal damage to a unit equal to the number of friendly units.
+= Tusken Tracker#card
+~
+= Twi'lek Kalikori#card
+~
+= Twilight | Escaping Malevolence#card
+When Played: Heal 3 damage from your base.
+= Twin Laser Turret#card
+Attached unit gains: "On Attack: Deal 1 damage to a unit. Deal 1 damage to a unit."
+= Two-Faced Troig#card
+!
+= Ty Yorrick | Monster Hunter#card
+~
+= U-Wing Lander#card
+~
+= U-Wing Reinforcement#card
+Search the top 10 cards of your deck for a unit that costs 4 or less and play it for free. Search the top 10 cards of your deck for a unit that costs 3 or less and play it for free.
+= Umbaran Mobile Cannon#card
+~
+= Unauthorized Investigation#card
+Create a Spy token. You may disclose Aggression. If you do, create a Spy token.
+= Undercover Operation#card
+Ready a unit that entered play this phase.
+= Unexpected Escape#card
+Exhaust a unit.
+= Unfettered Ambition#card
+When Played: Give an Advantage token to attached unit.
+= Unity of Purpose#card
+Give each friendly unit +1/+1 for this phase.
+= Unlicensed Headhunter#card
+~
+= Unlimited Power#card
+Deal 4 damage to a unit. Deal 3 damage to a unit. Deal 2 damage to a unit. Deal 1 damage to a unit.
+= Unnatural Life#card
+!
+= Unrefusable Offer#card
+~
+= Vader's Lightsaber#card
+When Played: If attached unit is Darth Vader, you may deal 4 damage to a ground unit.
+= Valiant Assault Ship#card
+~
+= Valiant Commando#card
+~
+= Vambrace Flamethrower#card
+Attached unit gains: "On Attack: You may deal 3 damage to an enemy ground unit."
+= Vane | Quarrelsome Pirate#leader
+Action [Exhaust]: Defeat a friendly upgrade. If you do, deal 2 damage to a base.
+= Vane | Quarrelsome Pirate#unit
+On Attack: You may defeat a friendly upgrade. If you do, deal 2 damage to a unit or base.
+= Vane's Snub Fighter | Brash and Proud#card
+~
+= Vaneé | I Live to Serve#card
+~
+= Vanguard Ace#card
+~
+= Vel Sartha | Aldhani Insurgent#leader
+Action [Exhaust]: Give an Experience token to a unit.
+= Vel Sartha | Aldhani Insurgent#unit
+On Attack: You may give an Experience token to a unit.
+= Verdant Fortress#card
+~
+= Vermillion | Qi'ra's Auction House#card
+!
+= Vernestra Rwoh | We Should Handle This Ourselves#card
+~
+= Vice Admiral Rampart | A New Era of Safety#card
+~
+= Vice Admiral Rampart | On Schedule#card
+On Attack: You may disclose Command Command Villainy. If you do, give an Experience token to another unit.
+= Victor Squadron | In Attack Formation#card
+~
+= Vigil | Securing the Future#card
+~
+~
+= Vigilance#card
+Choose two
+- Discard 6 cards from your deck.
+- Heal 5 damage from a base.
+- Defeat a unit with 3 or less remaining HP.
+- Give a Shield token to a unit.
+= Vigilant Honor Guards#card
+While this unit is undamaged, this unit gains Sentinel.
+= Villainous Ambition#card
+When Played: If attached unit is a Villainy unit, you may deal 2 damage to a unit.
+= Viper Probe Droid#card
+When Played: Look at an opponent's hand.
+= Volley Fire#card
+A friendly unit deals damage equal to its power to an enemy unit.
+= Volunteer Soldier#card
+~
+= Vonreg's TIE Interceptor | Ace of the First Order#card
+~
+~
+= Vult Skerris's Defender | Secret Project#card
+~
+= Vuutun Palaa | Droid Control Ship#card
+~
+= Wanted#card
+Attached unit gains: "Bounty - Ready 2 resources."
+= War Juggernaut#card
+When Played: Deal 1 damage to each enemy unit.
+= Warrior of Clan Ordo#card
+On Attack: You may disclose Aggression. If you don't, deal 2 damage to your base.
+= Wartime Mercenaries#card
+~
+= Wartime Pirate#card
+~
+= Wartime Profiteer#card
+~
+= Wartime Profiteering#card
+Search the top 3 cards of your deck for a card, reveal it, and draw it.
+= Wartime Refugee#card
+~
+= Wat Tambor | Techno Union Foreman#leader
+Action [Exhaust]: If a friendly unit was defeated this phase, give a unit +2/+2 for this phase.
+= Wat Tambor | Techno Union Foreman#unit
+On Attack: If a friendly unit was defeated this phase, you may give another unit +2/+2 for this phase.
+= Watchful#card
+~
+= Watto#card
+On Attack: Draw a card.
+= Wedge Antilles | Leader of Red Squadron#leader
+!
+= Weequay Pirate#card
+~
+= When Has Become Now#card
+Resource the top card of your deck.
+= Whistling Birds#card
+~
+= Wicket | Few Greater Battles to Fight#leader
+~
+= Wicket | Yub Nub!#card
+~
+= Wild Space Wanderer#card
+~
+= Willrow Hood | On the Run#card
+~
+= Wingman Victor Three | Backstabber#card
+~
+= Wingman Victor Two | Mauler Mithel#card
+~
+= Wipe Them Out#card
+Attack with a unit.
+= With Thunderous Applause#card
+Give a unit +2/+2 for this phase. You may disclose Command. If you do, give another unit +2/+2 for this phase.
+= Wolf Pack Escort#card
+When Played: You may return a friendly non-leader unit to its owner's hand.
+= Wolffe | Suspicious Veteran#card
+~
+= Wrecker | Boom!#card
+!
+= Wrecker | Wrecking the Empire#card
+When Played: Deal 3 damage to a friendly unit. Deal 3 damage to an enemy unit.
+= Wroshyr Rebel#card
+~
+= Xanadu Blood | Cad Bane's Reward#card
+When Played/On Attack: You may return another friendly non-leader unit to its owner's hand. If you do, exhaust an enemy unit.
+= Yellow Aces Bomber#card
+On Attack: If this unit is upgraded, deal 2 damage to a base.
+= Yoda | A Disturbing Puzzle#card
+~
+= Yoda | Begun, the Clone War Has#card
+While you control 7 or more resources, this unit costs 2 less to play.
+= Yoda | My Ally is the Force#card
+~
+= Yoda | Old Master#card
+When Defeated: Draw a card.
+= Yoda | Sensing Darkness#leader
+Action [Exhaust]: Draw a card. Discard a card from your hand.
+= Yoda | Sensing Darkness#unit
+When Deployed: You may discard a card from your deck. If you do, defeat an enemy non-leader unit that costs 3 or less.
+= Yoda | Trickster in Exile#card
+When Defeated: Heal 2 damage from a base.
+= You Hold This#card
+!
+= You're All Clear, Kid#card
+Defeat an enemy space unit with 3 or less remaining HP.
+= You're My Only Hope#card
+Search the top 1 cards of your deck for a card and play it. It costs 5 less.
+= Zam Wesell | Inconspicuous Assassin#card
+~
+= Zam Wesell | Not What She Seems#card
+~
+= Zeb Orrelios | Fists Work Every Time#card
+~
+= Zeb Orrelios | Headstrong Warrior#card
+When this unit completes an attack: If the defending unit was defeated, you may deal 4 damage to a ground unit.
+= Ziro the Hutt | Colorful Schemer#card
+When Played: You may exhaust an enemy unit.
+~
+= Ziton Moj | Sowing Chaos#card
+On Attack: Deal 1 damage to an enemy unit. Deal 1 damage to a friendly unit.
+= Zorii Bliss | Valiant Smuggler#card
+On Attack: Draw a card.
+= Zuckuss | The Findsman#card
+~

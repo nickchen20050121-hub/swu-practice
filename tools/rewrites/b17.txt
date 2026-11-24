@@ -1,0 +1,148 @@
+= Special Forces TIE Fighter#card
+When Played: If you control fewer space units than an opponent, ready this unit.
+= Special Modifications#card
+When Played: If attached unit is a Transport unit, you may create a Spy token.
+= Stay on Target#card
+Attack with a Vehicle unit. It gets +2/+0 for this attack.
+= Steadfast Senator#card
+Action [C=2, Exhaust]: Attack with a unit. It gets +2/+0 for this attack.
+= Stockpile#card
+Resource the top card of your deck. Resource the top card of your deck.
+= Stolen AT-Hauler#card
+~
+= Stolen Landspeeder#card
+!
+= Stolen Starpath Unit#card
+~
+= Stormchaser#card
+When Played: Draw a card.
+= Strafing Gunship#card
+~
+~
+= Sugi | Hired Guardian#card
+~
+= Sundari Gauntlet#card
+~
+= Sundari Palace | Mandalore#card
+!
+= Supercommando Squad#card
+While this unit is upgraded, this unit gains Sentinel.
+= Superheavy Ion Cannon#card
+Attached unit gains: "On Attack: You may exhaust an enemy non-leader unit."
+= Superlaser Technician#card
+!
+= Supremacy | Destroy the Resistance#card
+!
+= Supreme Leader Snoke | Darkness Rising#card
+When Played: Deal 4 damage to each other unit.
+= Supreme Leader Snoke | In the Seat of Power#leader
+Action [C=1, Exhaust]: Give an Experience token to a friendly Villainy unit.
+= Supreme Leader Snoke | In the Seat of Power#unit
+On Attack: Give an Experience token to a friendly Villainy unit.
+= Surveillance Cruiser#card
+~
+= Survivors' Gauntlet#card
+~
+= Swarming Vulture Droid#card
+~
+~
+= Sweep the Area#card
+Return a non-leader unit that costs 2 or less to its owner's hand.
+= Swoop Down#card
+Attack with a space unit. It gains Saboteur for this attack.
+= Synara San | Harboring a Secret#card
+On Attack: Ready a resource.
+= Synara San | Loyal to Kragan#card
+~
+= Synchronized Strike#card
+Deal damage to an enemy unit equal to the number of friendly units.
+= Syril Karn | Where is He?#card
+On Attack: You may disclose Aggression Aggression Villainy. If you do, deal 2 damage to a unit.
+= System Shock#card
+Defeat an upgrade. If you do, deal 1 damage to a unit.
+= Tactical Droid Commander#card
+~
+= Tactical Heavy Bomber#card
+On Attack: Deal damage to an enemy base equal to this unit's power.
+= Take Action#card
+~
+Deal 3 damage to a unit.
+= Take Aim#card
+~
+Attack with a unit. It gets +2/+0 and gains Saboteur for this attack.
+= Take Captive#card
+A friendly unit captures an enemy non-leader unit.
+= Take Charge#card
+~
+Give an Experience token to a unit. Give an Experience token to a unit. Give an Experience token to a unit.
+= Take Cover#card
+~
+Heal up to 3 damage from a unit. Give a Shield token to a unit.
+= Talzin's Shuttle | Mysterious Arrival#card
+~
+= Tam Ryvora#card
+Attached unit gains: "On Attack: Give an enemy unit -1/-1 for this phase."
+= Tandem Assault#card
+Attack with a space unit. Attack with a ground unit. It gets +2/+0 for this attack.
+= Tantive IV | Carrying Hope#card
+When Played: If a friendly unit was defeated this phase, heal 4 damage from your base.
+= Taramyn Barcona | Eyes Front!#card
+!
+= Tarfful | Fighting From the Shadowlands#leader
+Action [C=2, Exhaust]: Discard a card from your hand. If you do, create a Beast token.
+= Tarfful | Kashyyyk Chieftan#card
+~
+= Target Tagger#card
+When Played: You may attack with a unit.
+= Targeted For Removal#card
+~
+= Targeting Computer#card
+~
+= Tatooine Repulsor Train#card
+~
+= Tear This Ship Apart#card
+!
+= Tech | I Thought it Was Obvious#card
+~
+= Tech | Source of Insight#card
+!
+= Teeka | You're in Luck#card
+When Played: Give a unit Sentinel for this phase.
+= Tempest Assault#card
+Deal 2 damage to each enemy space unit.
+= Temple of Destruction | Malachor#card
+~
+= That's a Rock#card
+Deal 1 damage to a unit.
+~
+= The Armorer | Steel Shapes Us#leader
+!
+= The Armorer | Steel Shapes Us#unit
+!
+= The Chancellor's Shuttle | Grim Harbinger#card
+When Defeated: You may give an Experience token to a unit.
+= The Chaos of War#card
+!
+= The Chieftain | Here Since the Oceans Dried#card
+~
+= The Client | Dictated by Discretion#card
+!
+= The Client | Please Lower Your Blaster#leader
+Action [Exhaust]: Exhaust an enemy unit.
+= The Client | Please Lower Your Blaster#unit
+On Attack: Exhaust an enemy unit.
+= The Clone Wars#card
+!
+= The Conflict Within#card
+~
+= The Cyborg Mech | Mysterious Threat#card
+When Played: Deal 2 damage to a ground unit.
+= The Darksaber#card
+~
+Attached unit gains: "On Attack: Give an Experience token to each other friendly Mandalorian unit."
+= The Darksaber | Icon of Leadership#card
+~
+= The Darksaber | Only the Strongest Shall Rule#card
+~
+= The Daughter | Embodiment of Light#card
+~
