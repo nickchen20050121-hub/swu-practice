@@ -43,7 +43,7 @@
     probCard: '指定卡', probCat: '類別', cat2: '2 費以下單位', cat3: '3 費以下單位', catSentinel: '有哨兵的卡', catRemoval: '解場卡', probCore: '每張牌在第 1／3／5 回合前抽到的機率',
     scSize: '張數', scCurve: '前期卡比例', scAvg: '平均費用', scPenalty: '顏色罰費', scConsistency: '穩定度（3 張的比例）', scInteraction: '互動手段', scUnits: '單位比例',
     scNote: '只看牌組結構，不代表實戰勝率。', errNoLeader: '還沒選領袖', errNoBase: '還沒選基地', errTooFew: '主牌只有 {0} 張（至少 50）', errTooMany: '{0} 超過 3 張', errSide: '備牌 {0} 張（最多 10）',
-    errJson: 'JSON 格式有誤', warnUnknown: '找不到：{0}', presetPQ: '藍綠路克（台北 PQ 版 52 張）', presetA2: '藍綠路克（A2 調整版 50 張）', autoDeckName: '自動組牌',
+    errJson: 'JSON 格式有誤', warnUnknown: '找不到：{0}', presetPQ: 'Luke Skywalker (ASH)｜起源之樹・卡希克 (HMW)｜台北 PQ 版 52 張', presetA2: 'Luke Skywalker (ASH)｜起源之樹・卡希克 (HMW)｜A2 調整版 50 張', autoDeckName: '自動組牌',
     pickLeaderBase: '先選好領袖和基地', addHint: '點卡片加入牌組；右鍵或長按移除', clickToSet: '點卡片設為{0}',
     // 設定
     setLang: '語言', setKey: 'Claude API 金鑰', setKeyHint: '金鑰只會存在這台電腦的瀏覽器裡。到 console.anthropic.com 建立。', setTest: '測試連線', testing: '測試中…', testOk: '連線成功', testFail: '連線失敗：{0}',
@@ -79,7 +79,7 @@
     probCore: 'Chance to see each card by rounds 1 / 3 / 5',
     scSize: 'Size', scCurve: 'Early cards', scAvg: 'Average cost', scPenalty: 'Aspect penalty', scConsistency: 'Consistency (3-ofs)', scInteraction: 'Interaction', scUnits: 'Unit ratio',
     scNote: 'Structure only; not a win-rate prediction.', errNoLeader: 'No leader', errNoBase: 'No base', errTooFew: 'Main deck has {0} cards (50 minimum)', errTooMany: '{0} has more than 3 copies', errSide: 'Sideboard has {0} (10 max)',
-    errJson: 'Invalid JSON', warnUnknown: 'Not found: {0}', presetPQ: 'Blue-Green Luke (Taipei PQ, 52)', presetA2: 'Blue-Green Luke (A2 tune, 50)', autoDeckName: 'Auto-build',
+    errJson: 'Invalid JSON', warnUnknown: 'Not found: {0}', presetPQ: 'Luke Skywalker (ASH) | Origin Tree (HMW) | Taipei PQ, 52', presetA2: 'Luke Skywalker (ASH) | Origin Tree (HMW) | A2 tune, 50', autoDeckName: 'Auto-build',
     pickLeaderBase: 'Choose a leader and a base first', addHint: 'Click a card to add it; right-click or long-press to remove', clickToSet: 'Click to set as {0}',
     setLang: 'Language', setKey: 'Claude API key', setKeyHint: 'The key stays in this browser only. Create one at console.anthropic.com.', setTest: 'Test connection', testing: 'Testing…', testOk: 'Connected', testFail: 'Failed: {0}',
     setModel: 'Model', setEffort: 'Thinking effort', effLow: 'Fast (low)', effMed: 'Medium', effHigh: 'Deep (high)', setMode: 'Decisions made by Claude', modeMain: 'Main actions and effect reading (faster, cheaper)', modeAll: 'Every decision (smarter, slower, costlier)',
