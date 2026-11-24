@@ -244,6 +244,28 @@
     document.addEventListener('touchend', end, { passive: false });
     document.addEventListener('touchcancel', end);
     document.addEventListener('touchmove', () => clearTimeout(press), { passive: true });
+    // 手機：牌表裡的卡名列（不是卡片本身）點一下就放大，再點任何地方收起
+    let tapShown = false;
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (fine()) return;
+        if (tapShown) {
+          tapShown = false;
+          hideZoom();
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        const f = e.target.closest && e.target.closest('[data-zoom]');
+        if (!f || !f._zc || f.classList.contains('face') || e.target.closest('button')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        tapShown = true;
+        showZoom(f, 0, 0, true);
+      },
+      true
+    );
     document.addEventListener('contextmenu', (e) => {
       if (e.target.closest && e.target.closest('[data-zoom]') && zoom.shownByPress) e.preventDefault();
     });

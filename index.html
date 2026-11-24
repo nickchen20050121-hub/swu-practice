@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>由奈練牌桌</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -150,12 +151,15 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .dl-sec{break-inside:avoid;margin-bottom:10px}
 .dl-sec h4{margin:4px 0}
 .dl-sec ul{list-style:none;margin:0;padding:0}
-.dl-sec li{display:flex;gap:6px;align-items:center;font-size:13px;padding:2px 0}
+.dl-sec li{display:flex;gap:6px;align-items:center;font-size:13px;padding:5px 8px;margin:3px 0;border:1px solid var(--line);border-radius:8px;background:var(--panel2);cursor:zoom-in}
+[data-zoom]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dl-sec li .asp{margin-left:auto;padding:4px 6px;border-left:1px solid var(--line)}
 .dl-sec .qty{font-family:var(--f-num);width:26px}
 .dl-c{font-family:var(--f-num);color:var(--muted);width:16px;text-align:right}
 .dl-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dv-btns{flex-wrap:wrap;justify-content:flex-end}
 .dv-btns button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+@media (max-width:640px){.dv-list{columns:1;max-height:48vh;overflow-x:hidden}.dl-n{white-space:normal}}
 @media (max-width:900px){.qm{grid-template-columns:1fr}.qm-right{position:static}}
 @media (max-width:640px){.modecards{grid-template-columns:1fr;max-width:360px}.modecard{aspect-ratio:auto}.mc-art{height:150px;flex:none}.dgrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}.vs{font-size:20px}}
 .ai-status{margin:0;padding:8px 12px;border-radius:8px;background:var(--panel2);border:1px solid var(--line)}
@@ -514,17 +518,17 @@ button.inittok.take{border:2px dashed var(--warn);animation:initpulse 1.6s ease-
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js"></script>
-<script src="engine.js"></script>
+<script src="cards.js?v=202611241852"></script>
+<script src="engine.js?v=202611241852"></script>
 <script src="i18n.js"></script>
-<script src="effects.js"></script>
-<script src="gfx.js"></script>
-<script src="programs.js"></script>
-<script src="meta_decks.js"></script>
-<script src="deck.js"></script>
-<script src="ai.js"></script>
-<script src="sfx.js"></script>
-<script src="ui.js"></script>
+<script src="effects.js?v=202611241852"></script>
+<script src="gfx.js?v=202611241852"></script>
+<script src="programs.js?v=202611241852"></script>
+<script src="meta_decks.js?v=202611241852"></script>
+<script src="deck.js?v=202611241852"></script>
+<script src="ai.js?v=202611241852"></script>
+<script src="sfx.js?v=202611241852"></script>
+<script src="ui.js?v=202611241852"></script>
 <script>SWU.boot();</script>
 </body>
 </html>
