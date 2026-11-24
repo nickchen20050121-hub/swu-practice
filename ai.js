@@ -235,6 +235,7 @@
       let forced = c.force != null;
       let oppMoves = 0;
       let rollN = 0;
+      let rgN = 0;
       const mk = (q) => {
         const o = g.io[q] || {};
         return {
@@ -244,7 +245,7 @@
           },
           chooseAction: async (g2, who, acts2) => {
             // 推演到這回合結束：雙方都用快速規則打完，再看局面
-            if (deep === 'roll' && acts2 && acts2.length && rollN++ < 40) return H.chooseAction(g2, who, acts2);
+            if (deep === 'roll' && acts2 && acts2.length && rollN++ < (opt.h2 ? 100 : 40)) return H.chooseAction(g2, who, acts2);
             // 深一層：讓對手用推測的手牌回應一手（最多兩個行動），再看局面
             if (deep && who !== p && oppMoves < 2 && acts2 && acts2.length) {
               oppMoves++;
@@ -260,6 +261,8 @@
               return [c.force];
             }
             if (req.ctx && req.ctx.regroupResource) {
+              // 推演看兩回合：第一次重整先照常放資源，到下一回合結束才評分
+              if (deep === 'roll' && opt.h2 && rgN++ < 2) return H.choose(g2, qq, req);
               score = H.evalState(g2, p);
               throw STOP;
             }
@@ -357,7 +360,8 @@
     5: { smart: {} },
     6: { smart: { rollout: 2, top: 4 } },
     7: { smart: { rollout: 4, top: 6 } },
-    8: { smart: { rollout: 6, top: 8, risk: 0.3 } },
+    // 2026-11-24 加強：前 12 名各推演 14 次（對柏偉的路克，比賽牌組勝率約 21%→40%）
+    8: { smart: { rollout: 14, top: 12, risk: 0.3 } },
   };
   H.randomAct = function (g, p, acts) {
     const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');

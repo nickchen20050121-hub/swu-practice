@@ -436,7 +436,7 @@ body.ingame #app{height:100dvh;display:flex;flex-direction:column}
 body.ingame header.top{padding-top:6px;padding-bottom:6px}
 body.ingame main#view{flex:1;min-height:0;padding:8px max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px))}
 body.ingame .table-wrap{height:100%;align-items:stretch;grid-template-columns:minmax(0,1fr) clamp(240px,22vw,320px)}
-body.ingame .board{--cw:clamp(40px,calc((100dvh - 345px) / 5.8),104px);--hcw:clamp(42px,calc((100dvh - 345px) / 5.5),110px);height:100%;min-height:0;overflow:hidden;grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr) auto;gap:6px;padding:8px 10px;align-content:stretch}
+body.ingame .board{--cw:clamp(40px,calc((100dvh - 385px) / 5.8),104px);--hcw:clamp(42px,calc((100dvh - 385px) / 5.5),110px);height:100%;min-height:0;overflow:hidden;grid-template-rows:auto auto minmax(0,1fr) auto minmax(0,1fr) auto;gap:6px;padding:8px 10px;align-content:stretch}
 body.ingame .zone{min-height:0;padding:4px 8px 6px;gap:3px;grid-template-rows:auto minmax(0,1fr)}
 body.ingame .lane{min-height:0;padding:14px 6px 6px}
 body.ingame .units{flex-wrap:nowrap;overflow-x:auto;overflow-y:visible;padding-bottom:6px;scrollbar-width:thin}
@@ -464,7 +464,7 @@ body.ingame .backs{min-height:0}
   body.ingame header.top .brand span:last-child{display:none}
   body.ingame header.top .tab{padding:4px 8px;font-size:13px}
   body.ingame main#view{padding:4px 4px 0}
-  body.ingame .board{--cw:clamp(36px,calc((100dvh - 400px) / 6.3),66px);--hcw:clamp(40px,calc((100dvh - 400px) / 5.6),74px);padding:4px 6px;gap:4px;border-radius:10px}
+  body.ingame .board{--cw:clamp(36px,calc((100dvh - 440px) / 6.3),66px);--hcw:clamp(40px,calc((100dvh - 440px) / 5.6),74px);padding:4px 6px;gap:4px;border-radius:10px}
   body.ingame .status{gap:4px;font-size:11px}
   body.ingame .status .chip{padding:1px 6px;font-size:11px}
   body.ingame .zone{padding:3px 4px 4px}
@@ -514,21 +514,68 @@ button.inittok.take{border:2px dashed var(--warn);animation:initpulse 1.6s ease-
 .distrow button{min-height:28px;min-width:28px;padding:0}
 .distleft{font-weight:700;color:var(--warn)}
 .distleft.done{color:var(--accent)}
+.cinfo{display:grid;gap:5px;text-align:left;width:100%;min-width:0}
+.ci-name{font-family:var(--f-display);font-weight:700;font-size:16px;line-height:1.3}
+.ci-sub{font-weight:500;color:var(--muted);font-size:13px}
+.ci-meta{font-size:12px;color:var(--muted)}
+.ci-en{font-size:12px;color:var(--muted);line-height:1.45;white-space:pre-line}
+.ci-zh{font-size:13.5px;line-height:1.55;white-space:pre-line}
+.ci-sec{display:grid;gap:3px;border-top:1px dashed var(--line);padding-top:5px}
+.ci-lab{font-size:11px;font-weight:700;color:var(--accent)}
+.ci-kws{display:flex;flex-wrap:wrap;gap:4px}
+.ci-kws .chip{font-size:11px;padding:1px 7px}
+.ci-ver{font-size:11px}
+.zoom .zinfo{width:300px;max-height:min(80vh,620px);overflow:hidden;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:10px 12px;align-self:flex-start}
+.zoom.center .zinfo{width:min(92vw,440px);max-height:38vh;overflow:auto}
+.zoom.center .face{max-height:52vh}
+.vers{width:100%;text-align:left;font-size:12px}
+.vers summary{cursor:pointer;font-weight:700;padding:4px 0}
+.vers-g{font-weight:700;margin:6px 0 2px;font-size:11.5px;color:var(--accent)}
+.vers-list{display:grid;gap:3px}
+.vers-it{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;text-align:left;font-size:12px;padding:4px 8px;min-height:30px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink)}
+.vers-p{font-variant-numeric:tabular-nums}
+.vers-big img{width:100%;max-width:260px;border-radius:10px;display:block;margin:4px 0}
+.feed{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px 8px;display:flex;gap:8px;align-items:center;font-size:12px;min-height:0;overflow:hidden}
+.feed-head{display:flex;gap:4px;align-items:center;flex:none;order:2}
+.feed-head b{display:none}
+.feed-head .chip{min-height:26px;padding:1px 8px;font-size:11px}
+.feed-rows{display:grid;gap:1px;flex:1;min-width:0}
+.feed-r{display:flex;gap:6px;align-items:baseline;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-r>span:last-child{overflow:hidden;text-overflow:ellipsis}
+.feed-r.latest{font-weight:700}
+.feed>.muted{flex:1}
+.who{flex:none;font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;color:#fff;background:#6b7c93}
+.by-opp .who{background:#c0392b}
+.by-me .who{background:#2e86c1}
+.log .l .who{margin-right:5px}
+@keyframes lungeDown{0%{transform:none}35%{transform:translateY(26px) scale(1.06)}60%{transform:translateY(18px) rotate(-2deg)}100%{transform:none}}
+@keyframes lungeUp{0%{transform:none}35%{transform:translateY(-26px) scale(1.06)}60%{transform:translateY(-18px) rotate(2deg)}100%{transform:none}}
+@keyframes hitShake{0%,25%{transform:none}32%{transform:translateX(-7px) rotate(-2deg)}42%{transform:translateX(7px) rotate(2deg)}52%{transform:translateX(-5px)}62%{transform:translateX(5px)}72%{transform:translateX(-2px)}85%,100%{transform:none}}
+@keyframes hitFlash{0%,25%{box-shadow:none}35%{box-shadow:0 0 0 3px #e74c3c,0 0 18px #e74c3c}100%{box-shadow:none}}
+@keyframes dropIn{0%{transform:translateY(-14px) scale(1.15);opacity:.3;box-shadow:0 0 0 3px #f1c40f}60%{transform:none;opacity:1;box-shadow:0 0 16px #f1c40f}100%{box-shadow:none}}
+.anim-lunge-down{animation:lungeDown .9s ease-out both;z-index:5;position:relative}
+.anim-lunge-up{animation:lungeUp .9s ease-out both;z-index:5;position:relative}
+.anim-hit{animation:hitShake .9s linear both,hitFlash .9s ease-out both}
+.anim-drop{animation:dropIn .7s ease-out both}
+.castpop{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:70;background:var(--panel);border:2px solid #c0392b;border-radius:14px;padding:8px 12px;display:grid;justify-items:center;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:dropIn .5s ease-out;--cw:110px;cursor:pointer}
+.castpop small{color:#c0392b;font-weight:700}
+@media (prefers-reduced-motion:reduce){.anim-lunge-down,.anim-lunge-up,.anim-hit,.anim-drop,.castpop{animation:none!important}}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611241912"></script>
-<script src="engine.js?v=202611241912"></script>
-<script src="i18n.js"></script>
-<script src="effects.js?v=202611241912"></script>
-<script src="gfx.js?v=202611241912"></script>
-<script src="programs.js?v=202611241912"></script>
-<script src="meta_decks.js?v=202611241912"></script>
-<script src="deck.js?v=202611241912"></script>
-<script src="ai.js?v=202611241912"></script>
-<script src="sfx.js?v=202611241912"></script>
-<script src="ui.js?v=202611241912"></script>
+<script src="cards.js?v=202611242015"></script>
+<script src="engine.js?v=202611242015"></script>
+<script src="zh_cards.js?v=202611242015"></script>
+<script src="i18n.js?v=202611242015"></script>
+<script src="effects.js?v=202611242015"></script>
+<script src="gfx.js?v=202611242015"></script>
+<script src="programs.js?v=202611242015"></script>
+<script src="meta_decks.js?v=202611242015"></script>
+<script src="deck.js?v=202611242015"></script>
+<script src="ai.js?v=202611242015"></script>
+<script src="sfx.js?v=202611242015"></script>
+<script src="ui.js?v=202611242015"></script>
 <script>SWU.boot();</script>
 </body>
 </html>

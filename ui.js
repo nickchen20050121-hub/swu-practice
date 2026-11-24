@@ -19,7 +19,7 @@
 
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
-    expFt: '匯出 Force Table', expFtHint: 'SWUDB JSON 格式，複製後到 Force Table 匯入牌組貼上', expKb: '匯出 Karabast', expKbHint: 'SWUDB JSON 格式，複製後到 Karabast 的牌組匯入貼上', expMelee: '匯出 Melee', expMeleeHint: 'Melee.gg 牌表文字格式（張數 | 卡名 | 副標），比賽報名貼牌表用', dimgBtn: '牌組圖片', dimgDownload: '下載圖片', dimgMaking: '正在產生圖片…', dimgDone: '已下載', dimgTextOnly: '已下載（有些卡圖讀不到，改用文字版）', dimgFail: '產生圖片失敗，請再試一次', lvName: '第 {0} 級', lv1: '剛學會規則，幾乎都是亂出牌、亂選目標', lv2: '常常亂出，偶爾會想一下', lv3: '大多照基本打法，偶爾失誤', lv4: '照基本打法：先下費用合適的牌、挑好打的目標攻擊', lv5: '每一步都先預想結果，會推測你手上可能有什麼牌', lv6: '會把最好的幾個行動推演到回合結束再決定', lv7: '推演更多次，比較少被你的手牌嚇到或騙到', lv8: '最強：從你的領袖、基地、出過的牌和比賽環境推測你的牌組，每個候選行動推演 6 次，算利益也算風險',
+    expFt: '匯出 Force Table', expFtHint: 'SWUDB JSON 格式，複製後到 Force Table 匯入牌組貼上', expKb: '匯出 Karabast', expKbHint: 'SWUDB JSON 格式，複製後到 Karabast 的牌組匯入貼上', expMelee: '匯出 Melee', expMeleeHint: 'Melee.gg 牌表文字格式（張數 | 卡名 | 副標），比賽報名貼牌表用', dimgBtn: '牌組圖片', dimgDownload: '下載圖片', dimgMaking: '正在產生圖片…', dimgDone: '已下載', dimgTextOnly: '已下載（有些卡圖讀不到，改用文字版）', dimgFail: '產生圖片失敗，請再試一次', lvName: '第 {0} 級', lv1: '剛學會規則，幾乎都是亂出牌、亂選目標', lv2: '常常亂出，偶爾會想一下', lv3: '大多照基本打法，偶爾失誤', lv4: '照基本打法：先下費用合適的牌、挑好打的目標攻擊', lv5: '每一步都先預想結果，會推測你手上可能有什麼牌', lv6: '會把最好的幾個行動推演到回合結束再決定', lv7: '推演更多次，比較少被你的手牌嚇到或騙到', lv8: '最強：從你的領袖、基地、出過的牌和比賽環境推測你的牌組，把最好的 12 個候選行動各推演 14 次到回合結束，算利益也算風險（想得比較久）',
     setSound: '音效', setVolume: '音量', setZoom: '滑鼠指到卡片時放大顯示（手機長按）', lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
     needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
@@ -55,7 +55,7 @@
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
-    expFt: 'Export Force Table', expFtHint: 'SWUDB JSON; paste it into Force Table deck import', expKb: 'Export Karabast', expKbHint: 'SWUDB JSON; paste it into Karabast deck import', expMelee: 'Export Melee', expMeleeHint: 'Melee.gg decklist text (count | name | subtitle) for tournament registration', dimgBtn: 'Deck image', dimgDownload: 'Download image', dimgMaking: 'Making image…', dimgDone: 'Downloaded', dimgTextOnly: 'Downloaded (some card art could not be loaded, used text instead)', dimgFail: 'Could not make the image, please try again', lvName: 'Level {0}', lv1: 'Just learned the rules; plays and targets almost at random', lv2: 'Often random, sometimes thinks', lv3: 'Mostly solid basics with occasional mistakes', lv4: 'Solid basics: plays on curve and attacks good targets', lv5: 'Looks one step ahead and guesses what is in your hand', lv6: 'Plays out the best few actions to the end of the round before deciding', lv7: 'Plays out more rounds; harder to bluff', lv8: 'Strongest: reads your deck from your leader, base, played cards and the tournament meta, plays out each candidate 6 times and weighs gain against risk',
+    expFt: 'Export Force Table', expFtHint: 'SWUDB JSON; paste it into Force Table deck import', expKb: 'Export Karabast', expKbHint: 'SWUDB JSON; paste it into Karabast deck import', expMelee: 'Export Melee', expMeleeHint: 'Melee.gg decklist text (count | name | subtitle) for tournament registration', dimgBtn: 'Deck image', dimgDownload: 'Download image', dimgMaking: 'Making image…', dimgDone: 'Downloaded', dimgTextOnly: 'Downloaded (some card art could not be loaded, used text instead)', dimgFail: 'Could not make the image, please try again', lvName: 'Level {0}', lv1: 'Just learned the rules; plays and targets almost at random', lv2: 'Often random, sometimes thinks', lv3: 'Mostly solid basics with occasional mistakes', lv4: 'Solid basics: plays on curve and attacks good targets', lv5: 'Looks one step ahead and guesses what is in your hand', lv6: 'Plays out the best few actions to the end of the round before deciding', lv7: 'Plays out more rounds; harder to bluff', lv8: 'Strongest: reads your deck from your leader, base, played cards and the tournament meta, plays out its 12 best candidates 14 times each and weighs gain against risk (thinks longer)',
     setSound: 'Sound effects', setVolume: 'Volume', setZoom: 'Enlarge cards on hover (long-press on phones)', lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
@@ -123,6 +123,188 @@
   function aspectDots(card) {
     return h('span', { class: 'asp' }, ...(card.a || []).map((a) => h('i', { class: 'dot ' + ASP_CLASS[a], title: t('asp_' + a) })));
   }
+  // ---------- 中英對照卡片資訊（放大圖、預覽、手機說明、組牌器共用） ----------
+  function cardMeta(card, lang = SWU.lang) {
+    const zh = lang === 'zh';
+    return [
+      SWU.typeName(card.t, lang),
+      card.c != null ? t('cost') + ' ' + card.c : '',
+      card.p != null ? card.p + '/' + card.h : card.h ? card.h + ' HP' : '',
+      card.ar ? SWU.arName(card.ar, lang) : '',
+      (card.tr || []).map((x) => (zh ? SWU.trName(x, 'zh') : x)).join('・'),
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+  function cardInfo(card, side = 'card', opt = {}) {
+    const zh = SWU.lang === 'zh';
+    const zn = SWU.zhName(card), zs = SWU.zhSub(card);
+    const leader = card.t === 'Leader';
+    const txt = (sd, lang) => SWU.cardText(card, sd, lang);
+    const block = (label, zhT, enT) => {
+      if (!zhT && !enT) return null;
+      return h(
+        'div',
+        { class: 'ci-sec' },
+        label ? h('div', { class: 'ci-lab' }, label) : null,
+        zh && zhT && zhT !== enT ? h('div', { class: 'ci-zh' }, zhT) : null,
+        enT ? h('div', { class: zh && zhT && zhT !== enT ? 'ci-en' : 'ci-zh' }, enT) : null
+      );
+    };
+    const kws = (card.kw || []).filter((k) => k !== 'Keyword' && k !== 'Keywords');
+    const secs = [];
+    if (leader) {
+      const first = side === 'unit' ? 'unit' : 'card';
+      const second = first === 'unit' ? 'card' : 'unit';
+      const lab = (sd) => (sd === 'unit' ? (zh ? '部署後（單位面）' : 'Unit side') : zh ? '領袖面' : 'Leader side');
+      secs.push(block(lab(first), txt(first, 'zh'), txt(first, 'en')));
+      if (first === 'card' && card.ep) secs.push(block(zh ? '史詩行動' : 'Epic Action', SWU.cardEp(card, 'zh').replace(/^史詩行動：/, ''), card.ep.replace(/^Epic Action:\s*/, '')));
+      secs.push(block(lab(second), txt(second, 'zh'), txt(second, 'en')));
+      if (first === 'unit' && card.ep) secs.push(block(zh ? '史詩行動' : 'Epic Action', SWU.cardEp(card, 'zh').replace(/^史詩行動：/, ''), card.ep.replace(/^Epic Action:\s*/, '')));
+    } else {
+      secs.push(block('', txt('card', 'zh'), txt('card', 'en')));
+      if (card.ep) secs.push(block(zh ? '史詩行動' : 'Epic Action', SWU.cardEp(card, 'zh').replace(/^史詩行動：/, ''), card.ep.replace(/^Epic Action:\s*/, '')));
+    }
+    const nm = secs.filter(Boolean);
+    return h(
+      'div',
+      { class: 'cinfo' + (opt.cls ? ' ' + opt.cls : '') },
+      h('div', { class: 'ci-name' }, zh && zn ? zn : card.n, zh && zs ? h('span', { class: 'ci-sub' }, '｜' + zs) : card.s ? h('span', { class: 'ci-sub' }, '｜' + card.s) : null),
+      zh && zn ? h('div', { class: 'ci-en ci-ename' }, card.n + (card.s ? ' | ' + card.s : '')) : null,
+      h('div', { class: 'ci-meta' }, cardMeta(card)),
+      zh && (card.tr || []).length ? h('div', { class: 'ci-en ci-tr' }, card.tr.join(' · ')) : null,
+      kws.length ? h('div', { class: 'ci-kws' }, ...kws.map((k) => h('span', { class: 'chip' }, SWU.bi(SWU.kwName(k, 'zh'), k)))) : null,
+      ...(nm.length ? nm : [h('div', { class: 'ci-en' }, zh ? '（沒有能力文字）' : '(no ability text)')]),
+      opt.extra || null
+    );
+  }
+  // ---------- 卡牌版本（一般／閃卡／超空間／尊爵版／特卡／編號卡／賽事卡…） ----------
+  const VER_GROUPS = [
+    ['normal', '一般版', 'Normal'],
+    ['foil', '閃卡', 'Foil'],
+    ['hs', '超空間版', 'Hyperspace'],
+    ['hsf', '超空間閃卡', 'Hyperspace Foil'],
+    ['show', '特卡（展示版）', 'Showcase'],
+    ['pres', '尊爵版系列', 'Prestige'],
+    ['serial', '編號卡', 'Serialized'],
+    ['prize', '賽事獎勵卡', 'Tournament prizes'],
+    ['pack', '賽事活動包', 'Event packs'],
+    ['promo', '店家活動／推廣卡', 'OP & promos'],
+    ['judge', '裁判卡', 'Judge'],
+    ['other', '其他特典', 'Other exclusives'],
+  ];
+  function verGroup(v) {
+    if (v === 'Normal') return 'normal';
+    if (v === 'Foil') return 'foil';
+    if (v === 'Hyperspace') return 'hs';
+    if (v === 'Hyperspace Foil') return 'hsf';
+    if (v === 'Showcase') return 'show';
+    if (/^Prestige/.test(v)) return 'pres';
+    if (v === 'Serialized') return 'serial';
+    if (/Judge/.test(v)) return 'judge';
+    if (/Event Pack|Silver Pack|Black Pack|Token Pack/.test(v)) return 'pack';
+    if (/^(PQ|SQ|RQ|GC|SS|S1|Store Showdown)\b/.test(v)) return 'prize';
+    if (/OP Promo|Prerelease Promo/.test(v)) return 'promo';
+    return 'other';
+  }
+  const VER_ZH = {
+    Normal: '一般版', Foil: '閃卡', Hyperspace: '超空間版', 'Hyperspace Foil': '超空間閃卡', Showcase: '特卡', Prestige: '尊爵版', 'Prestige Foil': '尊爵閃卡', 'Prestige Serialized': '尊爵編號卡', Serialized: '編號卡',
+    'OP Promo': '店家活動卡', 'OP Promo Foil': '店家活動閃卡', 'Prerelease Promo': '發售前活動卡', 'Prerelease Judge': '發售前活動裁判卡', 'Judge Program': '裁判計畫卡', 'Judge Promo': '裁判推廣卡',
+    'Convention Exclusive': '展會限定', 'Costco Exclusive': 'Costco 限定', 'Gift Box': '禮盒版', 'Movie Promo': '電影推廣卡', 'Event Exclusive': '活動限定', 'S1 Leaderboard Prize': '第一季排行榜獎勵',
+  };
+  const VER_PRE = { PQ: '行星賽', SQ: '星區資格賽', RQ: '地區資格賽', GC: '銀河錦標賽', SS: '店家對決', 'Store Showdown': '店家對決' };
+  const VER_SUF = {
+    Participation: '參加獎', Judge: '裁判卡', Champion: '冠軍', Finalist: '亞軍', 'Top 4': '前 4 名', 'Top 8': '前 8 名', 'Top 16': '前 16 名', 'Top 64': '前 64 名', 'Prize Wall': '獎品牆', 'Prize Wall Foil': '獎品牆閃卡',
+    'Event Pack': '活動包', 'Silver Pack': '銀包', 'Black Pack': '黑包', 'Token Pack': '代幣包', 'Day Two': '第二天晉級', 'Day Three': '第三天晉級', 'VIP Promo': 'VIP 特典', 'Staff Promo': '工作人員特典',
+    'Early Badge Pickup Promo': '提早報到特典', 'Early Bird Promo': '早鳥特典', 'LCQ Participation': '最後資格賽參加獎', 'Event Exclusive': '活動限定',
+  };
+  function verName(v, lang = SWU.lang) {
+    if (lang !== 'zh') return v;
+    if (VER_ZH[v]) return VER_ZH[v];
+    const m = v.match(/^(PQ|SQ|RQ|GC|SS|Store Showdown) (.+)$/);
+    if (m && VER_SUF[m[2]]) return VER_PRE[m[1]] + ' ' + VER_SUF[m[2]];
+    return v;
+  }
+  let varState = 0;
+  const varWait = [];
+  function loadVariants(cb) {
+    if (window.SWU_VAR) return cb();
+    varWait.push(cb);
+    if (varState) return;
+    varState = 1;
+    const me = [...document.scripts].find((x) => /ui\.js/.test(x.src));
+    const v = me && me.src.match(/\?v=\w+/);
+    const sc = document.createElement('script');
+    sc.src = 'variants.js' + (v ? v[0] : '');
+    sc.onload = () => varWait.splice(0).forEach((f) => f());
+    sc.onerror = () => (varState = 0);
+    document.head.append(sc);
+  }
+  function cardVariants(card) {
+    const V = window.SWU_VAR;
+    if (!V) return null;
+    return (V.v[card.key] || []).map(([set, num, vi, pr, tid, img]) => ({ set, num, vt: V.vt[vi], pr, tid, img: img || `https://cdn.swu-db.com/images/cards/${set}/${num}.png` }));
+  }
+  function versionCount(card) {
+    const box = h('div', { class: 'ci-ver muted' });
+    const fill = () => {
+      const list = cardVariants(card) || [];
+      if (!list.length) return;
+      const by = {};
+      for (const x of list) by[verGroup(x.vt)] = (by[verGroup(x.vt)] || 0) + 1;
+      const zh = SWU.lang === 'zh';
+      box.textContent = (zh ? '版本 ' : 'Versions ') + list.length + '：' + VER_GROUPS.filter((g) => by[g[0]]).map((g) => (zh ? g[1] : g[2]) + ' ' + by[g[0]]).join('、');
+    };
+    if (window.SWU_VAR) fill();
+    else loadVariants(fill);
+    return box;
+  }
+  function versionsBox(card) {
+    const zh = SWU.lang === 'zh';
+    const det = h('details', { class: 'vers' });
+    const sum = h('summary', {}, zh ? '卡牌版本（載入中…）' : 'Versions (loading…)');
+    det.append(sum);
+    const fill = () => {
+      const list = cardVariants(card) || [];
+      sum.textContent = (zh ? '卡牌版本 ' : 'Versions ') + list.length;
+      if (!list.length) return;
+      const big = h('div', { class: 'vers-big' });
+      const show = (x) => {
+        big.innerHTML = '';
+        big.append(
+          h('img', { src: x.img, alt: card.key, loading: 'lazy' }),
+          h('div', { class: 'ci-meta' }, verName(x.vt) + (zh && verName(x.vt) !== x.vt ? '（' + x.vt + '）' : '') + ' · ' + x.set + ' ' + x.num + (x.pr ? ' · $' + x.pr.toFixed(2) : ''))
+        );
+      };
+      det.append(big);
+      for (const g of VER_GROUPS) {
+        const items = list.filter((x) => verGroup(x.vt) === g[0]).sort((a, b) => (a.set + a.num).localeCompare(b.set + b.num));
+        if (!items.length) continue;
+        det.append(
+          h('div', { class: 'vers-g' }, zh ? g[1] + ' ' + g[2] : g[2]),
+          h(
+            'div',
+            { class: 'vers-list' },
+            ...items.map((x) =>
+              h(
+                'button',
+                { class: 'vers-it', title: x.vt, onclick: (e) => (e.preventDefault(), show(x)) },
+                h('span', { class: 'vers-n' }, verName(x.vt)),
+                h('span', { class: 'muted' }, x.set + ' ' + x.num),
+                h('span', { class: 'vers-p' }, x.pr ? '$' + x.pr.toFixed(2) : '—')
+              )
+            )
+          )
+        );
+      }
+    };
+    det.addEventListener('toggle', () => det.open && !det._f && ((det._f = 1), loadVariants(fill)));
+    if (window.SWU_VAR) {
+      const list = cardVariants(card) || [];
+      sum.textContent = (zh ? '卡牌版本 ' : 'Versions ') + list.length;
+    } else sum.textContent = zh ? '卡牌版本（點開查看）' : 'Versions (tap to open)';
+    return det;
+  }
   function textFrame(card, side, stats, full) {
     const isUnitSide = side === 'unit';
     const p = stats ? stats.p : card.p;
@@ -131,8 +313,8 @@
       'div',
       { class: 'frame ' + (card.a && card.a[0] ? ASP_CLASS[card.a[0]] : 'neutral') },
       h('div', { class: 'fr-top' }, card.c != null && card.t !== 'Base' ? h('b', { class: 'fr-cost' }, isUnitSide ? '' : card.c) : null, aspectDots(card)),
-      h('div', { class: 'fr-name' }, card.n),
-      card.s ? h('div', { class: 'fr-sub' }, card.s) : null,
+      h('div', { class: 'fr-name' }, SWU.cardName(card)),
+      card.s ? h('div', { class: 'fr-sub' }, SWU.cardSub(card)) : null,
       h('div', { class: 'fr-text' }, full ? SWU.cardText(card, side) : SWU.cardText(card, side).slice(0, 160)),
       p != null || hp != null ? h('div', { class: 'fr-stats' }, h('span', { class: 'pw' }, p != null ? p : ''), h('span', { class: 'hpv' }, hp != null ? hp : '')) : null
     );
@@ -176,6 +358,7 @@
     const big = cardFace(zc.card, zc.side, { stats: zc.stats, full: true, noZoom: true });
     el.append(big);
     if (zc.card.t === 'Leader' && zc.side === 'card' && zc.card.bimg) el.append(cardFace(zc.card, 'unit', { full: true, noZoom: true }));
+    if (SWU.AI.settings.zoomText !== false) el.append(cardInfo(zc.card, zc.side, { cls: 'zinfo', extra: versionCount(zc.card) }));
     el.className = 'zoom on' + (big.classList.contains('wide') ? ' wide' : '') + (center ? ' center' : '');
     if (center) {
       el.style.left = el.style.top = '';
@@ -310,16 +493,13 @@
       document.body.append(el);
     }
     el.innerHTML = '';
-    const meta = [card.t, card.c != null ? t('cost') + ' ' + card.c : '', card.p != null ? card.p + '/' + card.h : card.h ? card.h + ' HP' : '', (card.tr || []).join(' · ')].filter(Boolean).join(' · ');
     el.append(
       h('div', { class: 'peek-face' }, cardFace(card, side, { small: true })),
       h(
         'div',
         { class: 'peek-body' },
-        h('div', { class: 'peek-head' }, h('b', {}, card.n), h('button', { class: 'ghost small peek-x', 'aria-label': 'close', onclick: hidePeek }, '✕')),
-        card.s ? h('small', { class: 'muted' }, card.s) : null,
-        h('div', { class: 'pv-meta' }, meta),
-        h('div', { class: 'pv-text' }, SWU.cardText(card, side) || (SWU.lang === 'zh' ? '（沒有能力文字）' : '(no ability text)')),
+        h('div', { class: 'peek-head' }, h('span'), h('button', { class: 'ghost small peek-x', 'aria-label': 'close', onclick: hidePeek }, '✕')),
+        cardInfo(card, side),
         acts.length ? h('div', { class: 'peek-acts' }, ...acts.map((a) => h('button', { class: 'primary', onclick: () => (hidePeek(), settle(a)) }, a.label))) : null
       )
     );
@@ -341,15 +521,7 @@
       return;
     }
     const { card, side } = S.preview;
-    const kids = [
-      cardFace(card, side),
-      h('div', { class: 'pv-name' }, card.n, card.s ? h('small', {}, card.s) : null),
-      h('div', { class: 'pv-meta' }, [card.t, card.c != null ? t('cost') + ' ' + card.c : '', card.p != null ? card.p + '/' + card.h : card.h ? card.h + ' HP' : '', card.ar || '', (card.tr || []).join(' · ')].filter(Boolean).join('  ·  ')),
-      card.t === 'Leader' ? h('div', { class: 'pv-text' }, h('b', {}, side === 'unit' ? (SWU.lang === 'zh' ? '領袖面' : 'Leader side') : SWU.lang === 'zh' ? '部署後' : 'Unit side'), ' ', SWU.cardText(card, side === 'unit' ? 'card' : 'unit')) : null,
-      h('div', { class: 'pv-text' }, SWU.cardText(card, side)),
-      card.ep ? h('div', { class: 'pv-text muted' }, card.ep) : null,
-      SWU.lang === 'zh' && !SWU.hasZh(card) && (card.tx || card.bt) ? h('div', { class: 'pv-note muted' }, '（這張卡還沒有中文翻譯，顯示英文原文）') : null,
-    ];
+    const kids = [cardFace(card, side), cardInfo(card, side, { extra: versionsBox(card) })];
     box.append(...kids.filter(Boolean));
   }
 
@@ -503,13 +675,56 @@
       'div',
       { class: 'revealpop' },
       h('b', {}, t('revealedBy', S.game.P(ev.p).name)),
-      h('div', { class: 'revealcards' }, ...ev.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c, 'card'), onclick: () => showPeek && showPeek(c, 'card') }, cardFace(c, 'card'), h('small', {}, c.n)))),
+      h('div', { class: 'revealcards' }, ...ev.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c, 'card'), onclick: () => showPeek && showPeek(c, 'card') }, cardFace(c, 'card'), h('small', {}, SWU.cardName(c))))),
       h('button', { class: 'primary', onclick: () => el.remove() }, t('okSeen'))
     );
     document.body.append(el);
   }
+  // ---------- 對手動作小動畫 ----------
+  const ANIM_MS = 900;
+  function animOn() {
+    return SWU.AI.settings.anim !== false;
+  }
+  function animClass(uid, base) {
+    const A = S.anim;
+    if (!A || !animOn()) return null;
+    const el = Date.now() - A.t0;
+    if (el > ANIM_MS) return null;
+    const st = { style: 'animation-delay:-' + el + 'ms' };
+    if (A.kind === 'attack') {
+      if (uid != null && uid === A.a) return { cls: A.p === 1 ? ' anim-lunge-down' : ' anim-lunge-up', ...st };
+      if (uid != null && uid === A.d) return { cls: ' anim-hit', ...st };
+      if (base != null && base === A.base) return { cls: ' anim-hit', ...st };
+    }
+    if (A.kind === 'play' && uid != null && uid === A.u) return { cls: ' anim-drop', ...st };
+    return null;
+  }
+  function setAnim(a) {
+    S.anim = Object.assign({ t0: Date.now() }, a);
+    clearTimeout(S.animT);
+    S.animT = setTimeout(() => {
+      S.anim = null;
+      renderBoard();
+    }, ANIM_MS + 30);
+  }
+  function showCastPop(ev) {
+    if (!animOn()) return;
+    const old = document.querySelector('.castpop');
+    if (old) old.remove();
+    const zh = SWU.lang === 'zh';
+    const el = h(
+      'div',
+      { class: 'castpop', onclick: () => el.remove() },
+      h('small', {}, zh ? '對方打出' : 'Opponent plays'),
+      cardFace(ev.card, 'card', { small: true }),
+      h('b', {}, SWU.cardName(ev.card))
+    );
+    document.body.append(el);
+    setTimeout(() => el.remove(), 1700);
+  }
   function attachGame(g) {
     S.game = g;
+    g.pauseFor = (kind, p) => (p === 1 && animOn() ? new Promise((r) => setTimeout(r, kind === 'attack' ? 750 : 600)) : null);
     S.pending = null;
     g.on((ev) => {
       if (g.replaying && ev.type !== 'gameover') return;
@@ -519,8 +734,17 @@
       } else if (ev.type === 'reveal') {
         if (ev.p !== 0) showRevealPop(ev);
         renderBoard();
+      } else if (ev.type === 'attack') {
+        const atk = ev.atk;
+        setAnim({ kind: 'attack', p: atk.p, a: atk.attacker.uid, d: atk.defender ? atk.defender.uid : null, base: atk.base ? 1 - atk.p : null });
+        renderBoard();
+      } else if (ev.type === 'play') {
+        if (ev.u) setAnim({ kind: 'play', p: ev.u.ctrl, u: ev.u.uid });
+      } else if (ev.type === 'cast') {
+        if (ev.p === 1 && ev.card && ev.card.t !== 'Unit') showCastPop(ev);
       } else if (ev.type === 'log') {
         renderLog();
+        renderFeed();
         SWU.sfx && SWU.sfx.onLog(g.G.log[g.G.log.length - 1]);
       }
       else if (ev.type === 'gameover') {
@@ -1037,7 +1261,7 @@
       if (c) groups[gkey(c)].push([c, n]);
     }
     const line = ([c, n]) =>
-      zoomable(h('li', {}, h('span', { class: 'qty' }, n + '×'), h('span', { class: 'dl-c' }, c.c != null ? c.c : ''), h('span', { class: 'dl-n' }, c.n + (c.s ? ', ' + c.s : '')), aspectDots(c)), c);
+      zoomable(h('li', {}, h('span', { class: 'qty' }, n + '×'), h('span', { class: 'dl-c' }, c.c != null ? c.c : ''), h('span', { class: 'dl-n' }, SWU.cardName(c) + (c.s ? ', ' + SWU.cardSub(c) : '')), aspectDots(c)), c);
     const sortL = (a) => a.sort((x, y) => (x[0].c || 0) - (y[0].c || 0) || x[0].n.localeCompare(y[0].n));
     const sec = (k, list) => (list.length ? h('div', { class: 'dl-sec' }, h('h4', {}, t('dl_' + k) + '（' + list.reduce((s, x) => s + x[1], 0) + '）'), h('ul', {}, ...sortL(list).map(line))) : null);
     const side = Object.entries(d.side || {}).map(([k, n]) => [SWU.Deck.card(k), n]).filter((x) => x[0]);
@@ -1142,8 +1366,68 @@
     const box = $('#log');
     if (!box || !S.game) return;
     box.innerHTML = '';
-    for (const l of S.game.G.log.slice(-120)) box.append(h('div', { class: 'l' + (/^logManual/.test(l.k) ? ' warn' : /^logRound|^logRegroup/.test(l.k) ? ' sep' : '') }, SWU.fmtLog(l)));
+    for (const l of S.game.G.log.slice(-120)) box.append(h('div', { class: 'l' + (/^logManual/.test(l.k) ? ' warn' : /^logRound|^logRegroup/.test(l.k) ? ' sep' : '') + (l.p === 0 ? ' by-me' : l.p === 1 ? ' by-opp' : '') }, l.p != null ? h('span', { class: 'who' }, whoTag(l.p)) : null, SWU.fmtLog(l, logLang())));
     box.scrollTop = box.scrollHeight;
+  }
+  // 行動紀錄語言（可和介面語言分開切換）
+  function logLang() {
+    if (!S.logLang) {
+      try {
+        S.logLang = localStorage.getItem('swu.logLang') || '';
+      } catch (e) {}
+    }
+    return S.logLang === 'zh' || S.logLang === 'en' ? S.logLang : SWU.lang;
+  }
+  function toggleLogLang() {
+    S.logLang = logLang() === 'zh' ? 'en' : 'zh';
+    try {
+      localStorage.setItem('swu.logLang', S.logLang);
+    } catch (e) {}
+    renderLog();
+    renderFeed();
+  }
+  function whoTag(p, lang = logLang()) {
+    return p === 0 ? (lang === 'zh' ? '我' : 'Me') : lang === 'zh' ? '對方' : 'Opp';
+  }
+  // 桌面上的「對方做了什麼／我做了什麼」
+  const FEED_SKIP = /^(logDraw|logRound|logRegroup)/;
+  function feedEl() {
+    const g = S.game;
+    const lang = logLang();
+    // 每邊各一行：最後一個主要動作，後面接它造成的結果
+    const L = g ? g.G.log : [];
+    const MAJOR = /^log(Play|Deploy|Attack|Ability|Pass|Initiative|Attach|Smuggle)/;
+    const lineFor = (p) => {
+      let i = L.length - 1;
+      while (i >= 0 && !(L[i].p === p && MAJOR.test(L[i].k))) i--;
+      if (i < 0) return null;
+      const extra = [];
+      for (let j = i + 1; j < L.length && extra.length < 3; j++) {
+        if (MAJOR.test(L[j].k)) break;
+        if (L[j].p === p && !FEED_SKIP.test(L[j].k)) extra.push(SWU.fmtLog(L[j], lang));
+      }
+      return { i, l: L[i], text: SWU.fmtLog(L[i], lang) + (extra.length ? ' → ' + extra.join(lang === 'zh' ? '，' : '; ') : '') };
+    };
+    const rows = [lineFor(1), lineFor(0)].filter(Boolean);
+    const newest = rows.length ? Math.max(...rows.map((r) => r.i)) : -1;
+    return h(
+      'div',
+      { id: 'feed', class: 'feed' },
+      h(
+        'div',
+        { class: 'feed-head' },
+        h('b', {}, lang === 'zh' ? '最近動作' : 'Recent actions'),
+        h('button', { class: 'chip small', title: lang === 'zh' ? '切換紀錄語言' : 'Switch log language', onclick: toggleLogLang }, lang === 'zh' ? '中 / EN' : 'EN / 中'),
+        h('button', { class: 'chip small', onclick: () => document.body.classList.toggle('sideopen') }, lang === 'zh' ? '全部紀錄' : 'Full log')
+      ),
+      rows.length
+        ? h('div', { class: 'feed-rows' }, ...rows.map((r) => h('div', { class: 'feed-r ' + (r.l.p === 0 ? 'by-me' : 'by-opp') + (r.i === newest ? ' latest' : ''), title: r.text }, h('span', { class: 'who' }, whoTag(r.l.p, lang)), h('span', {}, r.text))))
+        : h('div', { class: 'muted small' }, lang === 'zh' ? '還沒有動作' : 'No actions yet')
+    );
+  }
+  function renderFeed() {
+    const el = $('#feed');
+    if (el) el.replaceWith(feedEl());
   }
   function renderStatus() {
     const el = $('#status');
@@ -1208,7 +1492,8 @@
     const el = h(
       'div',
       {
-        class: 'unit' + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (S.actMode === 'attack' && acts.some((x) => x.type === 'attack') ? ' hl' : '') + (selected || toolSel || S.selUid === u.uid ? ' sel' : '') + (u.isLeader ? ' leaderunit' : ''),
+        style: (animClass(u.uid) || {}).style || null,
+        class: 'unit' + ((animClass(u.uid) || {}).cls || '') + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (S.actMode === 'attack' && acts.some((x) => x.type === 'attack') ? ' hl' : '') + (selected || toolSel || S.selUid === u.uid ? ' sel' : '') + (u.isLeader ? ' leaderunit' : ''),
         tabindex: opt || acts.length ? '0' : null,
         onmouseenter: () => setPreview(card, side),
         onclick: () => clickUnit(u, opt, acts),
@@ -1321,7 +1606,8 @@
     const baseEl = h(
       'div',
       {
-        class: 'basecard' + (baseOpt ? ' can' : '') + (toolSel ? ' sel' : ''),
+        style: (animClass(null, pIdx) || {}).style || null,
+        class: 'basecard' + ((animClass(null, pIdx) || {}).cls || '') + (baseOpt ? ' can' : '') + (toolSel ? ' sel' : ''),
         onmouseenter: () => setPreview(P.base.card, 'card'),
         onclick: () => {
           if (S.pending && S.pending.type === 'manual') {
@@ -1425,7 +1711,7 @@
         { class: 'dialog' },
         h('h3', {}, title),
         cards.length
-          ? h('div', { class: 'pickgrid' }, ...cards.map((c, i) => h('div', { class: 'pick', onmouseenter: () => setPreview(c, 'card'), onclick: () => isTouch() && showPeek(c, 'card') }, cardFace(c, 'card'), h('small', {}, c.n + (notes && notes[i] ? '（' + notes[i] + '）' : '')))))
+          ? h('div', { class: 'pickgrid' }, ...cards.map((c, i) => h('div', { class: 'pick', onmouseenter: () => setPreview(c, 'card'), onclick: () => isTouch() && showPeek(c, 'card') }, cardFace(c, 'card'), h('small', {}, SWU.cardName(c) + (notes && notes[i] ? '（' + notes[i] + '）' : '')))))
           : h('p', { class: 'muted' }, t('emptyPile')),
         h('div', { class: 'row end' }, h('button', { class: 'primary', onclick: () => el.remove() }, t('close')))
       )
@@ -1494,7 +1780,7 @@
           'div',
           { class: 'siderow', onmouseenter: () => c && setPreview(c, 'card') },
           h('span', { class: 'cost' }, c && c.c != null ? c.c : ''),
-          zoomable(h('span', { class: 'grow' }, (c ? c.n + (c.s ? ' – ' + c.s : '') : k) + ' ×' + n), c),
+          zoomable(h('span', { class: 'grow' }, (c ? SWU.cardName(c) + (c.s ? ' – ' + SWU.cardSub(c) : '') : k) + ' ×' + n), c),
           h('button', { class: 'mini', onclick: () => move(k, zone, zone === 'main' ? 'side' : 'main') }, zone === 'main' ? t('toSide') + ' ⇢' : '⇠ ' + t('toMain'))
         );
       });
@@ -1547,7 +1833,7 @@
         'div',
         { class: 'dialog' },
         h('h3', {}, pd.prompt),
-        h('div', { class: 'pickgrid' }, ...pd.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c.card, 'card') }, cardFace(c.card, 'card'), h('small', {}, c.card.n)))),
+        h('div', { class: 'pickgrid' }, ...pd.cards.map((c) => h('div', { class: 'pick', onmouseenter: () => setPreview(c.card, 'card') }, cardFace(c.card, 'card'), h('small', {}, SWU.cardName(c.card))))),
         h('div', { class: 'row end' }, h('button', { class: 'primary', onclick: () => settle(null) }, t('okSeen')))
       )
     );
@@ -1621,7 +1907,7 @@
         'div',
         { class: 'promptbar asking effpop' + (boardOpts.length ? ' board' : '') },
         src ? h('div', { class: 'effsrc', onmouseenter: () => setPreview(src, 'card') }, cardFace(src, 'card')) : null,
-        h('div', { class: 'effq' }, src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null, h('b', {}, req.prompt)),
+        h('div', { class: 'effq' }, src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + SWU.cardName(src)) : null, h('b', {}, req.prompt)),
         req.kind === 'cards' ? h('button', { onclick: openCardsModal }, t('select')) : null,
         ...listOpts.map((o) => h('button', { class: pd.sel.includes(o.id) ? 'on' : '', onclick: () => pickOption(o.id) }, o.label)),
         ...(boardOpts.length && boardOpts.length <= 8 ? boardOpts.map((o) => h('button', { class: 'ghost small', onmouseenter: () => hilite(o.uid), onclick: () => pickOption(o.id) }, o.label)) : []),
@@ -1642,7 +1928,7 @@
         h(
           'div',
           { class: 'effq' },
-          src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null,
+          src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + SWU.cardName(src)) : null,
           h('b', {}, req.prompt),
           h('span', { class: 'distleft' + (left ? '' : ' done') }, t('distLeft', left)),
           h('small', { class: 'muted' }, t('distHint'))
@@ -1683,7 +1969,7 @@
         'div',
         { class: 'dialog small effdlg' },
         src ? h('div', { class: 'effdlg-card' }, cardFace(src, 'card')) : null,
-        src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + src.n) : null,
+        src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + SWU.cardName(src)) : null,
         h('h3', {}, req.prompt),
         ...req.options.map((o, i) => h('button', { class: 'wide' + (req.kind === 'yesno' && i === 0 ? ' primary' : ''), onclick: () => settle([o.id]) }, o.label)),
         min === 0 && req.kind !== 'yesno' ? h('button', { class: 'ghost wide', onclick: () => settle([]) }, t('skip')) : null
@@ -1712,7 +1998,7 @@
     const b = $('#board');
     if (!b || !S.game) return;
     b.innerHTML = '';
-    b.append(statusBar(), playerZone(1), promptBar(), playerZone(0), handEl());
+    b.append(statusBar(), feedEl(), playerZone(1), promptBar(), playerZone(0), handEl());
   }
 
   // 選卡視窗（資源、棄牌、搜尋）
@@ -1755,7 +2041,7 @@
                 },
               },
               card ? cardFace(card, 'card') : h('div', {}, o.label),
-              h('small', {}, card ? card.n : o.label)
+              h('small', {}, card ? SWU.cardName(card) : o.label)
             );
           })
         ),
@@ -1816,7 +2102,7 @@
         'div',
         { class: 'dialog manual' },
         h('h3', {}, info ? t('manualTitle') : t('manualTools')),
-        info ? h('div', { class: 'manual-card' }, cardFace(info.card, 'card', { small: true }), h('div', {}, h('b', {}, info.card.key), h('p', {}, SWU.lang === 'zh' && SWU.hasZh(info.card) ? SWU.cardText(info.card) : info.text), h('p', { class: 'muted small' }, t('manualHint')))) : null,
+        info ? h('div', { class: 'manual-card' }, cardFace(info.card, 'card', { small: true }), h('div', {}, h('b', {}, SWU.cardName(info.card) + (info.card.s ? '｜' + SWU.cardSub(info.card) : '')), h('p', {}, SWU.lang === 'zh' && SWU.hasZh(info.card) ? SWU.cardText(info.card) : info.text), h('p', { class: 'muted small' }, t('manualHint')))) : null,
         h('div', { class: 'tool-target' }, tName),
         h(
           'div',
@@ -1969,7 +2255,7 @@
       if (f.trait && !(c.tr || []).includes(f.trait)) return false;
       if (f.kw && !(c.kw || []).includes(f.kw)) return false;
       if (f.nopen && deck && ['Unit', 'Event', 'Upgrade'].includes(c.t) && SWU.Deck.penalty(deck, c) > 0) return false;
-      if (q && !(c.key.toLowerCase().includes(q) || (c.tx || '').toLowerCase().includes(q) || (c.tr || []).join(' ').toLowerCase().includes(q) || (SWU.ZH[c.key] && ((SWU.ZH[c.key].tx || '').includes(q) || (SWU.ZH[c.key].n || '').includes(q))))) return false;
+      if (q && !(c.key.toLowerCase().includes(q) || (c.tx || '').toLowerCase().includes(q) || (c.tr || []).join(' ').toLowerCase().includes(q) || SWU.zhName(c).includes(q) || SWU.zhSub(c).includes(q) || (c.tr || []).some((x) => SWU.trName(x, 'zh').includes(q)) || (SWU.ZH[c.key] && (SWU.ZH[c.key].tx || '').includes(q)))) return false;
       return true;
     });
     const keys = new Map(list.map((c) => [c, sortKey(c, f)]));
@@ -2153,7 +2439,7 @@
           },
           cardFace(c, 'card', { noZoom: isTouch() }),
           n ? h('span', { class: 'count' }, '×' + n) : isSet ? h('span', { class: 'count' }, '✓') : null,
-          h('small', {}, c.n, c.s ? ' – ' + c.s : ''),
+          h('small', {}, SWU.cardName(c), c.s ? ' – ' + SWU.cardSub(c) : ''),
           pr ? h('small', { class: 'setno' }, pr.set + ' ' + String(pr.n).padStart(3, '0')) : null
         )
       );
@@ -2190,8 +2476,8 @@
         sel('ftype', f.type, (v) => (f.type = v), [['', t('allTypes')], ...TYPE_ORDER.map((x) => [x, t('type_' + x)])]),
         sel('fcost', f.cost, (v) => (f.cost = v), [['', t('cost') + '：' + t('any')], ...['0', '1', '2', '3', '4', '5', '6', '7'].map((x) => [x, t('cost') + ' ' + (x === '7' ? '7+' : x)])]),
         sel('farena', f.arena, (v) => (f.arena = v), [['', t('allArenas')], ['Ground', t('arenaGround')], ['Space', t('arenaSpace')]]),
-        sel('ftrait', f.trait, (v) => (f.trait = v), [['', t('allTraits')], ...TRAITS.map((x) => [x, x])]),
-        sel('fkw', f.kw, (v) => (f.kw = v), [['', t('allKw')], ...KWS.map((x) => [x, x])])
+        sel('ftrait', f.trait, (v) => (f.trait = v), [['', t('allTraits')], ...TRAITS.map((x) => [x, SWU.bi(SWU.trName(x, 'zh'), x)])]),
+        sel('fkw', f.kw, (v) => (f.kw = v), [['', t('allKw')], ...KWS.map((x) => [x, SWU.bi(SWU.kwName(x, 'zh'), x)])])
       ),
       h(
         'div',
@@ -2248,12 +2534,7 @@
     const box = $('#bpreview');
     if (!box) return;
     box.innerHTML = '';
-    box.append(
-      h('b', {}, c.key),
-      h('span', { class: 'muted' }, ' ' + [c.t, c.c != null ? c.c : '', c.p != null ? c.p + '/' + c.h : c.h ? c.h + 'HP' : '', c.ar || '', (c.tr || []).join(' · '), c.pr ? '$' + c.pr : ''].filter(Boolean).join(' · ')),
-      h('p', {}, SWU.cardText(c, 'card')),
-      c.t === 'Leader' ? h('p', {}, h('b', {}, 'Unit: '), SWU.cardText(c, 'unit')) : null
-    );
+    box.append(cardInfo(c, 'card', { extra: h('div', {}, c.pr ? h('div', { class: 'ci-meta' }, (SWU.lang === 'zh' ? '一般版參考價 ' : 'Normal price ') + '$' + c.pr) : null, versionsBox(c)) }));
   }
   function deckPanel() {
     const d = S.edit;
@@ -2273,7 +2554,7 @@
             { class: 'drow', onmouseenter: () => c.t && setPreviewBuilder(c) },
             h('span', { class: 'dc' }, c.c != null ? c.c : '·'),
             aspectDots(c),
-            c.t ? zoomable(h('span', { class: 'dn' }, c.n, c.s ? h('small', {}, ' ' + c.s) : null, pen ? h('em', { class: 'penmark' }, ' +' + pen) : null), c) : h('span', { class: 'dn' }, c.n),
+            c.t ? zoomable(h('span', { class: 'dn' }, SWU.cardName(c), c.s ? h('small', {}, ' ' + SWU.cardSub(c)) : null, pen ? h('em', { class: 'penmark' }, ' +' + pen) : null), c) : h('span', { class: 'dn' }, c.n),
             h('button', { class: 'mini', title: '-', onclick: () => removeCard(k, zone) }, '−'),
             h('b', { class: 'dq' }, n),
             h('button', { class: 'mini', title: '+', onclick: () => c.t && addCard(c, zone) }, '+'),
@@ -2708,6 +2989,8 @@
         h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'sound', checked: st.sound !== false, onchange: (e) => ((st.sound = e.target.checked), save(), st.sound && SWU.sfx('play')) }), t('setSound'))),
         h('div', { class: 'field' }, h('label', { for: 'volume' }, t('setVolume')), h('input', { type: 'range', id: 'volume', min: 0, max: 1, step: 0.05, value: st.volume != null ? st.volume : 0.5, onchange: (e) => ((st.volume = +e.target.value), save(), SWU.sfx('hit')) })),
         h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'zoom', checked: st.zoom !== false, onchange: (e) => ((st.zoom = e.target.checked), save()) }), t('setZoom'))),
+        h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'zoomText', checked: st.zoomText !== false, onchange: (e) => ((st.zoomText = e.target.checked), save()) }), SWU.lang === 'zh' ? '放大卡片時旁邊顯示中英文說明' : 'Show bilingual text next to zoomed cards')),
+        h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'anim', checked: st.anim !== false, onchange: (e) => ((st.anim = e.target.checked), save()) }), SWU.lang === 'zh' ? '對手出牌、攻擊時播放小動畫（會稍微停頓讓你看清楚）' : 'Animate opponent plays and attacks (brief pause so you can follow)')),
         h('div', { class: 'field' }, h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'images', checked: st.images, onchange: (e) => ((st.images = e.target.checked), save()) }), t('setImages'))),
         h(
           'div',

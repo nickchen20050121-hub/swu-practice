@@ -101,7 +101,18 @@
     en: { appName: 'SWU Practice Table', gameOverLose: 'AI wins', yunaSided: 'AI sided in {0} cards against your deck.', yunaNoSide: 'AI keeps its deck for this game.', friendHello: 'AI opponent ready.', friendWin: 'Game over: you win.', friendLose: 'Game over: AI wins.' },
   };
   const raw = (k) => (S[SWU.lang] && S[SWU.lang][k]) || S.en[k] || S.zh[k] || k;
+  // 中文模式：參數若是卡名（或「卡名 | 副標」）就換成中文卡名
+  const zhArg = (x) => {
+    const Z = window.SWU_ZHC;
+    if (typeof x !== 'string' || !Z) return x;
+    if (Z.names[x]) return Z.names[x];
+    const i = x.indexOf(' | ');
+    if (i > 0 && Z.names[x.slice(0, i)]) return Z.names[x.slice(0, i)] + '｜' + (Z.subs[x.slice(i + 3)] || x.slice(i + 3));
+    return x;
+  };
+  SWU.zhArg = zhArg;
   SWU.t = (k, ...a) => {
+    if (SWU.lang === 'zh') a = a.map(zhArg);
     if (!SWU.friendMode()) return fmt(raw(k), a);
     const f = (FRIEND[SWU.lang] || FRIEND.en)[k];
     return fmt(f || raw(k), a)
@@ -111,7 +122,9 @@
   };
   SWU.tl = (lang, k, ...a) => fmt((S[lang] && S[lang][k]) || S.en[k] || k, a);
   SWU.fmtLog = (l, lang = SWU.lang) => {
-    const r = SWU.tl(lang, l.k, ...l.a);
+    const Z = window.SWU_ZHC && window.SWU_ZHC.names;
+    const args = lang === 'zh' && Z ? l.a.map(zhArg) : l.a;
+    const r = SWU.tl(lang, l.k, ...args);
     return SWU.friendMode && SWU.friendMode() ? r.replace(/由奈/g, 'AI').replace(/Yuna/g, 'AI') : r;
   };
   SWU.addStrings = (lang, obj) => Object.assign(S[lang], obj);
@@ -161,7 +174,11 @@
     'Experience': { tx: '+1/+1' },
     'Advantage': { tx: '當裝備的單位攻擊或防禦結束時：擊敗這個升級。' },
   };
+  // 全卡翻譯（zh_cards.js）：用正式卡面文字翻的版本優先，手寫版當備用
+  const ZC = window.SWU_ZHC || { names: {}, subs: {}, text: {}, traits: {}, kws: {}, types: {}, arenas: {} };
+  for (const k in ZC.text) ZH[k] = Object.assign({}, ZH[k] || {}, ZC.text[k]);
   SWU.ZH = ZH;
+  SWU.ZHC = ZC;
   SWU.cardText = function (card, side = 'card', lang = SWU.lang) {
     const leaderUnit = side === 'unit' && card.t === 'Leader';
     if (lang === 'zh') {
@@ -170,5 +187,21 @@
     }
     return (leaderUnit ? card.bt : card.tx) || '';
   };
+  SWU.cardEp = function (card, lang = SWU.lang) {
+    if (!card.ep) return '';
+    const z = ZH[card.key];
+    return lang === 'zh' && z && z.ep ? z.ep : card.ep;
+  };
   SWU.hasZh = (card) => !!ZH[card.key];
+  // 卡名／副標／特徵／關鍵字／卡種的中文
+  SWU.zhName = (card) => ZC.names[card.n] || '';
+  SWU.zhSub = (card) => (card.s ? ZC.subs[card.s] || '' : '');
+  SWU.cardName = (card, lang = SWU.lang) => (lang === 'zh' && ZC.names[card.n]) || card.n;
+  SWU.cardSub = (card, lang = SWU.lang) => (card.s ? (lang === 'zh' && ZC.subs[card.s]) || card.s : '');
+  SWU.trName = (x, lang = SWU.lang) => (lang === 'zh' && ZC.traits[x]) || x;
+  SWU.kwName = (x, lang = SWU.lang) => (lang === 'zh' && ZC.kws[x]) || x;
+  SWU.typeName = (x, lang = SWU.lang) => (lang === 'zh' && ZC.types[x]) || x;
+  SWU.arName = (x, lang = SWU.lang) => (lang === 'zh' && ZC.arenas[x]) || x;
+  // 中英並列：中文模式顯示「中文 English」，英文模式只顯示英文
+  SWU.bi = (zh, en, lang = SWU.lang) => (lang === 'zh' && zh && zh !== en ? zh + ' ' + en : en);
 })();

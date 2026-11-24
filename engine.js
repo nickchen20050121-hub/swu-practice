@@ -178,7 +178,7 @@
       }
     }
     log(k, ...a) {
-      this.G.log.push({ k, a, r: this.G.round });
+      this.G.log.push({ k, a, r: this.G.round, p: this.G.actor != null ? this.G.actor : null });
       if (this.G.log.length > 400) this.G.log.shift();
       this.emit({ type: 'log' });
     }
@@ -1065,6 +1065,8 @@
         if (P.deck.length) P.resources.push({ ...P.deck.shift(), exhausted: true });
       } else if (from === 'hand') P.hand = P.hand.filter((x) => x !== c);
       this.log('logPlay', P.name, card.n, cost);
+      this.emit({ type: 'cast', p, card });
+      if (this.pauseFor && !this.replaying) await this.pauseFor('cast', p);
       this.G.playedThisPhase[p].push(card);
       await this.fire(1 - p, 'onEnemyPlay', card);
       const inst = { uid: c.uid, card, owner: c.owner };
@@ -1140,6 +1142,8 @@
       const u = this.makeUnit({ uid: L.uid, card: L.card, owner: p }, p, { exhausted: false, isLeader: true, arena: 'Ground' });
       P.units.push(u);
       this.log('logDeploy', P.name, L.card.n);
+      this.emit({ type: 'play', u });
+      if (this.pauseFor && !this.replaying) await this.pauseFor('cast', p);
       const e = SWU.EFFECTS.get(L.card, 'unit');
       if (e && e.whenDeployed) await this.safe(() => e.whenDeployed(this, u));
       else if (!e || !e.implemented) await this.unimplemented(u, 'When Deployed', p);
@@ -1171,6 +1175,7 @@
         (G.attackers = G.attackers || []).push({ uid: attacker.uid, ctrl: p, u: attacker, phaseId: G.phaseId });
         this.log(atk.base ? 'logAttackBase' : 'logAttackUnit', attacker.card.n, atk.defender ? atk.defender.card.n : this.opp(p).name);
         this.emit({ type: 'attack', atk });
+        if (this.pauseFor && !this.replaying) await this.pauseFor('attack', p);
         // On Attack
         const k = this.kw(attacker);
         if (k.Restore) this.healBase(p, k.Restore);
@@ -1334,7 +1339,9 @@
           act = await this.input(p, 'a', () => this.io[p].chooseAction(this, p, acts));
         }
         if (!act) act = { type: 'pass' };
+        G.actor = p;
         await this.doAction(p, act);
+        G.actor = null;
         this.emit({ type: 'update' });
         G.active = 1 - p;
       }
