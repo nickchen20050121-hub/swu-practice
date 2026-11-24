@@ -542,7 +542,12 @@ Deck
 1 Bestial Bond
 1 Moral Authority
 Sideboard
-2 T-6 Shuttle 1974 - Stay Close`;
+2 Taramyn Barcona - Eyes Front!
+2 Nothing Left to Fear
+1 Trask Walker
+2 Home One - Heart of the Fleet
+1 Saw Gerrera - Shadowlands Insurgent
+2 T-6 Shuttle 1974 - With a Mentor's Dedication`;
     const a2 = `Leader: Luke Skywalker - I Can Save Him
 Base: Origin Tree - Kashyyyk
 Deck
@@ -566,7 +571,7 @@ Deck
 1 Trask Walker
 3 Bo-Katan Kryze - Alone
 3 Blue Leader - Scarif Air Support
-2 T-6 Shuttle 1974 - Stay Close
+2 T-6 Shuttle 1974 - With a Mentor's Dedication
 3 Overgrowth
 3 Lost and Forgotten
 3 Bestial Bond
