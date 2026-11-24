@@ -940,7 +940,7 @@
       let exploitMax = card.kwp.Exploit || 0;
       const reduce = Math.min(exploitMax, this.P(p).units.length) * 2;
       if (!this.canPay(p, Math.max(0, cost - reduce))) return null;
-      if (card.t === 'Upgrade' && !this.upgradeTargets(p, card).length) return null;
+      if (card.t === 'Upgrade' && !/^Fortify/m.test(card.tx || '') && !this.upgradeTargets(p, card).length) return null;
       if (e && e.canPlay && !e.canPlay(this, p)) return null;
       return { type: 'play', uid: c.uid, from, cost, label: SWU.t(from === 'smuggle' ? 'actSmuggle' : 'actPlay', card.n, cost) };
     }
@@ -1077,6 +1077,11 @@
         if (e && e.event) await this.safe(() => e.event(this, p, inst));
         else await this.unimplementedText({ card }, card.tx || '', p);
         await this.fire(p, 'onFriendlyEvent', card);
+      } else if (card.t === 'Upgrade' && /^Fortify/m.test(card.tx || '')) {
+        // 堡壘：裝在自己的基地上
+        P.base.upgrades.push(inst);
+        this.log('logAttach', card.n, P.base.card.n);
+        if (e && e.whenPlayed) await this.safe(() => e.whenPlayed(this, inst, P.base));
       } else if (card.t === 'Upgrade') {
         const targets = opts.target ? [opts.target] : this.upgradeTargets(p, card);
         const t = await this.pickUnit(p, SWU.t('promptAttach', card.n), (u) => targets.includes(u), { ctx: { card: card.key } });

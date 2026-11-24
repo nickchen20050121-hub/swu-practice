@@ -397,6 +397,73 @@
   });
 
   // ===== 標記「純關鍵字」的卡為已實作（避免多跳手動視窗）=====
+  // ---------- 比賽牌表裡需要手寫的卡 ----------
+  def('Kelnacca | Solitary Master', 'card', {
+    async whenPlayed(g, u) {
+      const p = u.ctrl;
+      const ready = g.P(p).resources.filter((r) => !r.exhausted).length;
+      const enemies = g.P(1 - p).units.length;
+      const max = Math.min(Math.floor(ready / 3), Math.max(enemies, 0));
+      if (max <= 0) return;
+      const opts = [];
+      for (let k = max; k >= 0; k--) opts.push(SWU.lang === 'zh' ? (k ? `付 ${k * 3} 資源，造成 ${k} 次傷害` : '不付') : k ? `Pay ${k * 3}: deal damage ${k} time(s)` : 'Pay nothing');
+      const i = await g.pickOption(p, `${u.card.n}：${SWU.lang === 'zh' ? '要付多少資源？' : 'Pay how many resources?'}`, opts);
+      const k = max - (i || 0);
+      if (k <= 0) return;
+      g.pay(p, k * 3);
+      for (let j = 0; j < k; j++) {
+        const t = await g.pickUnit(p, T('promptDealPower', g.power(u)), (x) => x.ctrl !== p, { ctx: { harm: true, op: 'damage', n: g.power(u) } });
+        if (t) await g.damageUnit(t, g.power(u), { ability: true });
+      }
+    },
+  });
+  def('Sando Aqua Monster', 'card', {
+    async whenPlayed(g, u) {
+      const p = u.ctrl;
+      const bc = g.P(p).base.card;
+      if (!(g.hasTrait(bc, 'NABOO') || /Naboo/i.test(bc.key || ''))) return;
+      const limit = g.power(u);
+      const picked = [];
+      let used = 0;
+      for (;;) {
+        const left = limit - used;
+        const t = await g.pickUnit(
+          p,
+          `${u.card.n}：${SWU.lang === 'zh' ? `擊敗任意數量的地面單位（總戰力 ${limit} 以內，已用 ${used}；按略過結束）` : `defeat ground units (total power ≤ ${limit}, used ${used}; skip to finish)`}`,
+          (x) => x !== u && x.arena === 'Ground' && !picked.includes(x) && g.power(x) <= left,
+          { optional: true, ctx: { harm: true } }
+        );
+        if (!t) break;
+        picked.push(t);
+        used += g.power(t);
+      }
+      for (const t of picked) await g.defeat(t, { ability: true });
+      if (used > 0 && g.findUnit(u.uid)) await g.damageUnit(u, used, { ability: true });
+    },
+  });
+  def('Single Reactor Ignition', 'card', {
+    async event(g, p) {
+      const all = g.allUnits().slice();
+      const enemy = {};
+      for (const u of all) enemy[u.uid] = u.ctrl;
+      for (const u of all) await g.defeat(u, { ability: true });
+      const n = all.filter((u) => enemy[u.uid] !== p && !g.findUnit(u.uid)).length;
+      if (n) g.damageBase(1 - p, n, { ability: true });
+    },
+  });
+  def('Alliance Shield Generator', 'card', {
+    baseDamage(g, p, n) {
+      if (n < 5) return n;
+      const B = g.P(p).base;
+      const up = B.upgrades.find((x) => x.card.key === 'Alliance Shield Generator');
+      if (!up) return n;
+      B.upgrades = B.upgrades.filter((x) => x !== up);
+      g.P(up.owner != null ? up.owner : p).discard.push(up);
+      g.log('logManualNote', SWU.lang === 'zh' ? `Alliance Shield Generator 擋下 ${n} 點傷害` : `Alliance Shield Generator prevents ${n} damage`);
+      g.draw(p, 1);
+      return 0;
+    },
+  });
   SWU.markVanillaKeywordCards = function () {
     for (const c of SWU.DB.list) {
       if (!['Unit', 'Upgrade'].includes(c.t)) continue;

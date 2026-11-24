@@ -390,6 +390,13 @@
     }
     return deck;
   };
+  // 比賽牌表裡每張卡出現的張數（AI 推測對手手牌時當作環境熱門度）
+  D.metaFreq = () => {
+    if (D._mf) return D._mf;
+    const f = {};
+    for (const d of window.SWU_META_DECKS || []) for (const z of ['main', 'side']) for (const [k, n] of Object.entries(d[z] || {})) f[k.toLowerCase()] = (f[k.toLowerCase()] || 0) + n * (z === 'main' ? 1 : 0.5);
+    return (D._mf = f);
+  };
   // ---------- 備牌（sideboard）----------
   const TX = (c) => (c.tx || '') + ' ' + (c.bt || '');
   D.features = (c) => ({
@@ -554,7 +561,7 @@ Deck
 Sideboard
 1 Direct Hit`;
     if (!D._presets || D._presetsLang !== SWU.lang) {
-      D._presets = [mk(SWU.t('presetPQ'), pq, 'preset-pq'), mk(SWU.t('presetA2'), a2, 'preset-a2')];
+      D._presets = [mk(SWU.t('presetPQ'), pq, 'preset-pq'), mk(SWU.t('presetA2'), a2, 'preset-a2'), ...(window.SWU_META_DECKS || []).map((d) => ({ ...JSON.parse(JSON.stringify(d)), name: (SWU.lang === 'zh' ? '🏆 ' : '🏆 ') + d.name }))];
       D._presetsLang = SWU.lang;
     }
     return JSON.parse(JSON.stringify(D._presets));

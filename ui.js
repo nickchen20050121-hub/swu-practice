@@ -31,7 +31,7 @@
     manualTools: '手動調整', gameOverWin: '你贏了！', gameOverLose: '由奈贏了～', again: '再來一局', viewLog: '看紀錄',
     // 組牌器
     myDecks: '我的牌組', newDeck: '新牌組', import: '匯入', presets: '內建牌組', importHint: '貼上 SWUDB 匯出的 JSON，或文字清單（每行「3 卡名 - 副標」，可用 Leader:/Base: 開頭標出領袖和基地）', doImport: '匯入',
-    type_Leader: '領袖', type_Base: '基地', type_Unit: '單位', type_Event: '事件', type_Upgrade: '升級', mode_single: '單局', mode_bo3: '三戰兩勝（BO3）', bo3Hint: '照比賽規則：第一局隨機一方決定誰先手，之後由上一局輸的人決定；局間可以用備牌換牌（主牌至少 50 張、備牌最多 10 張）。由奈也會依你的牌型換備牌。', matchScore: '第 {0} 局後　柏偉 {1} : {2} 由奈', matchWin: '你贏下這場比賽！', matchLose: '這場比賽由奈贏了', nextGame: '換備牌，開始第 {0} 局', sideTitle: '第 {0} 局前換備牌', sideHint: '點按鈕在主牌和備牌之間移動。換好後主牌至少 50 張、備牌最多 10 張。', sideReset: '還原', sideConfirm: '確定，開始下一局', yunaSided: '嘿嘿，我針對你的牌換了 {0} 張備牌喔～', yunaNoSide: '這局我不換牌，用原本的牌組繼續～', addTo: '點卡片加到：', sortBy: '排序', sort_number: '卡號', sort_cost: '費用', sort_name: '名稱', sort_aspect: '屬性', sort_type: '類型', sort_power: '戰力', sort_hp: '生命', sort_price: '價格', allSets: '全部系列', setsLabel: '系列（可多選）：', allArenas: '地面＋太空', arenaGround: '只看地面', arenaSpace: '只看太空', allTraits: '全部特性', allKw: '全部關鍵字', groupBy: '分組顯示', aspAll: '同時有選的屬性', aspAny: '有任一選的屬性', aspNone: '無屬性', showing: '顯示 {0} / {1}', clearFilters: '清除篩選', noAspect: '無屬性', search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
+    type_Leader: '領袖', type_Base: '基地', type_Unit: '單位', type_Event: '事件', type_Upgrade: '升級', mode_single: '單局', mode_bo3: '三戰兩勝（BO3）', bo3Hint: '照比賽規則：第一局隨機一方決定誰先手，之後由上一局輸的人決定；局間可以用備牌換牌（主牌至少 50 張、備牌最多 10 張）。由奈也會依你的牌型換備牌。', matchScore: '第 {0} 局後　柏偉 {1} : {2} 由奈', matchWin: '你贏下這場比賽！', matchLose: '這場比賽由奈贏了', nextGame: '換備牌，開始第 {0} 局', sideTitle: '第 {0} 局前換備牌', sideHint: '點按鈕在主牌和備牌之間移動。換好後主牌至少 50 張、備牌最多 10 張。', sideReset: '還原', sideConfirm: '確定，開始下一局', yunaSided: '嘿嘿，我針對你的牌換了 {0} 張備牌喔～', yunaNoSide: '這局我不換牌，用原本的牌組繼續～', addTo: '點卡片加到：', randomMeta: '🎲 隨機一套比賽得名牌組', randomMetaHint: '開打時隨機挑一套 🏆 比賽牌組（開局才知道是哪套，跟真正比賽一樣）', sortBy: '排序', sort_number: '卡號', sort_cost: '費用', sort_name: '名稱', sort_aspect: '屬性', sort_type: '類型', sort_power: '戰力', sort_hp: '生命', sort_price: '價格', allSets: '全部系列', setsLabel: '系列（可多選）：', allArenas: '地面＋太空', arenaGround: '只看地面', arenaSpace: '只看太空', allTraits: '全部特性', allKw: '全部關鍵字', groupBy: '分組顯示', aspAll: '同時有選的屬性', aspAny: '有任一選的屬性', aspNone: '無屬性', showing: '顯示 {0} / {1}', clearFilters: '清除篩選', noAspect: '無屬性', search: '搜尋卡名或文字…', allTypes: '全部類型', legalOnly: '只看 Premier 合法', noPenalty: '只看不會被罰費', cost: '費用', any: '不限', results: '{0} 張',
     deckName: '牌組名稱', leader: '領袖', base: '基地', main: '主牌', side: '備牌', toSide: '移到備牌', toMain: '移到主牌', save: '儲存', saved: '已儲存', del: '刪除', confirmDel: '再按一次刪除',
     exportText: '匯出文字', exportJson: '匯出 SWUDB JSON', copied: '已複製', copyFail: '請手動複製下面的文字',
     autoBuild: '由奈幫我組', autoBuildQuick: '快速自動組（不用 AI）', wishes: '想要的風格（可不填，例如：偏快攻、多放哨兵）', building: '由奈組牌中…',
@@ -64,7 +64,7 @@
     toolBounce: 'Return to hand', toolBuffUp: '+1/+1 this phase', toolBuffDown: '-1/-1 this phase', toolDraw: 'I draw 1', toolResTop: 'Resource top card', toolToken: 'Create token', toolForce: 'Force',
     manualTools: 'Manual tools', gameOverWin: 'You win!', gameOverLose: 'Yuna wins!', again: 'Play again', viewLog: 'View log',
     myDecks: 'My decks', newDeck: 'New deck', import: 'Import', presets: 'Built-in decks', importHint: 'Paste SWUDB JSON or a text list ("3 Name - Subtitle" per line, Leader:/Base: lines for leader and base)', doImport: 'Import',
-    type_Leader: 'Leader', type_Base: 'Base', type_Unit: 'Unit', type_Event: 'Event', type_Upgrade: 'Upgrade', mode_single: 'Single game', mode_bo3: 'Best of three', bo3Hint: 'Tournament style: in game 1 a random player chooses who goes first, afterwards the previous loser chooses; between games you may side in cards (main at least 50, sideboard at most 10). Yuna sides against your deck too.', matchScore: 'After game {0}: Nick {1} : {2} Yuna', matchWin: 'You won the match!', matchLose: 'Yuna won the match', nextGame: 'Sideboard and start game {0}', sideTitle: 'Sideboarding before game {0}', sideHint: 'Move cards between main deck and sideboard. Main deck at least 50, sideboard at most 10.', sideReset: 'Reset', sideConfirm: 'Confirm and start next game', yunaSided: 'Hehe, I sided in {0} cards against you~', yunaNoSide: "I'm keeping my deck as is~", addTo: 'Click adds to:', sortBy: 'Sort', sort_number: 'Set #', sort_cost: 'Cost', sort_name: 'Name', sort_aspect: 'Aspect', sort_type: 'Type', sort_power: 'Power', sort_hp: 'HP', sort_price: 'Price', allSets: 'All sets', setsLabel: 'Sets (multi):', allArenas: 'Ground + Space', arenaGround: 'Ground only', arenaSpace: 'Space only', allTraits: 'All traits', allKw: 'All keywords', groupBy: 'Group', aspAll: 'Has all selected', aspAny: 'Has any selected', aspNone: 'No aspect', showing: 'Showing {0} / {1}', clearFilters: 'Clear filters', noAspect: 'Colorless', search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
+    type_Leader: 'Leader', type_Base: 'Base', type_Unit: 'Unit', type_Event: 'Event', type_Upgrade: 'Upgrade', mode_single: 'Single game', mode_bo3: 'Best of three', bo3Hint: 'Tournament style: in game 1 a random player chooses who goes first, afterwards the previous loser chooses; between games you may side in cards (main at least 50, sideboard at most 10). Yuna sides against your deck too.', matchScore: 'After game {0}: Nick {1} : {2} Yuna', matchWin: 'You won the match!', matchLose: 'Yuna won the match', nextGame: 'Sideboard and start game {0}', sideTitle: 'Sideboarding before game {0}', sideHint: 'Move cards between main deck and sideboard. Main deck at least 50, sideboard at most 10.', sideReset: 'Reset', sideConfirm: 'Confirm and start next game', yunaSided: 'Hehe, I sided in {0} cards against you~', yunaNoSide: "I'm keeping my deck as is~", addTo: 'Click adds to:', randomMeta: '🎲 Random tournament deck', randomMetaHint: 'A random 🏆 tournament deck is picked when the game starts, like a real event.', sortBy: 'Sort', sort_number: 'Set #', sort_cost: 'Cost', sort_name: 'Name', sort_aspect: 'Aspect', sort_type: 'Type', sort_power: 'Power', sort_hp: 'HP', sort_price: 'Price', allSets: 'All sets', setsLabel: 'Sets (multi):', allArenas: 'Ground + Space', arenaGround: 'Ground only', arenaSpace: 'Space only', allTraits: 'All traits', allKw: 'All keywords', groupBy: 'Group', aspAll: 'Has all selected', aspAny: 'Has any selected', aspNone: 'No aspect', showing: 'Showing {0} / {1}', clearFilters: 'Clear filters', noAspect: 'Colorless', search: 'Search names or text…', allTypes: 'All types', legalOnly: 'Premier legal only', noPenalty: 'No aspect penalty', cost: 'Cost', any: 'Any', results: '{0} cards',
     deckName: 'Deck name', leader: 'Leader', base: 'Base', main: 'Main deck', side: 'Sideboard', toSide: 'To sideboard', toMain: 'To main', save: 'Save', saved: 'Saved', del: 'Delete', confirmDel: 'Click again to delete',
     exportText: 'Export text', exportJson: 'Export SWUDB JSON', copied: 'Copied', copyFail: 'Copy the text below',
     autoBuild: 'Yuna, build it for me', autoBuildQuick: 'Quick auto-build (no AI)', wishes: 'Style wishes (optional, e.g. aggressive, lots of Sentinels)', building: 'Yuna is building…',
@@ -321,7 +321,10 @@
       S.match.game++;
     } else {
       mine = deckById(S.lobby.mine);
-      yuna = deckById(S.lobby.yuna);
+      if (S.lobby.yuna === 'random-meta') {
+        const ms = allDecks().filter((d) => d.meta);
+        yuna = ms[Math.floor(Math.random() * ms.length)];
+      } else yuna = deckById(S.lobby.yuna);
       if (!mine || !yuna) return;
       S.match = S.lobby.mode === 'bo3' ? { mine: JSON.parse(JSON.stringify(mine)), yuna: SWU.Deck.ensureSide(JSON.parse(JSON.stringify(yuna))), wins: [0, 0], game: 1, seen: [], lastLoser: null } : null;
     }
@@ -466,7 +469,7 @@
   function renderLobby(v) {
     const decks = allDecks();
     if (!S.lobby.mine || !deckById(S.lobby.mine)) S.lobby.mine = decks[0] && decks[0].id;
-    if (!S.lobby.yuna || !deckById(S.lobby.yuna)) S.lobby.yuna = (decks[1] || decks[0] || {}).id;
+    if (!S.lobby.yuna || (S.lobby.yuna !== 'random-meta' && !deckById(S.lobby.yuna))) S.lobby.yuna = (decks.find((d) => d.meta) || decks[1] || decks[0] || {}).id;
     const sel = (key) =>
       h(
         'select',
@@ -477,9 +480,11 @@
             render();
           },
         },
+        key === 'yuna' ? h('option', { value: 'random-meta', selected: S.lobby[key] === 'random-meta' }, t('randomMeta')) : null,
         ...decks.map((d) => h('option', { value: d.id, selected: d.id === S.lobby[key] }, d.name + (SWU.Deck.validate(d).length ? ' ⚠' : '')))
       );
     const deckCard = (id) => {
+      if (id === 'random-meta') return h('div', { class: 'muted small' }, t('randomMetaHint'));
       const d = deckById(id);
       if (!d) return h('div', { class: 'muted' }, t('needDecks'));
       const L = SWU.Deck.card(d.leader);
@@ -499,7 +504,7 @@
         ),
         S.lobby.mode === 'bo3' ? h('p', { class: 'muted small' }, t('bo3Hint')) : null,
         h('p', { class: 'ai-status ' + (SWU.AI.hasClaude() ? 'on' : 'off') }, SWU.AI.hasClaude() ? t('aiStatusOn', SWU.AI.settings.model) : t('aiStatusOff')),
-        h('button', { class: 'primary big', onclick: () => startGame(), disabled: !deckById(S.lobby.mine) || !deckById(S.lobby.yuna) }, t('start'))
+        h('button', { class: 'primary big', onclick: () => startGame(), disabled: !deckById(S.lobby.mine) || !(S.lobby.yuna === 'random-meta' || deckById(S.lobby.yuna)) }, t('start'))
       )
     );
   }

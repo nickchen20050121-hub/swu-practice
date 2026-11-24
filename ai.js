@@ -160,7 +160,7 @@
       const asp = [...(Q.leader.card.a || []), ...(Q.base.card.a || [])];
       pool = SWU.DB.list
         .filter((c) => c.pl === 'Yes' && ['Unit', 'Event', 'Upgrade'].includes(c.t) && (c.a || []).every((a) => asp.includes(a)))
-        .map((c) => ({ c, w: 1 + Math.min(3, Math.log10(1 + (+c.pr || 0) * 10)) * 1.5 + ((c.a || []).length ? 1 : 0) }));
+        .map((c) => ({ c, w: 1 + Math.min(3, Math.log10(1 + (+c.pr || 0) * 10)) * 1.5 + ((c.a || []).length ? 1 : 0) + Math.min(12, (SWU.Deck.metaFreq()[c.key.toLowerCase()] || 0)) * 1.2 }));
       g._pool[key] = pool;
     }
     // 已經看過的牌（場上、棄牌堆、公開過的）：牌組通常放 3 張，剩下的機率高

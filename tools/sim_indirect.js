@@ -2,7 +2,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const dir=path.join(__dirname,'..');
 global.window=global; global.localStorage={getItem:()=>null,setItem:()=>{}};
-for(const f of ['cards.js','engine.js','i18n.js','effects.js','gfx.js','programs.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['cards.js','engine.js','i18n.js','effects.js','gfx.js','programs.js','meta_decks.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
 const pres=SWU.Deck.presets();
 const extra=['TIE Bomber','Torpedo Barrage','Planetary Bombardment','Emperor Palpatine | Master of the Dark Side','The Legacy Run | Doomed Debris','Guerilla Soldier','Kimoglia Heavy Fighter','Devastator | Hunting the Rebellion','Hold Them Off','First Order Stormtrooper'].map(k=>SWU.DB.list.find(c=>c.key===k)).filter(Boolean);

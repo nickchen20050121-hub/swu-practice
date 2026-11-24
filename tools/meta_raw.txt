@@ -1,0 +1,289 @@
+# 2026-11 比賽得名牌表（swu-competitivehub.com，Melee 匯出；頁面只有卡名沒有副標，由 tools/build_meta.js 依領袖/基地屬性解析）
+### Wicket (HMW) | PQ Mantova 2026-11-22 1st/39
+Leader: Wicket @HMW
+Base: Data Vault
+Deck
+3 Ant Droid
+3 Captain Tarpals
+3 Fennec Shand
+3 Leia Organa
+3 Wicket
+3 Karis Nemik
+3 Logray
+3 Migs Mayfeld
+2 Arvel Skeen
+2 Obi-Wan Kenobi
+3 Captain Typho
+2 Queen Amidala
+2 Luke Skywalker
+3 Luminara Unduli
+3 Blue Leader
+3 Red Five
+2 Sabine's Masterpiece
+2 T-6 Shuttle 1974
+2 Kit Fisto's Aethersprite
+3 Rebellious Hammerhead
+3 Verdant Fortress
+3 Figure of Unity
+1 Whistling Birds
+Sideboard
+2 Commence the Festivities
+2 Outer Rim Constable
+1 Arvel Skeen
+1 T-6 Shuttle 1974
+2 Chewbacca
+2 Rey
+### Doctor Hemlock (HMW) | PQ Taipei 2026-11-22 1st/14
+Leader: Doctor Hemlock @HMW
+Base: Data Vault
+Deck
+3 Han Solo
+3 Imperial Door Technician
+3 Latts Razzi
+3 Moff Gideon
+3 Nuvo Vindi
+3 Scorch
+3 Imperial Armored Commando
+1 Kelnacca
+1 Cad Bane
+1 Emperor Palpatine
+3 Anakin Skywalker
+2 Lando Calrissian
+3 Pre Vizsla
+3 Trask Walker
+2 Eager Escort Fighter
+2 Governor's Shuttle
+2 Cantwell Arrestor Cruiser
+2 Lawbringer
+1 Ravager
+1 Annihilator
+2 The Tree Remembers
+3 No Glory, Only Results
+3 Lost and Forgotten
+1 Hyperspace Disaster
+3 Condemn
+3 Craving Power
+Sideboard
+2 Salvage
+2 Hold For Questioning
+2 Migrate
+1 The Darksaber
+2 Hyperspace Disaster
+1 Annihilator
+### Darth Vader (JTL) | PQ Northridge 2026-11-21 1st/76
+Leader: Darth Vader @JTL
+Base: Freetown
+Deck
+3 Garindan
+3 Chancellor Palpatine
+3 Lifetree Caravan
+3 A-Wing
+3 First Order TIE Fighter
+3 Outland Protector
+3 Screeching TIE Fighter
+3 Black Sun Patroller
+3 Emissary's Sheathipede
+1 Death Space Skirmisher
+3 Lurking Snub Fighter
+3 Stolen AT-Hauler
+3 Victor Leader
+3 Clone Combat Squadron
+2 Snub Fighter Squadron
+2 Victor Squadron
+2 Forced Pacification
+2 The Axe Forgets
+2 Hold For Questioning
+Sideboard
+2 Intelligence Agency
+1 Forced Pacification
+2 Booma Ball
+2 Sweep the Area
+1 Snub Fighter Squadron
+2 Craving Power
+### Director Krennic (LAW) | PQ Stow 2026-11-21 1st/34
+Leader: Director Krennic @LAW
+Base: Great Grass Plains
+Deck
+3 Ant Droid
+3 Disposable B1
+3 Imperial Door Technician
+3 Director Krennic
+3 Nightsister Warrior
+3 Moff Gideon
+3 Expendable Mercenary
+3 Imperial Armored Commando
+2 Emperor Palpatine
+3 Pre Vizsla
+3 Sando Aqua Monster
+1 Trask Walker
+3 Cantwell Arrestor Cruiser
+3 Lawbringer
+1 Ravager
+2 The Tree Remembers
+3 No Glory, Only Results
+1 Hyperspace Disaster
+1 Condemn
+3 Craving Power
+Sideboard
+1 Domesticated Loth-Cat
+1 Condemn
+1 Canto Bight Security
+2 Shin Hati
+1 Hyperspace Disaster
+1 Rey
+1 Trask Walker
+2 Annihilator
+### Luke Skywalker (JTL) | PQ Stow 2026-11-21 2nd/34
+Leader: Luke Skywalker @JTL
+Base: Data Vault
+Deck
+3 Captain Typho
+3 Admiral Ackbar
+3 Chewbacca
+3 Cinta Kaz
+3 Crackshot V-Wing
+3 Black One
+3 Green Leader
+3 Jedi Starfighter
+3 Phoenix Squadron A-Wing
+3 Red Squadron Y-Wing
+3 Blue Leader
+3 Red Five
+3 Sabine's Masterpiece
+2 Danger Squadron Wingmen
+3 Resistance Blue Squadron
+3 Kit Fisto's Aethersprite
+3 Hotshot Maneuver
+2 System Shock
+2 Trench Run
+3 Air Superiority
+3 Sudden Ferocity
+Sideboard
+2 Commence the Festivities
+2 Arvel Skeen
+2 Kelleran Beq
+2 Luminara Unduli
+2 Rey
+### Luke Skywalker (ASH) | PQ Victoria Park 2026-11-22 1st/14
+Leader: Luke Skywalker @ASH
+Base: Origin Tree
+Deck
+3 Huyang
+3 Soaring Can-Cell
+3 Yaddle
+3 Yord Fandar
+3 Latts Razzi
+2 Leia Organa
+3 Obi-Wan Kenobi
+3 Captain Typho
+2 The Mandalorian
+1 Qui-Gon Jinn
+3 Wookiee Rangers
+3 Hunter
+2 Kelleran Beq
+3 Bo-Katan Kryze
+2 Blue Leader
+2 T-6 Shuttle 1974
+3 Overgrowth
+3 Lost and Forgotten
+3 Bestial Bond
+Sideboard
+2 Silver Angel
+2 Direct Hit
+2 The Tree Remembers
+1 Qui-Gon Jinn
+2 Hyperspace Disaster
+1 Trask Walker
+### Mother Talzin (LOF) | PQ Mount Pearl 2026-11-21 2nd/14
+Leader: Mother Talzin @LOF
+Base: Fortress Vader
+Deck
+3 Acolyte of the Beyond
+3 Karis
+2 Nightsister Warrior
+2 Outer Rim Constable
+3 Secretive Sage
+1 Trayus Acolyte
+3 Marrok
+3 Mother Talzin
+2 Ryder Azadi
+3 Darth Tyranus
+3 Talzin's Assassin
+2 Anakin Skywalker
+2 General Grievous
+3 Ninth Sister
+3 B-Wing Rearguard
+2 Devastator
+2 Shatterpoint
+3 No Glory, Only Results
+1 Hyperspace Disaster
+1 Single Reactor Ignition
+2 Condemn
+2 Constructed Lightsaber
+Sideboard
+2 Arvel Skeen
+2 Chirrut Îmwe
+2 Honnah
+2 The Tree Remembers
+2 Hyperspace Disaster
+### Lando Calrissian (LAW) | PQ Mantova 2026-11-22 4th/39
+Leader: Lando Calrissian @LAW
+Base: Great Grass Plains
+Deck
+3 Owen Lars
+2 Huyang
+1 Ryder Azadi
+3 Wookiee Protector
+2 Yoda
+3 Galen Erso
+3 Kanan Jarrus
+3 The Mandalorian
+2 Qui-Gon Jinn
+3 Anakin Skywalker
+3 Pre Vizsla
+3 Sando Aqua Monster
+3 Bo-Katan Kryze
+2 Home One
+2 Torrent
+2 Direct Hit
+2 No Glory, Only Results
+3 Lost and Forgotten
+3 Hyperspace Disaster
+3 Alliance Shield Generator
+Sideboard
+2 Corona Four
+1 Huyang
+2 Lieutenant Gorn
+1 Ryder Azadi
+2 The Tree Remembers
+2 Out the Airlock
+### Vel Sartha (LAW) | PQ Stow 2026-11-21 3rd/34
+Leader: Vel Sartha @LAW
+Base: Dendroid Wilds
+Deck
+3 Adamant Ewoks
+3 Karis Nemik
+2 Outer Rim Constable
+3 Peppi Bow
+3 Arvel Skeen
+2 Cinta Kaz
+3 Galen Erso
+2 Honnah
+3 The Mandalorian
+1 Anakin Skywalker
+3 Zeb Orellios
+3 Black One
+2 Green Leader
+3 Red Five
+3 Yellow Aces Bomber
+3 Nightfall
+3 Nimble Prowess
+2 Moral Authority
+3 Sudden Ferocity
+Sideboard
+2 Commence the Festivities
+1 Outer Rim Constable
+3 Hera Syndulla
+1 Moral Authority
+1 Pegasus Tri-Wing
+2 Mining Guild Trespasser
