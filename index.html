@@ -203,6 +203,15 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .pick.sel .face{box-shadow:0 0 0 3px var(--good)}
 .pick.off{opacity:.35;cursor:not-allowed}
 .undobtn{margin-left:6px}
+.modesel{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+.modesel button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.matchscore{font-family:var(--f-num);padding:0 8px}
+.sidedlg{max-width:min(96vw,860px)}
+.sidecols{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-height:60vh;overflow:auto}
+@media (max-width:640px){.sidecols{grid-template-columns:1fr}}
+.siderow{display:flex;gap:6px;align-items:center;padding:3px 0;border-bottom:1px solid var(--line);font-size:13px}
+.siderow .cost{font-family:var(--f-num);width:1.4em;text-align:center;color:var(--muted)}
+.siderow .grow{flex:1;min-width:0}
 .warn{color:var(--bad,#e66);font-size:.85em}
 .revealpop{position:fixed;right:16px;bottom:16px;z-index:60;background:var(--panel,#1d2230);border:1px solid var(--line,#445);border-radius:12px;padding:12px;box-shadow:0 8px 30px #0008;max-width:min(92vw,560px);display:flex;flex-direction:column;gap:8px}
 .revealcards{display:flex;gap:8px;overflow-x:auto}

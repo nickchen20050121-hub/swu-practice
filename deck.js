@@ -390,6 +390,87 @@
     }
     return deck;
   };
+  // ---------- 備牌（sideboard）----------
+  const TX = (c) => (c.tx || '') + ' ' + (c.bt || '');
+  D.features = (c) => ({
+    antiUpgrade: /defeat (?:an|any|each|all|up to \d+)? ?(?:non-leader )?upgrades?|upgrades? .{0,40}(?:defeat|return)/i.test(TX(c)),
+    bigRemoval: /defeat (?:a|an|target) (?:non-leader )?(?:enemy )?(?:ground |space )?unit(?! with)|with \d+ or more (?:power|cost)/i.test(TX(c)),
+    smallRemoval: /deal [1-4] damage to (?:a|an|each)|defeat .{0,30}with [1-4] or less/i.test(TX(c)),
+    sweeper: /to each (?:enemy )?(?:ground |space )?unit|each other unit/i.test(TX(c)),
+    sentinel: !!(c.kwp && c.kwp.Sentinel) || (c.kw || []).includes('Sentinel'),
+    heal: /heal|restore/i.test(TX(c)) || !!(c.kwp && c.kwp.Restore),
+    space: c.ar === 'Space',
+    ground: c.ar === 'Ground',
+    cheap: c.t === 'Unit' && (c.c || 0) <= 2,
+    big: c.t === 'Unit' && (c.p || 0) >= 5,
+  });
+  // 從看過的對手卡片推出對手牌型
+  D.profile = (cards) => {
+    const units = cards.filter((c) => c.t === 'Unit');
+    const n = Math.max(1, cards.length), u = Math.max(1, units.length);
+    return {
+      upgrades: cards.filter((c) => c.t === 'Upgrade').length / n,
+      space: units.filter((c) => c.ar === 'Space').length / u,
+      cheap: units.filter((c) => (c.c || 0) <= 2).length / u,
+      big: units.filter((c) => (c.p || 0) >= 5 || (c.c || 0) >= 6).length / u,
+      wide: units.length / n,
+    };
+  };
+  D.matchupValue = (c, pr) => {
+    const f = D.features(c);
+    let v = D.cardValue(c);
+    if (!pr) return v;
+    if (f.antiUpgrade) v += pr.upgrades * 8 - 0.6;
+    if (f.bigRemoval) v += pr.big * 4;
+    if (f.smallRemoval) v += pr.cheap * 2.5;
+    if (f.sweeper) v += (pr.cheap + pr.wide) * 2.5 - 1;
+    if (f.sentinel) v += pr.cheap * 2;
+    if (f.heal) v += pr.cheap * 1.5;
+    if (f.space) v += (pr.space - 0.35) * 3;
+    if (f.ground) v += (0.65 - pr.space) * 1.5;
+    if (f.cheap) v += pr.cheap * 1;
+    return v;
+  };
+  // 沒有備牌就從可用卡池挑 10 張應對用的牌
+  D.ensureSide = (deck) => {
+    if (D.count(deck, 'side') >= 10) return deck;
+    const pool = D.pool(deck.leader, deck.base).filter((c) => !deck.main[c.key]);
+    const want = ['antiUpgrade', 'bigRemoval', 'sweeper', 'smallRemoval', 'sentinel', 'space', 'heal'];
+    let n = D.count(deck, 'side');
+    for (const k of [...want, ...want]) {
+      if (n >= 10) break;
+      const best = pool.filter((c) => D.features(c)[k] && !deck.side[c.key]).sort((a, b) => D.cardValue(b) - D.cardValue(a))[0];
+      if (!best) continue;
+      const k2 = Math.min(2, 10 - n);
+      deck.side[best.key] = k2;
+      n += k2;
+      if (n >= 10) break;
+    }
+    return deck;
+  };
+  // 依對手牌型換牌：主牌數量不變，備牌最多 10 張，每張最多 3 張
+  D.sideboardAI = (deck, seenCards, maxSwap = 6) => {
+    const pr = D.profile(seenCards);
+    const d = JSON.parse(JSON.stringify(deck));
+    const swaps = [];
+    for (let i = 0; i < maxSwap; i++) {
+      // 只看「對這個對手」多出來的價值，避免把牌組本身的關鍵牌換掉
+      const bonus = (k) => D.matchupValue(D.card(k), pr) - D.cardValue(D.card(k));
+      const outs = Object.keys(d.main).filter((k) => !swaps.some((x) => x.in === k)).map((k) => ({ k, v: bonus(k), b: D.cardValue(D.card(k)) })).sort((a, b) => a.v - b.v || a.b - b.b);
+      const ins = Object.keys(d.side).filter((k) => !swaps.some((x) => x.out === k)).map((k) => ({ k, v: bonus(k) })).sort((a, b) => b.v - a.v);
+      if (!outs.length || !ins.length || ins[0].v < outs[0].v + 1.2) break;
+      const o = outs[0].k, n = ins[0].k;
+      d.main[o]--;
+      if (!d.main[o]) delete d.main[o];
+      d.side[o] = (d.side[o] || 0) + 1;
+      d.side[n]--;
+      if (!d.side[n]) delete d.side[n];
+      d.main[n] = (d.main[n] || 0) + 1;
+      swaps.push({ in: n, out: o });
+    }
+    return { deck: d, swaps, profile: pr };
+  };
+
   // 給 AI 的候選清單（精簡文字）
   D.poolBrief = function (leaderKey, baseKey, limit = 220) {
     const L = D.card(leaderKey);

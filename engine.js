@@ -1260,7 +1260,10 @@
     async setup() {
       const G = this.G;
       G.phase = 'setup';
-      G.initiative = rnd(2);
+      // 隨機（或上一局輸的人）決定誰拿主動權先手
+      const chooser = this.opts.initiativeChooser != null ? this.opts.initiativeChooser : rnd(2);
+      if (this.opts.askInitiative) G.initiative = (await this.yesno(chooser, SWU.t('promptGoFirst'), { goFirst: true })) ? chooser : 1 - chooser;
+      else G.initiative = chooser;
       this.log('logStart', this.P(G.initiative).name);
       for (const P of G.players) {
         let n = 6;
