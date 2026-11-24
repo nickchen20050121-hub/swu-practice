@@ -19,6 +19,7 @@
 
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
+    lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
     needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
@@ -53,6 +54,7 @@
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
+    lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
     tapTwice: 'Double-click a card to play / attack', setAutoSingle: 'When there is only one legal target', setAutoSingleOff: 'Always let me click (default)', setAutoSingleOn: 'Choose it automatically', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
@@ -465,47 +467,272 @@
     else v.append(h('section', { class: 'panel help', html: t('helpBody') }));
   }
 
-  // ---------- 大廳 ----------
+  // ---------- 大廳（仿 Force Table：首頁選模式 → 左邊牌組格、右邊對戰面板） ----------
+  function leaderArtCard(name) {
+    return SWU.DB.list.find((c) => c.t === 'Leader' && c.n === name && c.img) || null;
+  }
+  function deckArt(d, extra) {
+    const L = d && SWU.Deck.card(d.leader);
+    const url = L && SWU.AI.settings.images ? L.img : null;
+    return h(
+      'div',
+      { class: 'dart ' + (L && L.a && L.a[0] ? ASP_CLASS[L.a[0]] : 'neutral') + (extra ? ' ' + extra : '') },
+      h('span', { class: 'dart-n' }, L ? L.n : '?'),
+      url ? h('img', { src: url, alt: '', loading: 'lazy', onerror: (e) => e.target.remove() }) : null
+    );
+  }
+  function isOwnDeck(d) {
+    return S.decks.some((x) => x.id === d.id);
+  }
   function renderLobby(v) {
     const decks = allDecks();
     if (!S.lobby.mine || !deckById(S.lobby.mine)) S.lobby.mine = decks[0] && decks[0].id;
     if (!S.lobby.yuna || (S.lobby.yuna !== 'random-meta' && !deckById(S.lobby.yuna))) S.lobby.yuna = decks.some((d) => d.meta) ? 'random-meta' : (decks[1] || decks[0] || {}).id;
-    const sel = (key) =>
+    if (!S.lobby.step) S.lobby.step = 'home';
+    if (S.lobby.step === 'home') return renderLobbyHome(v);
+    const st = SWU.AI.settings;
+    const own = decks.filter((d) => !d.meta);
+    const metas = decks.filter((d) => d.meta);
+    const badges = (id) => [id === S.lobby.mine ? h('b', { class: 'pbadge p1' }, 'P1') : null, id === S.lobby.yuna ? h('b', { class: 'pbadge p2' }, 'P2') : null];
+    const tile = (d) =>
       h(
-        'select',
-        {
-          id: 'lobby-' + key,
-          onchange: (e) => {
-            S.lobby[key] = e.target.value;
-            render();
-          },
-        },
-        key === 'yuna' ? h('option', { value: 'random-meta', selected: S.lobby[key] === 'random-meta' }, t('randomMeta')) : null,
-        ...decks.map((d) => h('option', { value: d.id, selected: d.id === S.lobby[key] }, d.name + (SWU.Deck.validate(d).length ? ' ⚠' : '')))
+        'button',
+        { class: 'dtile' + (d.id === S.lobby.mine || d.id === S.lobby.yuna ? ' sel' : ''), title: d.name, onclick: () => openDeckView(d) },
+        deckArt(d),
+        h('span', { class: 'pbadges' }, ...badges(d.id)),
+        h('span', { class: 'dtile-n' }, d.event ? d.event.replace(/ \d{4}-\d{2}-\d{2}/, '') : d.name),
+        SWU.Deck.validate(d).length ? h('span', { class: 'dtile-warn', title: SWU.Deck.validate(d).join('、') }, '⚠') : null
       );
-    const deckCard = (id) => {
-      if (id === 'random-meta') return h('div', { class: 'muted small' }, t('randomMetaHint'));
-      const d = deckById(id);
-      if (!d) return h('div', { class: 'muted' }, t('needDecks'));
-      const L = SWU.Deck.card(d.leader);
-      const B = SWU.Deck.card(d.base);
-      return h('div', { class: 'lobby-deck' }, L ? cardFace(L, 'card', { small: true }) : null, B ? cardFace(B, 'card', { small: true }) : null, h('div', { class: 'muted small' }, SWU.Deck.count(d) + ' / ' + (SWU.Deck.validate(d).join('、') || 'OK')));
+    const addTile = h(
+      'button',
+      {
+        class: 'dtile add',
+        onclick: () => {
+          editDeck(SWU.Deck.blank(t('newDeck')));
+          S.tab = 'build';
+          render();
+        },
+      },
+      h('div', { class: 'dart neutral' }, h('span', { class: 'plus' }, '＋')),
+      h('span', { class: 'dtile-n' }, t('lbAdd'))
+    );
+    const randTile = h(
+      'button',
+      { class: 'dtile' + (S.lobby.yuna === 'random-meta' ? ' sel' : ''), title: t('randomMetaHint'), onclick: () => ((S.lobby.yuna = 'random-meta'), render()) },
+      h('div', { class: 'dart neutral' }, h('span', { class: 'plus' }, '🎲')),
+      h('span', { class: 'pbadges' }, S.lobby.yuna === 'random-meta' ? h('b', { class: 'pbadge p2' }, 'P2') : null),
+      h('span', { class: 'dtile-n' }, t('lbRandom'))
+    );
+    const slot = (key) => {
+      const id = S.lobby[key];
+      const d = id === 'random-meta' ? null : deckById(id);
+      return h(
+        'div',
+        { class: 'vslot' },
+        h('div', { class: 'vslot-art' }, d ? deckArt(d) : h('div', { class: 'dart neutral' }, h('span', { class: 'plus' }, id === 'random-meta' ? '🎲' : '？')), h('b', { class: 'pbadge ' + (key === 'mine' ? 'p1' : 'p2') }, key === 'mine' ? 'P1' : 'P2')),
+        h('div', { class: 'vslot-who' }, key === 'mine' ? SWU.playerName() : t('lbYuna')),
+        h('div', { class: 'vslot-n' }, d ? d.name.replace(/^🏆 /, '') : id === 'random-meta' ? t('lbRandom') : t('lbPickHint'))
+      );
     };
+    const optBtns = (key, list) =>
+      h(
+        'div',
+        { class: 'aiopts' },
+        ...list.map((k) =>
+          h(
+            'button',
+            {
+              class: 'aiopt' + (st[key] === k ? ' on' : ''),
+              onclick: () => {
+                st[key] = k;
+                SWU.AI.save();
+                render();
+              },
+            },
+            h('b', {}, t('ai_' + key + '_' + k)),
+            h('span', {}, t('ai_' + key + '_' + k + '_d'))
+          )
+        )
+      );
+    const ready = deckById(S.lobby.mine) && (S.lobby.yuna === 'random-meta' || deckById(S.lobby.yuna));
     v.append(
       h(
         'section',
-        { class: 'panel lobby' },
-        h('h2', {}, t('lobbyTitle')),
-        !S.decks.length ? h('p', { class: 'muted small' }, t('noOwnDecks')) : null,
-        h('div', { class: 'lobby-grid' }, h('div', {}, h('label', { for: 'lobby-mine' }, t('yourDeck')), sel('mine'), deckCard(S.lobby.mine)), h('div', { class: 'vs' }, 'VS'), h('div', {}, h('label', { for: 'lobby-yuna' }, t('yunaDeck')), sel('yuna'), deckCard(S.lobby.yuna))),
+        { class: 'qm' },
         h(
           'div',
-          { class: 'modesel' },
-          ...['single', 'bo3'].map((md) => h('button', { class: S.lobby.mode === md ? 'on' : 'ghost', onclick: () => ((S.lobby.mode = md), render()) }, t('mode_' + md)))
+          { class: 'qm-left' },
+          h('div', { class: 'qm-head' }, h('button', { class: 'linkbtn', onclick: () => ((S.lobby.step = 'home'), render()) }, '‹ ' + t('lbBack')), h('span', { class: 'sep' }, '｜'), h('b', {}, t('mode_' + S.lobby.mode))),
+          h('p', { class: 'muted small' }, t('lbTileHint')),
+          h('h3', {}, t('lbMine', own.length)),
+          !S.decks.length ? h('p', { class: 'muted small' }, t('noOwnDecks')) : null,
+          h('div', { class: 'dgrid' }, addTile, ...own.map(tile)),
+          h('h3', {}, t('lbMeta', metas.length)),
+          h('div', { class: 'dgrid' }, randTile, ...metas.map(tile))
         ),
-        S.lobby.mode === 'bo3' ? h('p', { class: 'muted small' }, t('bo3Hint')) : null,
-        h('p', { class: 'ai-status ' + (SWU.AI.hasClaude() ? 'on' : 'off') }, SWU.AI.hasClaude() ? t('aiStatusOn', SWU.AI.settings.model) : t('aiStatusOff')),
-        h('button', { class: 'primary big', onclick: () => startGame(), disabled: !deckById(S.lobby.mine) || !(S.lobby.yuna === 'random-meta' || deckById(S.lobby.yuna)) }, t('start'))
+        h(
+          'div',
+          { class: 'qm-right panel' },
+          h('h3', { class: 'qm-title' }, t('lbVersus')),
+          h('div', { class: 'vsrow' }, slot('mine'), h('div', { class: 'vs' }, 'VS'), slot('yuna')),
+          h(
+            'div',
+            { class: 'vsbtns' },
+            h(
+              'button',
+              {
+                disabled: S.lobby.yuna === 'random-meta',
+                title: S.lobby.yuna === 'random-meta' ? t('lbSwapNo') : '',
+                onclick: () => {
+                  [S.lobby.mine, S.lobby.yuna] = [S.lobby.yuna, S.lobby.mine];
+                  render();
+                },
+              },
+              t('lbSwap')
+            ),
+            h(
+              'button',
+              {
+                onclick: () => {
+                  S.lobby.mine = decks[0] && decks[0].id;
+                  S.lobby.yuna = metas.length ? 'random-meta' : (decks[1] || decks[0] || {}).id;
+                  render();
+                },
+              },
+              t('lbReset')
+            )
+          ),
+          h('h3', { class: 'qm-title' }, t('lbAiTitle')),
+          h('div', { class: 'aiopt-lbl' }, t('lbLevel')),
+          optBtns('level', ['basic', 'full']),
+          h('div', { class: 'aiopt-lbl' }, t('lbStyle')),
+          optBtns('style', ['default', 'aggro', 'control']),
+          S.lobby.mode === 'bo3' ? h('p', { class: 'muted small' }, t('bo3Hint')) : null,
+          h('p', { class: 'ai-status ' + (SWU.AI.hasClaude() ? 'on' : 'off') }, SWU.AI.hasClaude() ? t('aiStatusOn', st.model) : t('aiStatusOff')),
+          h('button', { class: 'primary big', onclick: () => startGame(), disabled: !ready }, t('start'))
+        )
+      ),
+      h('div', { id: 'modal', class: 'modal', hidden: true })
+    );
+  }
+  function renderLobbyHome(v) {
+    const modes = [
+      { k: 'single', art: 'Luke Skywalker', title: t('mode_single'), desc: t('lbSingleDesc') },
+      { k: 'bo3', art: 'Darth Vader', title: t('mode_bo3'), desc: t('lbBo3Desc') },
+      { k: 'build', art: 'Hera Syndulla', title: t('tabBuild'), desc: t('lbBuildDesc') },
+    ];
+    v.append(
+      h(
+        'section',
+        { class: 'home' },
+        h('h2', { class: 'home-title' }, t('lbHomeTitle')),
+        h(
+          'div',
+          { class: 'modecards' },
+          ...modes.map((m) => {
+            const c = leaderArtCard(m.art);
+            return h(
+              'button',
+              {
+                class: 'modecard ' + m.k,
+                onclick: () => {
+                  if (m.k === 'build') S.tab = 'build';
+                  else {
+                    S.lobby.mode = m.k;
+                    S.lobby.step = 'pick';
+                  }
+                  render();
+                },
+              },
+              h('div', { class: 'mc-art' }, c && SWU.AI.settings.images ? h('img', { src: c.img, alt: '', onerror: (e) => e.target.remove() }) : null),
+              h('div', { class: 'mc-txt' }, h('b', {}, m.title), h('span', {}, m.desc))
+            );
+          })
+        ),
+        !S.decks.length ? h('p', { class: 'muted small' }, t('noOwnDecks')) : null
+      )
+    );
+  }
+  // 點牌組：顯示牌表（領袖、基地、屬性、分類），可選 P1／P2、編輯、刪除
+  function openDeckView(d) {
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    const L = SWU.Deck.card(d.leader);
+    const B = SWU.Deck.card(d.base);
+    const asp = [...((L && L.a) || []), ...((B && B.a) || [])];
+    const groups = { ground: [], space: [], event: [], upgrade: [], other: [] };
+    const gkey = (c) => (c.t === 'Unit' ? (c.ar === 'Space' ? 'space' : 'ground') : c.t === 'Event' ? 'event' : c.t === 'Upgrade' ? 'upgrade' : 'other');
+    for (const [k, n] of Object.entries(d.main || {})) {
+      const c = SWU.Deck.card(k);
+      if (c) groups[gkey(c)].push([c, n]);
+    }
+    const line = ([c, n]) =>
+      h('li', { title: SWU.cardText(c, 'card') }, h('span', { class: 'qty' }, n + '×'), h('span', { class: 'dl-c' }, c.c != null ? c.c : ''), h('span', { class: 'dl-n' }, c.n + (c.s ? ', ' + c.s : '')), aspectDots(c));
+    const sortL = (a) => a.sort((x, y) => (x[0].c || 0) - (y[0].c || 0) || x[0].n.localeCompare(y[0].n));
+    const sec = (k, list) => (list.length ? h('div', { class: 'dl-sec' }, h('h4', {}, t('dl_' + k) + '（' + list.reduce((s, x) => s + x[1], 0) + '）'), h('ul', {}, ...sortL(list).map(line))) : null);
+    const side = Object.entries(d.side || {}).map(([k, n]) => [SWU.Deck.card(k), n]).filter((x) => x[0]);
+    let delArmed = false;
+    const pick = (key) => {
+      S.lobby[key] = d.id;
+      closeModal();
+      render();
+    };
+    m.append(
+      h(
+        'div',
+        { class: 'dialog deckview' },
+        h('div', { class: 'dv-head' }, h('h3', {}, d.name), h('button', { class: 'ghost', 'aria-label': t('close'), onclick: closeModal }, '✕')),
+        h(
+          'div',
+          { class: 'dv-meta' },
+          h('div', {}, h('i', {}, t('type_Leader') + '：'), L ? L.n + (L.s ? ', ' + L.s : '') : '—'),
+          h('div', {}, h('i', {}, t('type_Base') + '：'), B ? B.n + (B.s ? '（' + B.s + '）' : '') : '—'),
+          h('div', {}, h('i', {}, t('dvAspects') + '：'), aspectDots({ a: asp })),
+          h('div', {}, h('i', {}, t('dvDraw') + '：'), t('results', SWU.Deck.count(d)) + (side.length ? '　' + t('dl_side') + ' ' + side.reduce((s, x) => s + x[1], 0) : '')),
+          d.event ? h('div', { class: 'muted small' }, d.event) : null
+        ),
+        h('div', { class: 'dv-list' }, sec('ground', groups.ground), sec('space', groups.space), sec('event', groups.event), sec('upgrade', groups.upgrade), sec('other', groups.other), sec('side', side)),
+        h(
+          'div',
+          { class: 'row dv-btns' },
+          h('button', { class: S.lobby.mine === d.id ? 'on' : '', onclick: () => pick('mine') }, t('dvP1')),
+          h('button', { class: S.lobby.yuna === d.id ? 'on' : '', onclick: () => pick('yuna') }, t('dvP2')),
+          h(
+            'button',
+            {
+              class: 'primary',
+              onclick: () => {
+                closeModal();
+                editDeck(d);
+                S.tab = 'build';
+                render();
+              },
+            },
+            isOwnDeck(d) ? t('dvEdit') : t('dvCopyEdit')
+          ),
+          isOwnDeck(d)
+            ? h(
+                'button',
+                {
+                  class: 'danger',
+                  onclick: (e) => {
+                    if (!delArmed) {
+                      delArmed = true;
+                      e.target.textContent = t('confirmDel');
+                      return;
+                    }
+                    S.decks = S.decks.filter((x) => x.id !== d.id);
+                    saveDecks();
+                    if (S.edit && S.edit.id === d.id) S.edit = null;
+                    closeModal();
+                    render();
+                  },
+                },
+                t('del')
+              )
+            : null
+        )
       )
     );
   }

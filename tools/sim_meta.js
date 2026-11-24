@@ -6,7 +6,7 @@ for(const f of ['cards.js','engine.js','i18n.js','effects.js','gfx.js','programs
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
 const metas=SWU.Deck.presets().filter(d=>d.meta);
 const mk=(d)=>({name:d.name.slice(2,14),leader:SWU.Deck.card(d.leader),base:SWU.Deck.card(d.base),cards:SWU.Deck.expand(d)});
-const H=SWU.AI.heur;
+const H=SWU.AI.heur; if(process.env.STYLE) SWU.AI.settings.style=process.env.STYLE;
 const games=+process.argv[2]||9; const smart=process.argv[3]!=='old';
 const stat={};let errs=0,manual=0,stuck=0;
 (async()=>{

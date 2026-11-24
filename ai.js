@@ -8,7 +8,7 @@
 
   // ---------- 設定 ----------
   const SKEY = 'swu.settings.v1';
-  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true };
+  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true, level: 'full', style: 'default' };
   try {
     Object.assign(AI.settings, JSON.parse(localStorage.getItem(SKEY) || '{}'));
   } catch (e) {}
@@ -148,6 +148,14 @@
     for (const u of op.units) s -= unitV(u, false);
     s += (me.hand.length - op.hand.length) * 1.6;
     s += (me.resources.length - op.resources.length) * 1.2;
+    // 行為風格：侵略＝更看重打對方基地；控制＝更看重場面、手牌和自己的血量
+    const st = AI.settings.style;
+    if (st === 'aggro') s += (30 - opHp) * 0.9 - (me.units.length ? 0 : 1);
+    else if (st === 'control') {
+      for (const u of me.units) s += unitV(u, true) * 0.3;
+      for (const u of op.units) s -= unitV(u, false) * 0.4;
+      s += (me.hand.length - op.hand.length) * 0.8 + myHp * 0.3;
+    }
     if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += 1;
     return s;
   };
@@ -399,6 +407,7 @@
       async chooseAction(g, p, acts) {
         await wait(AI.settings.delay);
         if (!useClaude('action')) {
+          if (AI.settings.level === 'basic') return H.chooseAction(g, p, acts);
           const r = await H.chooseActionSmart(g, p, acts);
           force = r.force != null && r.act && r.act.type === 'attack' ? { uid: r.act.uid, target: r.force } : null;
           return r.act;
