@@ -410,6 +410,7 @@
         if (this.rp < this.replay.length) {
           const r = this.replay[this.rp++];
           this.rec.push(r);
+          if (this.rp === this.replay.length && this.opts.onReplayEnd) this.opts.onReplayEnd(this);
           return r.v == null ? r.v : JSON.parse(JSON.stringify(r.v));
         }
         this.replay = null;
@@ -1407,6 +1408,8 @@
   }
   class GameOver extends Error {}
   SWU.Game = Game;
+  // 給 AI 預想用：暫存／還原全域亂數與編號
+  SWU.engineRT = { get: () => ({ RNG, UID }), set: (r) => ((RNG = r.RNG), (UID = r.UID)) };
   SWU.GameOver = GameOver;
 
   SWU.unitLabel = function (g, u) {

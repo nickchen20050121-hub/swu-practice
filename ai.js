@@ -124,6 +124,176 @@
     }
     return best;
   };
+  // ---------- 預想一步：用重播把每個候選行動實際跑一次，看結果局面 ----------
+  H.evalState = function (g, p) {
+    const G = g.G;
+    if (G.winner != null) return G.winner === p ? 10000 : -10000;
+    const me = g.P(p), op = g.P(1 - p);
+    const hpLeft = (P) => (P.base.card.h || 30) - P.base.damage;
+    const unitV = (u, mine) => {
+      const pw = g.power(u), rm = g.remaining(u);
+      let v = pw * 1.1 + rm * 0.9 + (u.card.c || 0) * 0.3 + (u.isLeader ? 3 : 0);
+      if ((u.upgrades || []).some((x) => x.card.n === 'Shield')) v += 2;
+      if (G.phase === 'action' && !u.exhausted) v += pw * (mine ? 0.35 : 0.5); // 還能攻擊／還能反擊
+      return v;
+    };
+    let s = 0;
+    const myHp = hpLeft(me), opHp = hpLeft(op);
+    s += (myHp - opHp) * 1.25;
+    // 對方快死了就更積極打基地
+    if (opHp <= 10) s += (10 - opHp) * 1.0;
+    if (myHp <= 10) s -= (10 - myHp) * 0.8;
+    for (const u of me.units) s += unitV(u, true);
+    for (const u of op.units) s -= unitV(u, false);
+    s += (me.hand.length - op.hand.length) * 1.6;
+    s += (me.resources.length - op.resources.length) * 1.2;
+    if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += 1;
+    return s;
+  };
+  // ---------- 推測對手手牌：看對手領袖＋基地的屬性、已經出過的牌、卡價（當作環境熱門度） ----------
+  H.predictPool = function (g, p) {
+    const q = 1 - p, Q = g.P(q);
+    const key = Q.leader.card.key + '|' + Q.base.card.key;
+    g._pool = g._pool || {};
+    let pool = g._pool[key];
+    if (!pool) {
+      const asp = [...(Q.leader.card.a || []), ...(Q.base.card.a || [])];
+      pool = SWU.DB.list
+        .filter((c) => c.pl === 'Yes' && ['Unit', 'Event', 'Upgrade'].includes(c.t) && (c.a || []).every((a) => asp.includes(a)))
+        .map((c) => ({ c, w: 1 + Math.min(3, Math.log10(1 + (+c.pr || 0) * 10)) * 1.5 + ((c.a || []).length ? 1 : 0) }));
+      g._pool[key] = pool;
+    }
+    // 已經看過的牌（場上、棄牌堆、公開過的）：牌組通常放 3 張，剩下的機率高
+    const seen = {};
+    for (const x of [...Q.discard, ...Q.units.map((u) => u), ...Q.units.flatMap((u) => u.upgrades || [])]) if (x && x.card && x.card.key) seen[x.card.key] = (seen[x.card.key] || 0) + 1;
+    for (const l of g.G.log) if (l.k === 'logReveal' && l.a[0] === Q.name) for (const n of String(l.a[1]).split('、')) seen['@' + n] = 1;
+    return pool.map(({ c, w }) => {
+      const k = seen[c.key] || (seen['@' + c.n] ? 1 : 0);
+      return { c, w: k ? (k >= 3 ? 0.2 : w + 6) : w };
+    });
+  };
+  H.sampleHand = function (pool, n, maxCost) {
+    const out = [];
+    const ok = pool.filter((x) => x.w > 0 && (x.c.c || 0) <= maxCost + 2);
+    let tot = ok.reduce((s, x) => s + x.w, 0);
+    for (let i = 0; i < n && tot > 0; i++) {
+      let r = Math.random() * tot;
+      const x = ok.find((y) => (r -= y.w) <= 0) || ok[ok.length - 1];
+      out.push(x.c);
+    }
+    return out;
+  };
+  // 對手下一步用「公開的」場面能做到的最好攻擊（不偷看手牌）
+  H.oppThreat = function (g, p) {
+    let worst = 0;
+    for (const u of g.P(1 - p).units) {
+      if (u.exhausted || !g.canAttackWith(u)) continue;
+      const b = H.bestAttack(g, u);
+      if (b && b.s > worst) worst = b.s;
+    }
+    return worst;
+  };
+  H.search = async function (g, p, acts) {
+    if (!SWU.engineRT || !g.rec || g.replaying) return null;
+    const rt = SWU.engineRT.get();
+    const STOP = { stop: true };
+    const base = H.evalState(g, p) - H.oppThreat(g, p) * 0.6;
+    const cands = [];
+    for (const a of acts) {
+      if (a.type === 'pass' || a.type === 'initiative' || a.type === 'manualAbility' || a.type === 'manualLeader' || a.manual) continue;
+      if (a.type === 'attack') {
+        const u = g.findUnit(a.uid);
+        if (!u) continue;
+        const t = g.attackTargets(u);
+        for (const d of t.units) cands.push({ a, force: d.uid });
+        if (t.base) cands.push({ a, force: 'base' + (1 - p) });
+      } else cands.push({ a });
+    }
+    if (!cands.length) return { best: null, gain: -Infinity, base };
+    const t0 = Date.now();
+    const pool = H.predictPool(g, p);
+    const sim = async (c) => {
+      let score = null;
+      let forced = c.force != null;
+      const mk = (q) => {
+        const o = g.io[q] || {};
+        return {
+          isHuman: !!o.isHuman,
+          get autoSingle() {
+            return !!o.autoSingle;
+          },
+          chooseAction: async (g2, who) => {
+            score = H.evalState(g2, p) - (who !== p ? H.oppThreat(g2, p) * 0.6 : 0);
+            throw STOP;
+          },
+          choose: async (g2, qq, req) => {
+            if (forced && req.ctx && req.ctx.uid === c.a.uid && req.kind === 'target') {
+              forced = false;
+              return [c.force];
+            }
+            if (req.ctx && req.ctx.regroupResource) {
+              score = H.evalState(g2, p);
+              throw STOP;
+            }
+            return H.choose(g2, qq, req);
+          },
+          distribute: o.distribute ? async (g2, qq, req) => g2.autoDistribute(qq, req) : undefined,
+          showCards: o.showCards ? async () => {} : undefined,
+          resolveManual: async () => {},
+        };
+      };
+      // 重播到現在後，把看不到的資訊換掉：雙方牌庫重洗、對手手牌換成推測的牌
+      const hide = (g2) => {
+        for (const P of g2.G.players) for (let i = P.deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [P.deck[i], P.deck[j]] = [P.deck[j], P.deck[i]]; }
+        const Q = g2.P(1 - p);
+        const guess = H.sampleHand(pool, Q.hand.length, Q.resources.length);
+        if (guess.length === Q.hand.length) Q.hand = guess.map((card) => g2.inst(card, 1 - p));
+      };
+      const g2 = new SWU.Game(g.decks, [mk(0), mk(1)], { ...g.opts, seed: g.seed, uid0: g.uid0, onReplayEnd: hide, replay: [...g.rec, { p, k: 'a', v: JSON.parse(JSON.stringify(c.a)) }] });
+      const ce = console.error;
+      console.error = () => {};
+      try {
+        await g2.run();
+      } finally {
+        console.error = ce;
+      }
+      if (score == null) score = H.evalState(g2, p);
+      // 有效果錯誤的走法不採用
+      if (g2.G.log.some((l) => l.k === 'logEffectError' && !/stop/.test(String(l.a[0])) && l.a[0] !== '[object Object]')) score -= 5;
+      return score;
+    };
+    let best = null, bestS = -Infinity;
+    try {
+      for (const c of cands) {
+        if (Date.now() - t0 > 2500) break;
+        const sc = await sim(c);
+        if (sc > bestS) {
+          bestS = sc;
+          best = c;
+        }
+      }
+    } finally {
+      SWU.engineRT.set(rt);
+    }
+    return { best: best && best.a, force: best && best.force, gain: bestS - base, base };
+  };
+  // 預想版行動選擇：沒有好處的行動就搶先攻／Pass
+  H.chooseActionSmart = async function (g, p, acts) {
+    let r = null;
+    try {
+      r = await H.search(g, p, acts);
+    } catch (e) {
+      console.warn('search failed', e);
+    }
+    if (!r) return { act: H.chooseAction(g, p, acts) };
+    const init = acts.find((a) => a.type === 'initiative');
+    const pass = acts.find((a) => a.type === 'pass');
+    if (r.best && r.gain > 0.3) return { act: r.best, force: r.force };
+    // 沒什麼好做的：能搶先攻就搶（等於 Pass 但下回合先手）
+    if (init) return { act: init };
+    if (r.best && r.gain > -0.5 && !pass) return { act: r.best, force: r.force };
+    return { act: pass || r.best || acts[0] };
+  };
   const HARM = /damage|defeat|capture|-\d|傷害|擊敗|俘虜|攻擊誰|attack/i;
   H.choose = function (g, p, req) {
     const opts = req.options;
@@ -181,7 +351,14 @@
           const a = g.findUnit(ctx.uid);
           const best = a && H.bestAttack(g, a);
           s = best && best.target === u ? 100 : H.unitValue(g, u) * 0.1;
-        } else if (harm) s = enemy ? H.unitValue(g, u) : -H.unitValue(g, u);
+        } else if (harm) {
+          s = enemy ? H.unitValue(g, u) : -H.unitValue(g, u);
+          // 傷害類：能打死的優先（有護盾的打不死）
+          if (enemy && ctx.op === 'damage' && typeof ctx.n === 'number') {
+            const shield = (u.upgrades || []).some((x) => x.card.n === 'Shield');
+            s += !shield && ctx.n >= g.remaining(u) ? 8 + H.unitValue(g, u) : shield ? -3 : 0;
+          }
+        }
         else s = enemy ? -H.unitValue(g, u) : H.unitValue(g, u) + u.damage;
       }
       if (s > bestS) {
@@ -199,6 +376,7 @@
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const useClaude = (kind) => AI.hasClaude() && (AI.settings.mode === 'all' || kind === 'action' || kind === 'manual');
     const fails = { n: 0 };
+    let force = null; // 預想時選好的攻擊目標
     async function claudeOr(fallback, fn) {
       if (fails.n >= 3) return fallback();
       try {
@@ -219,7 +397,11 @@
       isAI: true,
       async chooseAction(g, p, acts) {
         await wait(AI.settings.delay);
-        if (!useClaude('action')) return H.chooseAction(g, p, acts);
+        if (!useClaude('action')) {
+          const r = await H.chooseActionSmart(g, p, acts);
+          force = r.force != null && r.act && r.act.type === 'attack' ? { uid: r.act.uid, target: r.force } : null;
+          return r.act;
+        }
         return claudeOr(
           () => H.chooseAction(g, p, acts),
           async () => {
@@ -243,6 +425,11 @@
         );
       },
       async choose(g, p, req) {
+        if (force && req.kind === 'target' && req.ctx && req.ctx.uid === force.uid && req.options.some((o) => o.id === force.target)) {
+          const t = force.target;
+          force = null;
+          return [t];
+        }
         if (!useClaude('choice') || req.options.length <= 1) {
           await wait(Math.min(400, AI.settings.delay));
           return H.choose(g, p, req);

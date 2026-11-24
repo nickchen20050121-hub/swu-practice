@@ -1062,7 +1062,7 @@
       const bs = bases.filter((b) => !picks.some((x) => x.base === b));
       if (!units.length && !bs.length) break;
       const optional = st.optional || t.sel === 'upTo' ? !(t.exact && i < count) || st.optional : false;
-      const r = await g.pickTarget(p, prompt + (count > 1 && count < 20 ? ` (${i + 1}/${count})` : count >= 20 ? L(`（已選 ${i}，可按略過結束）`, ` (${i} chosen, skip to finish)`) : '') + (t.sumMax != null ? L(`［總${t.sumKey === 'power' ? '戰力' : '費用'} ${t.sumMax} 以內，已用 ${used}］`, ` [total ${t.sumKey || 'cost'} ≤ ${t.sumMax}, used ${used}]`) : ''), { units, bases: bs, optional: optional || (t.sel === 'upTo' && !t.exact), ctx: { harm, card: ctx.card.key } });
+      const r = await g.pickTarget(p, prompt + (count > 1 && count < 20 ? ` (${i + 1}/${count})` : count >= 20 ? L(`（已選 ${i}，可按略過結束）`, ` (${i} chosen, skip to finish)`) : '') + (t.sumMax != null ? L(`［總${t.sumKey === 'power' ? '戰力' : '費用'} ${t.sumMax} 以內，已用 ${used}］`, ` [total ${t.sumKey || 'cost'} ≤ ${t.sumMax}, used ${used}]`) : ''), { units, bases: bs, optional: optional || (t.sel === 'upTo' && !t.exact), ctx: { harm, card: ctx.card.key, op: st.op, n: typeof st.n === 'number' ? st.n : st.n && typeof st.n === 'object' ? amt(ctx, st.n) : null } });
       if (!r) break;
       picks.push(r.unit || { base: r.base });
     }
