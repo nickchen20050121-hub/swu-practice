@@ -128,6 +128,11 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .vslot-who{font-weight:700}
 .vslot-n{font-size:13px;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vsbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.lvrow{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.lvbtn{padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-family:var(--f-num);font-weight:700;cursor:pointer}
+.lvbtn.on{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.lvdesc{font-size:13px;color:var(--muted)}
+.lvdesc b{color:var(--ink)}
 .aiopt-lbl{font-weight:700}
 .aiopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
 .aiopt{display:grid;gap:4px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
@@ -407,6 +412,71 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .field{display:grid;gap:6px}
 .field>label{font-weight:700}
 .help{max-width:720px;margin:0 auto}
+/* 對戰時整張牌桌塞進一個畫面（電腦、手機都不用捲動或縮放） */
+.zbody{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:stretch;min-height:0}
+.zbody .piles{flex-direction:column!important;flex-wrap:nowrap;align-items:stretch;justify-content:center;gap:6px;padding:2px;width:calc(var(--cw)*1.75)}
+.zbody .piles .resrow,.zbody .piles .handrow{flex:none}
+.zbody .piles .deckpile,.zbody .piles .discpile{width:auto}
+.zbody .pilepair{display:flex;gap:6px;justify-content:center}
+.logbtn{display:none;cursor:pointer}
+body.ingame{height:100dvh;overflow:hidden}
+body.ingame #app{height:100dvh;display:flex;flex-direction:column}
+body.ingame header.top{padding-top:6px;padding-bottom:6px}
+body.ingame main#view{flex:1;min-height:0;padding:8px max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px))}
+body.ingame .table-wrap{height:100%;align-items:stretch;grid-template-columns:minmax(0,1fr) clamp(240px,22vw,320px)}
+body.ingame .board{--cw:clamp(40px,calc((100dvh - 345px) / 5.8),104px);--hcw:clamp(42px,calc((100dvh - 345px) / 5.5),110px);height:100%;min-height:0;overflow:hidden;grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr) auto;gap:6px;padding:8px 10px;align-content:stretch}
+body.ingame .zone{min-height:0;padding:4px 8px 6px;gap:3px;grid-template-rows:auto minmax(0,1fr)}
+body.ingame .lane{min-height:0;padding:14px 6px 6px}
+body.ingame .units{flex-wrap:nowrap;overflow-x:auto;overflow-y:visible;padding-bottom:6px;scrollbar-width:thin}
+body.ingame .units>*{flex:none}
+body.ingame .hand{--cw:var(--hcw);flex-wrap:nowrap;overflow-x:auto;padding:6px 2px 4px;scrollbar-width:thin}
+body.ingame .hand>*{flex:none}
+body.ingame .promptbar{min-height:0;padding:6px 10px}
+body.ingame .side{position:static;height:100%;min-height:0;overflow:auto;align-content:start}
+body.ingame .side .preview{--cw:min(200px,16vw)}
+body.ingame .cardback{width:calc(var(--cw)*.3);height:calc(var(--cw)*.42);font-size:calc(var(--cw)*.13)}
+body.ingame .cardback.hb{width:calc(var(--cw)*.24);height:calc(var(--cw)*.34)}
+body.ingame .cardback.big,body.ingame .disctop,body.ingame .disctop .face{width:calc(var(--cw)*.62)}
+body.ingame .cardback.big{height:calc(var(--cw)*.87)}
+body.ingame .pilecount{top:calc(var(--cw)*.28)}
+body.ingame .backs{min-height:0}
+@media (max-width:1100px){
+  body.ingame .table-wrap{grid-template-columns:1fr}
+  body.ingame .side{display:none}
+  body.ingame .logbtn{display:inline-block}
+  body.ingame.sideopen .side{display:grid;position:fixed;inset:auto 0 0 0;max-height:70dvh;z-index:60;background:var(--bg);padding:12px;border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.25);grid-template-columns:repeat(auto-fit,minmax(260px,1fr));height:auto}
+  body.ingame.sideopen .side .preview{display:none}
+}
+@media (max-width:720px){
+  body.ingame header.top{gap:8px;padding:4px 8px}
+  body.ingame header.top .brand span:last-child{display:none}
+  body.ingame header.top .tab{padding:4px 8px;font-size:13px}
+  body.ingame main#view{padding:4px 4px 0}
+  body.ingame .board{--cw:clamp(36px,calc((100dvh - 400px) / 6.3),66px);--hcw:clamp(40px,calc((100dvh - 400px) / 5.6),74px);padding:4px 6px;gap:4px;border-radius:10px}
+  body.ingame .status{gap:4px;font-size:11px}
+  body.ingame .status .chip{padding:1px 6px;font-size:11px}
+  body.ingame .zone{padding:3px 4px 4px}
+  body.ingame .pinfo{gap:8px;font-size:11px}
+  body.ingame .zbody{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"piles center" "ground space";gap:4px}
+  body.ingame .zone.p0 .zbody{grid-template-areas:"ground space" "piles center"}
+  body.ingame .lanes{display:contents}
+  body.ingame .zbody .piles{grid-area:piles;flex-direction:row!important;flex-wrap:wrap;align-items:center;justify-content:flex-start;width:auto}
+  body.ingame .lanes .center{grid-area:center;flex-direction:row!important;justify-content:flex-end;gap:4px}
+  body.ingame .lane.ground{grid-area:ground}
+  body.ingame .lane.space{grid-area:space}
+  body.ingame .lane{padding:12px 3px 3px}
+  body.ingame .pilelabel{font-size:10px}
+  body.ingame .promptbar{padding:4px 6px;gap:4px}
+  body.ingame .promptbar button{min-height:34px;padding:2px 6px;font-size:13px}
+  body.ingame .promptbar:has(.actmenu)>b,body.ingame .promptbar:has(.actmenu)>.hint,body.ingame .promptbar:has(.actmenu)>.grow{display:none}
+  body.ingame .actmenu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%}
+  body.ingame .actmenu .passbtn{font-size:15px}
+  body.ingame .status .chip:nth-child(2){display:none}
+  body.ingame .logbtn{font-size:0}
+  body.ingame .logbtn::first-letter{font-size:14px}
+  body.ingame .turn{font-size:12px}
+  body.ingame .hand{position:static;margin:0 -6px -4px;padding:4px 6px calc(4px + env(safe-area-inset-bottom,0px))}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 .promptbar .grow{flex:1}

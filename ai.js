@@ -8,10 +8,13 @@
 
   // ---------- 設定 ----------
   const SKEY = 'swu.settings.v1';
-  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true, level: 'full', style: 'default' };
+  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true, level: 8, style: 'default' };
   try {
     Object.assign(AI.settings, JSON.parse(localStorage.getItem(SKEY) || '{}'));
   } catch (e) {}
+  if (AI.settings.level === 'full') AI.settings.level = 8;
+  else if (AI.settings.level === 'basic') AI.settings.level = 4;
+  AI.levelNum = () => Math.min(8, Math.max(1, +AI.settings.level || 8));
   AI.save = () => {
     try {
       localStorage.setItem(SKEY, JSON.stringify(AI.settings));
@@ -302,9 +305,12 @@
         let bd = -Infinity, bc = null;
         for (const x of scored.slice(0, opt.top || 5)) {
           if (Date.now() - t0 > 6000) break;
-          let d = 0;
-          for (let k = 0; k < opt.rollout; k++) d += await sim(x.c, 'roll');
-          d = d / opt.rollout + x.sc * (opt.blend == null ? 0.3 : opt.blend);
+          const rs = [];
+          for (let k = 0; k < opt.rollout; k++) rs.push(await sim(x.c, 'roll'));
+          const mean = rs.reduce((a, b) => a + b, 0) / rs.length;
+          // 風險：同一個行動在不同推演裡結果差很多（例如怕對手手上有解牌），就扣分
+          const sd = Math.sqrt(rs.reduce((a, b) => a + (b - mean) ** 2, 0) / rs.length);
+          let d = mean - (opt.risk || 0) * sd + x.sc * (opt.blend == null ? 0.3 : opt.blend);
           if (d > bd) {
             bd = d;
             bc = x.c;
@@ -335,6 +341,46 @@
     return { best: best && best.a, force: best && best.force, gain: bestS - base, base };
   };
   // 預想版行動選擇：沒有好處的行動就搶先攻／Pass
+  // ---------- 難度 1～8 ----------
+  // 1～3：規則型，但有一定機率亂出、亂選目標；4：規則型；5：預想一步；6～8：預想一步後把前幾名推演到回合結束（越高推演越多）
+  H.LEVELS = {
+    1: { rand: 1 },
+    2: { rand: 0.6 },
+    3: { rand: 0.3 },
+    4: {},
+    5: { smart: {} },
+    6: { smart: { rollout: 2, top: 4 } },
+    7: { smart: { rollout: 4, top: 6 } },
+    8: { smart: { rollout: 6, top: 8, risk: 0.3 } },
+  };
+  H.randomAct = function (g, p, acts) {
+    const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');
+    const nonPass = real.filter((a) => a.type !== 'pass' && a.type !== 'initiative');
+    const pool = nonPass.length && Math.random() < 0.85 ? nonPass : real.length ? real : acts;
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
+  H.levelAction = async function (g, p, acts, lv) {
+    const L = H.LEVELS[lv] || H.LEVELS[8];
+    if (L.smart) return H.chooseActionSmart(g, p, acts, L.smart);
+    if (L.rand && Math.random() < L.rand) return { act: H.randomAct(g, p, acts) };
+    return { act: H.chooseAction(g, p, acts) };
+  };
+  H.levelChoose = function (g, p, req, lv) {
+    const L = H.LEVELS[lv] || H.LEVELS[8];
+    if (L.rand && req.options.length > 1 && Math.random() < L.rand) {
+      const ctx = req.ctx || {};
+      if (req.kind === 'target') return [req.options[Math.floor(Math.random() * req.options.length)].id];
+      // 放資源時亂放（可能把便宜的好牌放掉）
+      if (req.kind === 'cards' && (ctx.setupResource || ctx.regroupResource)) {
+        const n = Math.max(req.min == null ? 1 : req.min, Math.min(req.max || 1, ctx.regroupResource ? 1 : req.max || 1));
+        return req.options
+          .map((o) => o.id)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, n);
+      }
+    }
+    return H.choose(g, p, req);
+  };
   // 全力模式：前 6 名候選行動各推演 4 次到回合結束（模擬對戰 128 局對舊版贏 66%）
   H.bestOpt = { rollout: 4, top: 6 };
   H.chooseActionSmart = async function (g, p, acts, opt = H.bestOpt || {}) {
@@ -459,8 +505,7 @@
       async chooseAction(g, p, acts) {
         await wait(AI.settings.delay);
         if (!useClaude('action')) {
-          if (AI.settings.level === 'basic') return H.chooseAction(g, p, acts);
-          const r = await H.chooseActionSmart(g, p, acts);
+          const r = await H.levelAction(g, p, acts, AI.levelNum());
           force = r.force != null && r.act && r.act.type === 'attack' ? { uid: r.act.uid, target: r.force } : null;
           return r.act;
         }
@@ -494,7 +539,7 @@
         }
         if (!useClaude('choice') || req.options.length <= 1) {
           await wait(Math.min(400, AI.settings.delay));
-          return H.choose(g, p, req);
+          return H.levelChoose(g, p, req, AI.levelNum());
         }
         return claudeOr(
           () => H.choose(g, p, req),

@@ -19,6 +19,7 @@
 
   SWU.addStrings('zh', {
     tabPlay: '對戰', tabBuild: '組牌器', tabSettings: '設定', tabHelp: '說明',
+    lvName: '第 {0} 級', lv1: '剛學會規則，幾乎都是亂出牌、亂選目標', lv2: '常常亂出，偶爾會想一下', lv3: '大多照基本打法，偶爾失誤', lv4: '照基本打法：先下費用合適的牌、挑好打的目標攻擊', lv5: '每一步都先預想結果，會推測你手上可能有什麼牌', lv6: '會把最好的幾個行動推演到回合結束再決定', lv7: '推演更多次，比較少被你的手牌嚇到或騙到', lv8: '最強：從你的領袖、基地、出過的牌和比賽環境推測你的牌組，每個候選行動推演 6 次，算利益也算風險',
     setSound: '音效', setVolume: '音量', setZoom: '滑鼠指到卡片時放大顯示（手機長按）', lbYuna: '由奈', lbAdd: '新增牌組', lbRandom: '隨機比賽牌組', lbPickHint: '從左邊點一副牌組', lbBack: '返回', lbTileHint: '點牌組可以看牌表，再選給你（P1）或由奈（P2）用。', lbMine: '我的牌組（{0}）', lbMeta: '🏆 比賽得名牌組（{0}）', lbVersus: '對戰', lbSwap: '交換牌組', lbSwapNo: '由奈是隨機牌組時不能交換', lbReset: '重置牌組', lbAiTitle: '由奈設定', lbLevel: '難度：', lbStyle: '打法：', ai_level_basic: '一般', ai_level_basic_d: '只看眼前最好的一步，適合剛熟悉牌組時練習', ai_level_full: '全力', ai_level_full_d: '預想每個行動的結果，並推測你的手牌', ai_style_default: '預設', ai_style_default_d: '依場面選擇最好的走法', ai_style_aggro: '侵略', ai_style_aggro_d: '專心攻擊你的基地', ai_style_control: '控制', ai_style_control_d: '先清場、保留手牌，打長期戰', lbHomeTitle: '要怎麼跟由奈練牌？', lbSingleDesc: '打一局，馬上開始', lbBo3Desc: '照比賽規則三戰兩勝，局間可以換備牌', lbBuildDesc: '組自己的牌組，或匯入 SWUDB 牌表', dl_ground: '地面單位', dl_space: '太空單位', dl_event: '事件', dl_upgrade: '升級', dl_other: '其他', dl_side: '備牌', dvAspects: '屬性', dvDraw: '主牌', dvP1: '選為 P1（你）', dvP2: '選為 P2（由奈）', dvEdit: '編輯', dvCopyEdit: '複製並編輯',
     lobbyTitle: '開一局練習', yourDeck: '你的牌組', yunaDeck: '由奈的牌組', start: '開始對戰', resume: '回到對局', newGame: '重新開局',
     needDecks: '先到組牌器建一副牌，或直接選一套 🏆 比賽牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
@@ -54,6 +55,7 @@
   });
   SWU.addStrings('en', {
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
+    lvName: 'Level {0}', lv1: 'Just learned the rules; plays and targets almost at random', lv2: 'Often random, sometimes thinks', lv3: 'Mostly solid basics with occasional mistakes', lv4: 'Solid basics: plays on curve and attacks good targets', lv5: 'Looks one step ahead and guesses what is in your hand', lv6: 'Plays out the best few actions to the end of the round before deciding', lv7: 'Plays out more rounds; harder to bluff', lv8: 'Strongest: reads your deck from your leader, base, played cards and the tournament meta, plays out each candidate 6 times and weighs gain against risk',
     setSound: 'Sound effects', setVolume: 'Volume', setZoom: 'Enlarge cards on hover (long-press on phones)', lbYuna: 'Yuna', lbAdd: 'New deck', lbRandom: 'Random tournament deck', lbPickHint: 'Pick a deck on the left', lbBack: 'Back', lbTileHint: 'Click a deck to see its list, then pick it for you (P1) or Yuna (P2).', lbMine: 'My decks ({0})', lbMeta: '🏆 Tournament decks ({0})', lbVersus: 'Match-up', lbSwap: 'Swap decks', lbSwapNo: "Can't swap while Yuna uses a random deck", lbReset: 'Reset decks', lbAiTitle: 'Yuna settings', lbLevel: 'Difficulty:', lbStyle: 'Play style:', ai_level_basic: 'Normal', ai_level_basic_d: 'Takes the best move in front of her; good while learning a deck', ai_level_full: 'Full strength', ai_level_full_d: 'Looks ahead at each action and predicts your hand', ai_style_default: 'Default', ai_style_default_d: 'Picks the best line for the board', ai_style_aggro: 'Aggressive', ai_style_aggro_d: 'Focuses on hitting your base', ai_style_control: 'Control', ai_style_control_d: 'Clears the board, keeps cards, plays the long game', lbHomeTitle: 'How do you want to practice?', lbSingleDesc: 'One game, start right away', lbBo3Desc: 'Best of three with sideboarding between games', lbBuildDesc: 'Build your own deck or import from SWUDB', dl_ground: 'Ground units', dl_space: 'Space units', dl_event: 'Events', dl_upgrade: 'Upgrades', dl_other: 'Other', dl_side: 'Sideboard', dvAspects: 'Aspects', dvDraw: 'Draw deck', dvP1: 'Select P1 (you)', dvP2: 'Select P2 (Yuna)', dvEdit: 'Edit', dvCopyEdit: 'Copy & edit',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or pick a built-in 🏆 tournament deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
@@ -564,6 +566,8 @@
       h('main', { id: 'view' })
     );
     const v = $('#view');
+    document.body.classList.toggle('ingame', S.tab === 'play' && !!S.game);
+    document.body.classList.remove('sideopen');
     if (S.tab === 'play') S.game ? renderGameShell(v) : renderLobby(v);
     else if (S.tab === 'build') renderBuilder(v);
     else if (S.tab === 'settings') renderSettings(v);
@@ -707,7 +711,26 @@
           ),
           h('h3', { class: 'qm-title' }, t('lbAiTitle')),
           h('div', { class: 'aiopt-lbl' }, t('lbLevel')),
-          optBtns('level', ['basic', 'full']),
+          h(
+            'div',
+            { class: 'lvrow', role: 'group', 'aria-label': t('lbLevel') },
+            ...[1, 2, 3, 4, 5, 6, 7, 8].map((n) =>
+              h(
+                'button',
+                {
+                  class: 'lvbtn' + (SWU.AI.levelNum() === n ? ' on' : ''),
+                  title: t('lv' + n),
+                  onclick: () => {
+                    st.level = n;
+                    SWU.AI.save();
+                    render();
+                  },
+                },
+                String(n)
+              )
+            )
+          ),
+          h('div', { class: 'lvdesc' }, h('b', {}, t('lvName', SWU.AI.levelNum())), '　', t('lv' + SWU.AI.levelNum())),
           h('div', { class: 'aiopt-lbl' }, t('lbStyle')),
           optBtns('style', ['default', 'aggro', 'control']),
           S.lobby.mode === 'bo3' ? h('p', { class: 'muted small' }, t('bo3Hint')) : null,
@@ -849,7 +872,7 @@
         h('section', { id: 'board', class: 'board' }),
         h(
           'aside',
-          { class: 'side' },
+          { class: 'side', onclick: (e) => e.target.classList.contains('side') && document.body.classList.remove('sideopen') },
           h('div', { id: 'preview', class: 'preview panel' }),
           h('div', { class: 'panel chatbox' }, h('h3', {}, t('chat')), h('div', { id: 'chat', class: 'chat' })),
           h('div', { class: 'panel logbox' }, h('h3', {}, t('log')), h('div', { id: 'log', class: 'log' }))
@@ -902,6 +925,7 @@
         );
       })(),
       G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null,
+      h('button', { class: 'chip logbtn', onclick: () => document.body.classList.toggle('sideopen') }, '📜 ' + t('log')),
       h(
         'button',
         {
@@ -1115,6 +1139,9 @@
       { class: 'piles' },
       res,
       pIdx === 1 ? h('div', { class: 'pile handrow', title: t('hand') + ' ' + P.hand.length }, h('span', { class: 'pilelabel' }, t('hand'), h('b', {}, ' ' + P.hand.length)), h('div', { class: 'backs' }, ...P.hand.map(() => back('hb')))) : null,
+      h(
+        'div',
+        { class: 'pilepair' },
       h('div', { class: 'pile deckpile', title: t('deck') + ' ' + P.deck.length }, back('big'), h('span', { class: 'pilecount' }, P.deck.length), h('span', { class: 'pilelabel' }, t('deck'))),
       h(
         'div',
@@ -1123,20 +1150,24 @@
         h('span', { class: 'pilecount' }, P.discard.length),
         h('span', { class: 'pilelabel' }, t('discard'))
       )
+      )
     );
     return h(
       'div',
       { class: 'zone p' + pIdx },
       info,
-      pIdx === 1 ? piles : null,
       h(
         'div',
-        { class: 'lanes' },
-        h('div', { class: 'lane ground' }, h('span', { class: 'lane-label' }, t('ground')), h('div', { class: 'units' }, ...units('Ground'))),
-        h('div', { class: 'center' }, baseEl, leaderEl),
-        h('div', { class: 'lane space' }, h('span', { class: 'lane-label' }, t('space')), h('div', { class: 'units' }, ...units('Space')))
-      ),
-      pIdx === 0 ? piles : null
+        { class: 'zbody' },
+        piles,
+        h(
+          'div',
+          { class: 'lanes' },
+          h('div', { class: 'lane ground' }, h('span', { class: 'lane-label' }, t('ground')), h('div', { class: 'units' }, ...units('Ground'))),
+          h('div', { class: 'center' }, baseEl, leaderEl),
+          h('div', { class: 'lane space' }, h('span', { class: 'lane-label' }, t('space')), h('div', { class: 'units' }, ...units('Space')))
+        )
+      )
     );
   }
   // 查看棄牌堆／自己的資源（不影響進行中的選擇）
