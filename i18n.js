@@ -97,8 +97,8 @@
   // 朋友版（沒有主人模式）：對手叫「AI」，用簡潔中性的系統語氣
   SWU.friendMode = () => !(SWU.AI && SWU.AI.settings && SWU.AI.settings.owner);
   const FRIEND = {
-    zh: { gameOverLose: 'AI 獲勝', yunaSided: 'AI 已依你的牌組換入 {0} 張備牌。', yunaNoSide: 'AI 本局不換備牌。', friendHello: 'AI 對手已就緒。', friendWin: '對局結束：你獲勝。', friendLose: '對局結束：AI 獲勝。' },
-    en: { gameOverLose: 'AI wins', yunaSided: 'AI sided in {0} cards against your deck.', yunaNoSide: 'AI keeps its deck for this game.', friendHello: 'AI opponent ready.', friendWin: 'Game over: you win.', friendLose: 'Game over: AI wins.' },
+    zh: { appName: 'SWU 練牌桌', gameOverLose: 'AI 獲勝', yunaSided: 'AI 已依你的牌組換入 {0} 張備牌。', yunaNoSide: 'AI 本局不換備牌。', friendHello: 'AI 對手已就緒。', friendWin: '對局結束：你獲勝。', friendLose: '對局結束：AI 獲勝。' },
+    en: { appName: 'SWU Practice Table', gameOverLose: 'AI wins', yunaSided: 'AI sided in {0} cards against your deck.', yunaNoSide: 'AI keeps its deck for this game.', friendHello: 'AI opponent ready.', friendWin: 'Game over: you win.', friendLose: 'Game over: AI wins.' },
   };
   const raw = (k) => (S[SWU.lang] && S[SWU.lang][k]) || S.en[k] || S.zh[k] || k;
   SWU.t = (k, ...a) => {

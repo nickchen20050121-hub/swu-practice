@@ -2643,7 +2643,7 @@
           'div',
           { class: 'field' },
           h('label', { for: 'pname' }, t('setName')),
-          h('input', { id: 'pname', type: 'text', value: st.playerName || '', maxlength: '20', placeholder: t('setNamePh'), onchange: (e) => ((st.playerName = e.target.value.trim()), save()) }),
+          h('input', { id: 'pname', type: 'text', value: st.owner ? st.ownerName || '柏偉' : st.playerName && st.playerName !== '柏偉' ? st.playerName : '', maxlength: '20', placeholder: t('setNamePh'), onchange: (e) => ((st.owner ? (st.ownerName = e.target.value.trim()) : (st.playerName = e.target.value.trim())), save()) }),
           h('p', { class: 'muted small' }, t('setNameHint'))
         ),
         h('div', { class: 'field' }, h('label', {}, t('setLang')), h('div', { class: 'row' }, h('button', { class: SWU.lang === 'zh' ? 'on' : '', onclick: () => (SWU.setLang('zh'), render()) }, '繁體中文'), h('button', { class: SWU.lang === 'en' ? 'on' : '', onclick: () => (SWU.setLang('en'), render()) }, 'English'))),
@@ -2744,22 +2744,13 @@
 
   // ---------- 啟動 ----------
   SWU.boot = function () {
-    // 主人模式：網址加 ?me=nick 打開（只存在這台裝置）；?me=off 關閉
+    // 主人模式：只有網址帶 ?me=nick 時才開（不記在裝置上，同一台裝置開一般網址就是朋友看到的樣子）
     try {
       const q = new URLSearchParams(location.search);
-      const me = q.get('me');
-      if (me) {
-        const st = SWU.AI.settings;
-        if (me === 'off') st.owner = false;
-        else {
-          st.owner = true;
-          if (!st.playerName) st.playerName = '柏偉';
-        }
-        SWU.AI.save();
-        q.delete('me');
-        history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
-      }
-    } catch (e) {}
+      SWU.AI.settings.owner = q.get('me') === 'nick';
+    } catch (e) {
+      SWU.AI.settings.owner = false;
+    }
     SWU.initDB(window.SWU_CARDS);
     SWU.markVanillaKeywordCards();
     document.documentElement.lang = SWU.lang === 'zh' ? 'zh-Hant' : 'en';

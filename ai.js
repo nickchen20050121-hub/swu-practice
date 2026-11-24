@@ -21,7 +21,12 @@
     } catch (e) {}
   };
   AI.hasClaude = () => !!AI.settings.apiKey;
-  SWU.playerName = () => AI.settings.playerName || (SWU.lang === 'zh' ? '你' : 'You');
+  SWU.playerName = () => {
+    const st = AI.settings;
+    if (st.owner) return st.ownerName || '柏偉';
+    const n = st.playerName && st.playerName !== '柏偉' ? st.playerName : '';
+    return n || (SWU.lang === 'zh' ? '你' : 'You');
+  };
 
   // ---------- Claude 連線 ----------
   let clientPromise = null;
