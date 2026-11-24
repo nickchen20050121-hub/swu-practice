@@ -87,7 +87,7 @@ While the Force is with you, this unit gains Ambush.
 = Darth Vader | Any Methods Necessary#card
 When Played: Search the top 8 cards of your deck for up to 2 units that cost 4 or less and play them for free. Deal 2 damage to each of them.
 = Darth Vader | Commanding the First Legion#card
-When Played: Search the top 10 cards of your deck for a Villainy unit that costs 3 or less and play it for free.
+When Played: Search the top 10 cards of your deck for any number of Villainy units with combined cost 3 or less and play each of them for free.
 = Darth Vader | Dark Lord of the Sith#leader
 Action [C=1, Exhaust]: If you've played a Villainy card this phase, deal 1 damage to a unit and 1 damage to a base.
 = Darth Vader | Meet Your Destiny#card
@@ -110,7 +110,7 @@ Action [Exhaust]: If you've attacked with a non-token Vehicle unit this phase, c
 ~
 = Dathomiri Magicks#card
 If you control a Force unit, this event costs 1 less to play.
-Play a non-Vehicle unit that costs 2 or less from your discard pile for free.
+Play a non-Vehicle unit that costs 2 or less from your discard pile for free. Play a non-Vehicle unit that costs 2 or less from your discard pile for free. Play a non-Vehicle unit that costs 2 or less from your discard pile for free.
 = Daughter of Dathomir#card
 While this unit is undamaged, this unit gains Restore 2.
 = Deadly Vulnerability#card

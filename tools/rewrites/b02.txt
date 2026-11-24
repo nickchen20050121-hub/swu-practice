@@ -65,7 +65,7 @@ When you play an Underworld card: You may exhaust this leader. If you do, deal 1
 = Cad Bane | He Who Needs No Introduction#unit
 When you play an Underworld card: Deal 2 damage to an enemy unit. Use this ability only once each round.
 = Cad Bane | Hostage Taker#card
-When Played: This unit captures an enemy non-leader unit with 4 or less remaining HP.
+When Played: A friendly unit captures up to 3 enemy non-leader units with a total of 8 or less remaining HP.
 ~
 = Cad Bane | Now it's My Turn#card
 On Attack: Give an Experience token to this unit for each Credit token you control.

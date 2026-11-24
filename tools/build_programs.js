@@ -58,7 +58,25 @@ for (const f of files) {
         }
       }
     } else {
-      for (const l of body) {
+      for (let bi = 0; bi < body.length; bi++) {
+        const l = body[bi];
+        if (l.startsWith('- ')) continue;
+        const co = l.match(/^(.+?): (?:You may )?Choose (one|two)\.?$/i);
+        if (co) {
+          const head = G.compileLine(co[1] + ': Draw a card.', card);
+          const opts = [];
+          for (let bj = bi + 1; bj < body.length && body[bj].startsWith('- '); bj++) {
+            const o = body[bj].slice(2);
+            const st = G.parseBody(SWU.GFX.norm(o));
+            if (!st) err('option fails: ' + o);
+            else opts.push({ label: o, steps: st });
+          }
+          if (!head || head.manual) { err('choose head fails: ' + l); continue; }
+          const ab = JSON.parse(JSON.stringify(head));
+          ab.steps = [{ op: 'chooseOne', options: opts, times: co[2].toLowerCase() === 'two' ? 2 : 1, optional: /you may/i.test(l) }];
+          prog.abilities.push(ab);
+          continue;
+        }
         if (l.startsWith('~')) continue;
         if (l.startsWith('!')) { prog.failed.push(...base.failed.filter((x) => !prog.failed.includes(x))); manualKept++; continue; }
         if (l.startsWith('{')) { try { prog.abilities.push(JSON.parse(l)); } catch (e) { err('bad json ' + e.message); } continue; }

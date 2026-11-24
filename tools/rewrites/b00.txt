@@ -19,7 +19,7 @@ Action [Exhaust, use the Force]: Exhaust a unit.
 = Adi Gallia | Stern and Focused#card
 When an opponent plays an event: Deal 1 damage to an enemy base.
 = Admiral Ackbar | Assume Attack Coordinates#card
-When Played: You may defeat this unit. If you do, search the top 10 cards of your deck for a space unit that costs 5 or less and play it for free.
+When Played: You may defeat this unit. If you do, search the top 10 cards of your deck for any number of space units with combined cost 5 or less and play each of them for free.
 = Admiral Ackbar | Brilliant Strategist#card
 When Played: You may deal damage to a unit equal to the number of friendly units.
 = Admiral Holdo | We Are the Spark#card

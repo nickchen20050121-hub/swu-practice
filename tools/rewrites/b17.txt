@@ -47,7 +47,7 @@ On Attack: Give an Experience token to a friendly Villainy unit.
 ~
 ~
 = Sweep the Area#card
-Return a non-leader unit that costs 2 or less to its owner's hand.
+Return up to 2 non-leader units with combined cost 3 or less to their owners' hands.
 = Swoop Down#card
 Attack with a space unit. It gains Saboteur for this attack.
 = Synara San | Harboring a Secret#card
@@ -74,7 +74,7 @@ Attack with a unit. It gets +2/+0 and gains Saboteur for this attack.
 A friendly unit captures an enemy non-leader unit.
 = Take Charge#card
 ~
-Give an Experience token to a unit. Give an Experience token to a unit. Give an Experience token to a unit.
+Give an Experience token to each of up to 3 units.
 = Take Cover#card
 ~
 Heal up to 3 damage from a unit. Give a Shield token to a unit.
@@ -107,7 +107,9 @@ When Played: You may attack with a unit.
 = Tech | Source of Insight#card
 !
 = Teeka | You're in Luck#card
-When Played: Give a unit Sentinel for this phase.
+When Played: Choose one
+- Give a unit Sentinel for this phase.
+- Note: A unit loses Sentinel for this phase.
 = Tempest Assault#card
 Deal 2 damage to each enemy space unit.
 = Temple of Destruction | Malachor#card
@@ -136,7 +138,9 @@ On Attack: Exhaust an enemy unit.
 = The Conflict Within#card
 ~
 = The Cyborg Mech | Mysterious Threat#card
-When Played: Deal 2 damage to a ground unit.
+When Played: Choose one
+- Deal 2 damage to an undamaged ground unit.
+- Deal 5 damage to a damaged ground unit.
 = The Darksaber#card
 ~
 Attached unit gains: "On Attack: Give an Experience token to each other friendly Mandalorian unit."

@@ -21,7 +21,7 @@ Action [C=2, Exhaust]: Exhaust a unit with 4 or less power.
 = Independent Smuggler#card
 Attached unit gains Raid 1.
 = Inferno Four | Unforgetting#card
-~
+When Played/When Defeated: Look at the top 2 cards of your deck. Put any number of them on the bottom of your deck and the rest on top in any order.
 = Infused Brawler #card
 ~
 = Inquisitor's Lightsaber#card
@@ -133,16 +133,20 @@ When Played: You may defeat an upgrade that costs 3 or less.
 = Justifier | Relentless#card
 When Played/On Attack: You may deal 1 damage to a unit. If it was defeated, give an Advantage token to a unit.
 = Jyn Erso | Her Father's Revenge#card
-When Played: Ready up to 2 units. Give them Saboteur for this phase.
+When Played: Ready up to 3 units with combined cost 7 or less. Give them Saboteur for this phase.
 = Jyn Erso | Resisting Oppression#unit
 ~
 = Jyn Erso | Stardust#card
 While an enemy unit was defeated this phase, this unit gets +1/+0 and gains Saboteur.
 = Jyn Erso | Take the Next Chance#card
-When Played: Give an Experience token to a unit.
+When Played: Choose one
+- Give an Experience token to a unit.
+- Exhaust a unit.
 = Jyn Erso | Time to Fight#leader
 Action [C=1, Exhaust]: If a friendly unit was defeated this phase, search the top 3 cards of your deck for a card, reveal it, and draw it.
 = Jyn Erso | Time to Fight#unit
 On Attack: If a friendly unit was defeated this phase, search the top 3 cards of your deck for a card, reveal it, and draw it.
 = K-2SO | Cassian's Counterpart#card
-When Defeated: Deal 3 damage to each enemy base.
+When Defeated: Choose one
+- Deal 3 damage to each enemy base.
+- Each opponent discards a card from their hand.

@@ -9,7 +9,7 @@ Deal damage to a unit equal to the number of friendly units.
 = Twilight | Escaping Malevolence#card
 When Played: Heal 3 damage from your base.
 = Twin Laser Turret#card
-Attached unit gains: "On Attack: Deal 1 damage to a unit. Deal 1 damage to a unit."
+Attached unit gains: "On Attack: Deal 1 damage to each of up to 2 units."
 = Two-Faced Troig#card
 !
 = Ty Yorrick | Monster Hunter#card
@@ -17,7 +17,7 @@ Attached unit gains: "On Attack: Deal 1 damage to a unit. Deal 1 damage to a uni
 = U-Wing Lander#card
 ~
 = U-Wing Reinforcement#card
-Search the top 10 cards of your deck for a unit that costs 4 or less and play it for free. Search the top 10 cards of your deck for a unit that costs 3 or less and play it for free.
+Search the top 10 cards of your deck for up to 3 units with combined cost 7 or less and play each of them for free.
 = Umbaran Mobile Cannon#card
 ~
 = Unauthorized Investigation#card
@@ -69,7 +69,7 @@ On Attack: You may give an Experience token to a unit.
 = Vice Admiral Rampart | A New Era of Safety#card
 ~
 = Vice Admiral Rampart | On Schedule#card
-On Attack: You may disclose Command Command Villainy. If you do, give an Experience token to another unit.
+On Attack: You may disclose Command Command Villainy. If you do, give an Experience token to each of up to 2 other units.
 = Victor Squadron | In Attack Formation#card
 ~
 = Vigil | Securing the Future#card
@@ -77,7 +77,7 @@ On Attack: You may disclose Command Command Villainy. If you do, give an Experie
 ~
 = Vigilance#card
 Choose two
-- Discard 6 cards from your deck.
+- Each opponent discards 6 cards from their deck.
 - Heal 5 damage from a base.
 - Defeat a unit with 3 or less remaining HP.
 - Give a Shield token to a unit.
@@ -101,7 +101,7 @@ A friendly unit deals damage equal to its power to an enemy unit.
 = Wanted#card
 Attached unit gains: "Bounty - Ready 2 resources."
 = War Juggernaut#card
-When Played: Deal 1 damage to each enemy unit.
+When Played: Deal 1 damage to each of up to 20 units.
 = Warrior of Clan Ordo#card
 On Attack: You may disclose Aggression. If you don't, deal 2 damage to your base.
 = Wartime Mercenaries#card

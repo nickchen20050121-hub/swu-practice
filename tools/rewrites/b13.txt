@@ -11,7 +11,9 @@ Action [Exhaust, use the Force]: Give an Experience token to a unit.
 = Obi-Wan Kenobi | Following Fate#card
 When Defeated: Give 2 Experience tokens to another friendly unit.
 = Obi-Wan Kenobi | I Sense a Trap#card
-When Played: Give a unit that entered play this phase -5/-5 for this phase.
+When Played: You may choose one
+- Play a unit from your discard pile. It costs 5 less.
+- Give a unit that entered play this phase -5/-5 for this phase.
 = Obi-Wan Kenobi | Patient Mentor#unit
 On Attack: Heal 1 damage from a unit. If you do, deal 1 damage to a unit.
 = Obi-Wan Kenobi | Protective Padawan#card
@@ -140,6 +142,6 @@ When this unit completes an attack: You may defeat a unit with 3 or less remaini
 = Populist Advisor#card
 ~
 = Power Failure#card
-Defeat an upgrade.
+{"trigger":"event","steps":[{"op":"defeatUpgrade","onUnit":true,"count":20,"f":{}}]}
 = Power from Pain#card
 !

@@ -84,6 +84,23 @@
     if (SPEC[s]) return { ...SPEC[s] };
     const t = { sel: 'choose', side: 'any', f: {} };
     let m;
+    // 「總費用／總戰力／總剩餘血量 N 以內」
+    if ((m = s.match(/^(.*?),? (?:with|that have) (?:a )?(?:combined|total of) (cost|power|\d+ or less remaining hp)(?: of)? ?(\d+)? or less$/)) || (m = s.match(/^(.*?) with a total of (\d+) or less remaining hp$/))) {
+      if (m.length === 3) {
+        s = m[1];
+        t.sumMax = +m[2];
+        t.sumKey = 'remaining';
+      } else if (/remaining hp/.test(m[2])) {
+        s = m[1];
+        t.sumMax = +m[2].match(/\d+/)[0];
+        t.sumKey = 'remaining';
+      } else {
+        s = m[1];
+        t.sumMax = +m[3];
+        t.sumKey = m[2];
+      }
+    }
+    s = s.replace(/^any number of /, 'up to 20 ');
     if ((m = s.match(/^(.*) or (?:a |an )?(enemy |friendly )?base$/))) {
       s = m[1];
       t.base = m[2] ? m[2].trim() : 'any';
@@ -259,6 +276,14 @@
     if ((m = l.match(/^take control of (.+?)( until the regroup phase)?$/)) && (t = T(m[1]))) return [{ op: 'takeControl', target: t, temp: !!m[2] }];
     if ((m = l.match(/^deal (\d+) indirect damage to (?:each opponent|a player|an opponent|the defending player|each player|its controller)$/))) return [{ op: 'indirect', n: +m[1] }];
     if ((m = l.match(/^deal indirect damage (?:to (?:each opponent|a player|an opponent|the defending player|its controller) )?equal to (.+?)(?: to (?:each opponent|a player|an opponent|the defending player|its controller))?$/)) && amountOf(m[1])) return [{ op: 'indirect', n: amountOf(m[1]) }];
+    if ((m = l.match(/^search the top (\d+) cards of your deck for (any number of|up to (\w+)) (.+?) with (?:a )?combined cost (?:of )?(\d+) or less and play (?:each of )?them for free$/)) && cardFilter('a ' + m[4].replace(/units$/, 'unit').replace(/cards$/, 'card')))
+      return [{ op: 'search', n: +m[1], count: m[3] ? num(m[3]) : 20, f: cardFilter('a ' + m[4].replace(/units$/, 'unit').replace(/cards$/, 'card')), to: 'play', free: true, sumMax: +m[5], discount: 0 }];
+    if ((m = l.match(/^deal that much damage to (.+)$/)) && (t = T(m[1]))) return [{ op: 'damage', n: { x: 'amount' }, target: t }];
+    if ((m = l.match(/^create a (.+?) token for each of them$/))) return [{ op: 'createToken', n: { x: 'prevCount' }, name: tokenName(m[1]), who: 'me' }];
+    if ((m = l.match(/^(?:you may )?deal damage equal to (.+?) divided as you choose among (.+)$/)) && amountOf(m[1]) && (t = parseTarget('each ' + m[2].replace(/^any number of /, '').replace(/units$/, 'unit')))) return [{ op: 'divide', n: amountOf(m[1]), target: t }];
+    if ((m = l.match(/^look at the top (\d+|card) cards? of (your|the defending player's|an opponent's) deck[.;] put any number of them on the bottom of (?:your|that) deck and the rest on top in any order$/))) return [{ op: 'scry', n: m[1] === 'card' ? 1 : +m[1], who: m[2] === 'your' ? 'me' : 'opp' }];
+    if ((m = l.match(/^look at the top (\d+) cards of (your|an opponent's) deck and put any number of them on the bottom$/))) return [{ op: 'scry', n: +m[1], who: m[2] === 'your' ? 'me' : 'opp' }];
+    if ((m = l.match(/^heal up to (\d+) (?:total )?damage from (?:among )?any number of (?:other )?units( and\/or bases)?$/))) return [{ op: 'divHeal', n: +m[1], withBase: !!m[2], target: { side: 'any', f: /other units/.test(l) ? { notSelf: true } : {} } }];
     if ((m = l.match(/^(?:deal )?(up to )?(\d+) damage divided as you choose among (.+)$/)) && (t = parseTarget('each ' + m[3].replace(/^any number of /, '').replace(/units$/, 'unit')))) return [{ op: 'divide', n: +m[2], upTo: !!m[1], target: t }];
     if ((m = l.match(/^(.+?) deals damage equal to its power divided as you choose among (.+)$/)) && T(m[1]) && (t = parseTarget('each ' + m[2].replace(/^any number of /, '').replace(/units$/, 'unit')))) return [{ op: 'source', target: T(m[1]) }, { op: 'divide', n: { x: 'power', of: 'src' }, target: t, ifPrev: true }];
     if ((m = l.match(/^look at an opponent's hand(?: and|\.)? (?:you may )?discard a (.+?) from it$/)))
@@ -352,7 +377,7 @@
     // 狀態
     if ((m = l.match(/^ready (a|an|\w+) resources?$/))) return [{ op: 'readyResource', n: num(m[1]) }];
     if ((m = l.match(/^(exhaust|ready) (.+)$/)) && (t = T(m[2]))) return [{ op: m[1], target: t }];
-    if ((m = l.match(/^return (.+?) to (?:its|their) owner's hand$/)) && (t = T(m[1]))) return [{ op: 'bounce', target: t }];
+    if ((m = l.match(/^return (.+?) to (?:its|their) owner'?s'? hands?$/)) && (t = T(m[1]))) return [{ op: 'bounce', target: t }];
     if ((m = l.match(/^(?:this unit )?captures? (.+)$/)) && (t = T(m[1]))) return [{ op: 'capture', target: t }];
     if ((m = l.match(/^(a friendly .*?unit) captures (.+)$/)) && T(m[1]) && (t = T(m[2]))) return [{ op: 'source', target: T(m[1]) }, { op: 'capture', target: t, by: 'src', ifPrev: true }];
     // 卡片
@@ -522,6 +547,7 @@
     const sentences = body
       .replace(/\. Then,? /g, '. ')
       .replace(/, then /g, '. ')
+      .replace(/deck\. Put any number of them on the bottom/gi, 'deck; put any number of them on the bottom')
       .split(/(?<=\.)\s+/)
       .map((x) => x.trim())
       .filter(Boolean);
@@ -929,6 +955,8 @@
     }
     if (n.x === 'defeatedCount') return (g.G.defeated || []).filter((d) => d.phaseId === g.G.phaseId && sideOk(n.side, d, ctx.p)).length;
     if (n.x === 'credits') return g.P(ctx.p).credits;
+    if (n.x === 'amount') return ctx.amount || 0;
+    if (n.x === 'prevCount') return (ctx.prev || []).length;
     if (n.x === 'discardCount') return g.P(ctx.p).discard.filter((c) => cardMatch(c.card, n.f)).length;
     if (n.x === 'div') return Math.floor(amt(ctx, n.of) / (n.k || 1));
     if (n.x === 'mul') return (n.k || 1) * amt(ctx, n.of);
@@ -1026,11 +1054,13 @@
     const picks = [];
     const count = t.sel === 'upTo' ? t.count || 1 : 1;
     for (let i = 0; i < count; i++) {
-      const units = pool.filter((u) => !picks.includes(u));
+      const sv = (u) => (t.sumKey === 'power' ? g.power(u) : t.sumKey === 'remaining' ? g.remaining(u) : u.card.c || 0);
+      const used = picks.reduce((a, x) => a + (x.uid != null ? sv(x) : 0), 0);
+      const units = pool.filter((u) => !picks.includes(u) && (t.sumMax == null || sv(u) <= t.sumMax - used));
       const bs = bases.filter((b) => !picks.some((x) => x.base === b));
       if (!units.length && !bs.length) break;
       const optional = st.optional || t.sel === 'upTo' ? !(t.exact && i < count) || st.optional : false;
-      const r = await g.pickTarget(p, prompt + (count > 1 ? ` (${i + 1}/${count})` : ''), { units, bases: bs, optional: optional || (t.sel === 'upTo' && !t.exact), ctx: { harm, card: ctx.card.key } });
+      const r = await g.pickTarget(p, prompt + (count > 1 && count < 20 ? ` (${i + 1}/${count})` : count >= 20 ? L(`（已選 ${i}，可按略過結束）`, ` (${i} chosen, skip to finish)`) : '') + (t.sumMax != null ? L(`［總${t.sumKey === 'power' ? '戰力' : '費用'} ${t.sumMax} 以內，已用 ${used}］`, ` [total ${t.sumKey || 'cost'} ≤ ${t.sumMax}, used ${used}]`) : ''), { units, bases: bs, optional: optional || (t.sel === 'upTo' && !t.exact), ctx: { harm, card: ctx.card.key } });
       if (!r) break;
       picks.push(r.unit || { base: r.base });
     }
@@ -1070,8 +1100,11 @@
     }
   }
   GFX.runSteps = runSteps;
+  const PICKS = (t) => t && !['self', 'attached', 'prev', 'defender', 'attacker', 'played', 'base', 'each'].includes(t.sel);
   async function ask(ctx, st, text) {
     if (!st.optional) return true;
+    // 「可以」＋要選目標：直接請玩家點目標，或按略過（resolve 會給略過鈕）
+    if (PICKS(st.target) && ctx.g.io[ctx.p] && ctx.g.io[ctx.p].isHuman) return true;
     return ctx.g.yesno(ctx.p, `${ctx.card.n}：${text}?`, { harm: false });
   }
   async function runStep(ctx, st) {
@@ -1086,6 +1119,44 @@
         ctx.prev = r.units;
         ctx.indirectBase = r.base > 0;
         return n > 0;
+      }
+      case 'divHeal': {
+        const n = amt(ctx, st.n);
+        const t = st.target || { side: 'any', f: {} };
+        const list = g.allUnits().filter((u) => sideOk(t.side, u, p) && unitMatch(g, ctx, u, t.f) && u.damage > 0);
+        const targets = g.distTargets(list, null);
+        if (st.withBase) for (const q of [p, 1 - p]) if (g.P(q).base.damage > 0) targets.push({ id: 'base' + q, base: q, label: g.P(q).name + ' ' + SWU.t('baseWord') });
+        if (!targets.length) return false;
+        const alloc = await g.distribute(p, { kind: 'distribute', mode: 'heal', upTo: true, total: n, targets, prompt: SWU.t('promptDistHeal', n) });
+        let healed = 0;
+        const hit = [];
+        for (const x of targets) {
+          const k = alloc[x.id] || 0;
+          if (!k) continue;
+          if (x.base != null) healed += g.healBase(x.base, k);
+          else {
+            const u = g.findUnit(x.uid);
+            if (u) ((healed += g.heal(u, k)), hit.push(u));
+          }
+        }
+        ctx.prev = hit;
+        ctx.amount = healed;
+        return healed > 0;
+      }
+      case 'divToken': {
+        const n = amt(ctx, st.n);
+        const t = st.target || { side: 'any', f: {} };
+        const list = g.allUnits().filter((u) => sideOk(t.side, u, p) && unitMatch(g, ctx, u, t.f));
+        if (!list.length || n <= 0) return false;
+        const targets = g.distTargets(list, null);
+        const alloc = await g.distribute(p, { kind: 'distribute', mode: 'token', harmful: st.name === 'Weakness', upTo: !!st.upTo, total: n, targets, prompt: SWU.t('promptDistToken', n, st.name) });
+        for (const x of targets) {
+          const k = alloc[x.id] || 0;
+          const u = k && g.findUnit(x.uid);
+          if (!u) continue;
+          for (let i = 0; i < k; i++) g.giveToken(u, st.name);
+        }
+        return true;
       }
       case 'divide': {
         const n = amt(ctx, st.n);
@@ -1133,12 +1204,21 @@
             ups.push({ uid: up.uid, card: up.card, host: u, up });
           }
         if (!ups.length) return false;
-        const pick = await g.pickCards(p, `${ctx.card.n}：${L('擊敗一張升級卡', 'defeat an upgrade')}`, ups, st.optional ? 0 : 1, 1);
+        let pool = ups;
+        if (st.onUnit) {
+          const hosts = [...new Set(ups.map((x) => x.host))];
+          const r = await g.pickTarget(p, `${ctx.card.n}：${L('選擇一個單位（擊敗它身上的升級卡）', 'choose a unit (to defeat upgrades on it)')}`, { units: hosts, optional: !!st.optional });
+          if (!r || !r.unit) return false;
+          pool = ups.filter((x) => x.host === r.unit);
+        }
+        const many = st.count || 1;
+        const pick = st.all ? pool : await g.pickCards(p, `${ctx.card.n}：${many > 1 ? L('擊敗任意數量的升級卡', 'defeat any number of upgrades') : L('擊敗一張升級卡', 'defeat an upgrade')}`, pool, st.optional || many > 1 ? 0 : 1, many);
         if (!pick.length) return false;
-        const { host, up } = pick[0];
-        host.upgrades = host.upgrades.filter((x) => x !== up);
-        if (!/Token/.test(up.card.t)) g.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
-        g.log('logDefeat', up.card.n);
+        for (const { host, up } of pick) {
+          host.upgrades = host.upgrades.filter((x) => x !== up);
+          if (!/Token/.test(up.card.t)) g.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
+          g.log('logDefeat', up.card.n);
+        }
         await g.checkState();
         return true;
       }
@@ -1269,11 +1349,32 @@
         await g.attack(a, { power: (st.p || 0) + (st.per ? st.per.p * k : 0), hp: (st.h || 0) + (st.per ? st.per.h * k : 0), kw: st.kw, noBase: st.noBase });
         return true;
       }
+      case 'scry': {
+        const D = st.who === 'opp' ? g.P(1 - p) : P;
+        const top = D.deck.slice(0, st.n);
+        if (!top.length) return false;
+        const bottom = await g.pickCards(p, `${ctx.card.n}：${L('選擇要放到牌庫底的卡（其他留在牌庫頂）', 'choose cards to put on the bottom (the rest stay on top)')}`, top, 0, top.length);
+        D.deck.splice(0, top.length);
+        const keep = top.filter((c) => !bottom.includes(c));
+        let ordered = keep;
+        if (keep.length > 1 && g.io[p] && g.io[p].isHuman) {
+          ordered = [];
+          const rest = [...keep];
+          while (rest.length > 1) {
+            const i = await g.pickOption(p, L('選擇牌庫頂第 ' + (ordered.length + 1) + ' 張', 'choose card #' + (ordered.length + 1) + ' from the top'), rest.map((c) => c.card.n));
+            ordered.push(...rest.splice(i < 0 ? 0 : i, 1));
+          }
+          ordered.push(...rest);
+        }
+        D.deck.unshift(...ordered);
+        D.deck.push(...bottom);
+        return true;
+      }
       case 'search': {
         const top = P.deck.splice(0, st.n);
         g.log('logSearch', P.name, top.length);
         const ok = top.filter((c) => cardMatch(c.card, st.f));
-        const pick = ok.length ? await g.pickCards(p, `${ctx.card.n}：${L('選擇要加入手牌的卡', 'choose cards to draw')}`, ok, 0, st.count || 1) : [];
+        const pick = ok.length ? await g.pickCards(p, `${ctx.card.n}：${st.to === 'play' ? L('選擇要打出的卡', 'choose cards to play') : L('選擇要加入手牌的卡', 'choose cards to draw')}${st.sumMax != null ? L(`（總費用 ${st.sumMax} 以內）`, ` (total cost ${st.sumMax} or less)`) : ''}`, ok, 0, st.count || 1, null, { sumMax: st.sumMax, sumKey: st.sumKey }) : [];
         P.deck.push(...SWU.shuffle(top.filter((c) => !pick.includes(c))));
         for (const c of pick) {
           if (st.to === 'play') {
@@ -1298,7 +1399,7 @@
       case 'chooseOne': {
         let left = st.options.slice();
         for (let k = 0; k < (st.times || 1) && left.length; k++) {
-          const i = await g.pickOption(p, `${ctx.card.n}：${L('選擇一項', 'choose one')}${st.times > 1 ? ` (${k + 1}/${st.times})` : ''}`, left.map((o) => o.label));
+          const i = await g.pickOption(p, `${ctx.card.n}：${L('選擇一項', 'choose one')}${st.times > 1 ? ` (${k + 1}/${st.times})` : ''}`, left.map((o) => o.label), { optional: !!st.optional });
           if (i < 0 || !left[i]) return false;
           const o = left[i];
           left = left.filter((x) => x !== o);

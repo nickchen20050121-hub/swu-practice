@@ -8,7 +8,7 @@ Action [C=1, Exhaust]: Deal 1 damage to a unit.
 ~
 ~
 = Pre Vizsla | Strong-Willed Ruler#card
-When Played: Defeat a non-leader unit with 3 or less remaining HP. If you do, create a Mandalorian token.
+When Played: Defeat any number of non-leader units with a total of 6 or less remaining HP. Create a Mandalorian token for each of them.
 = PreMor Personnel Carrier#card
 When Played: Give an Experience token to this unit.
 = Precision Fire#card
@@ -20,7 +20,7 @@ Attached unit gains: "Bounty - Resource the top card of your deck."
 = Prime Minister Almec | Scheming Populist#card
 When Played: Give a friendly unit +2/+2 for this phase. Exhaust an enemy unit with 2 or less power.
 = Princess Leia | Calculated Distraction#card
-When Played/On Attack: Exhaust up to 2 units that cost 2 or less.
+When Played/On Attack: Exhaust up to 2 units with combined cost 4 or less.
 = Princess Leia | On a Diplomatic Mission#leader
 Action [C=1, Exhaust]: Draw a card. Discard a card from your hand.
 = Princess Leia | On a Diplomatic Mission#unit
@@ -76,7 +76,7 @@ When Defeated: You may return a non-leader ground unit to its owner's hand.
 = Qui-Gon Jinn's Aethersprite | Guided by the Force#card
 ~
 = Qui-Gon Jinn's Lightsaber#card
-When Played: If attached unit is Qui-Gon Jinn, exhaust up to 2 units that cost 3 or less.
+When Played: If attached unit is Qui-Gon Jinn, you may exhaust any number of units with combined cost 6 or less.
 = Quinlan Vos | Dark Disciple#card
 On Attack: You may deal 2 damage to an enemy base.
 = Quinlan Vos | Sticking the Landing#leader
@@ -115,7 +115,7 @@ Give each friendly unit Raid 2 for this phase.
 = Rash Action#card
 Attack with a unit. It gets +1/+0 for this attack.
 = Ravage#card
-Give a Weakness token to a unit. Give a Weakness token to a unit. Give a Weakness token to a unit.
+{"trigger":"event","steps":[{"op":"divToken","n":3,"upTo":true,"name":"Weakness","target":{"side":"any","f":{}}}]}
 = Ravager | Final Imperial Command#card
 ~
 = Raze to Ruin#card
@@ -141,4 +141,4 @@ Draw 2 cards.
 = Red Leader | Strike the Reactor#card
 ~
 = Redemption | Medical Frigate#card
-When Played: Heal up to 4 damage from your base. Heal up to 4 damage from a unit.
+When Played: Heal up to 8 total damage from any number of other units and/or bases. Deal that much damage to this unit.

@@ -3,7 +3,7 @@ When Defeated: Deal 5 damage to each enemy unit. Deal 5 damage to each enemy bas
 = Kachirho Militia#card
 ~
 = Kalani | Analytical General#card
-On Attack: You may give another unit +2/+2 for this phase.
+On Attack: You may give another unit +2/+2 for this phase. If you have the initiative, you may give another unit +2/+2 for this phase.
 = Kanan Jarrus | Revealed Jedi#card
 On Attack: Heal 1 damage from your base.
 = Kanan Jarrus | Spectre One#card
@@ -15,7 +15,7 @@ When Defeated: You may disclose Aggression Heroism. If you do, create a Spy toke
 = Kashyyyk Defender#card
 When Played: Heal up to 2 damage from another unit.
 = Kaydel Connix | For Our Survival#card
-When Played: You may defeat an upgrade.
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"defeatUpgrade","onUnit":true,"all":true,"optional":true,"f":{"nonUnique":true}}]}
 = Kazuda Xiono | Best Pilot in the Galaxy#leader
 !
 = Kazuda Xiono | Best Pilot in the Galaxy#unit
@@ -41,7 +41,7 @@ When Played: Resource the top card of your deck.
 = Kit Fisto | Focused Jedi Master#leader
 Action [C=1, Exhaust]: If you've attacked with a unit this phase, deal 2 damage to a unit.
 = Kit Fisto's Aethersprite | Good Hunting#card
-When Played: You may defeat an upgrade.
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"defeatUpgrade","onUnit":true,"count":20,"optional":true,"f":{}}]}
 = Knobby White Ice Spider#card
 When Played: Give an Advantage token to this unit for each enemy unit.
 = Koska Reeves | Loyal Nite Owl#card
@@ -91,7 +91,7 @@ When Played: Give a Shield token to this unit.
 = L3-37 | Get Out of My Seat#card
 ~
 = L3-37 | Radical Instigator#card
-When Played: Search the top 10 cards of your deck for a unit that costs 5 or less and play it for free.
+When Played: Search the top 10 cards of your deck for any number of Droid units with combined cost 5 or less and play each of them for free.
 = L3-37 | We're Programmed to Learn#card
 ~
 = Lakeside Shaaks#card

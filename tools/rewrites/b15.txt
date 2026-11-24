@@ -7,7 +7,9 @@
 = Rehabilitation#card
 Take control of an enemy non-leader unit until the regroup phase.
 = Reinforcement Walker#card
-When Played/On Attack: Draw a card.
+When Played/On Attack: Choose one
+- Draw a card.
+- Discard a card from your deck. Heal 3 damage from your base.
 = Relentless | Konstantine's Folly#card
 ~
 = Relentless Pursuit#card
@@ -74,7 +76,7 @@ Action [Exhaust]: If you've played a card this phase, deal 1 damage to a unit.
 = Rhydonium Detonation#card
 !
 = Rich Reward#card
-Attached unit gains: "Bounty - Give an Experience token to a unit."
+Attached unit gains: "Bounty - Give an Experience token to each of up to 2 units."
 = Rickety Quadjumper#card
 On Attack: You may give an Experience token to another unit.
 = Rio Durant | Beckett's Right Hands#card
@@ -88,7 +90,7 @@ When Defeated: Create a Credit token. Note: The opponent also creates a Credit t
 = Roger Roger#card
 ~
 = Rogue One | At Any Cost#card
-~
+When a friendly unit is defeated: Look at the top 2 cards of your deck. Put any number of them on the bottom of your deck and the rest on top in any order.
 = Rose Tico | Dedicated to the Cause#card
 ~
 = Rose Tico | Now it's Worth It#card

@@ -1,13 +1,13 @@
 = Mechanize#card
 !
 = Medal Ceremony#card
-Give an Experience token to a friendly unit. Give an Experience token to a friendly unit. Give an Experience token to a friendly unit.
+Give an Experience token to each of up to 3 Rebel units.
 = Mercenary Gunship#card
 ~
 = Merciless Contest#card
 Defeat a friendly non-leader unit. Note: The opponent chooses a non-leader unit they control and defeats it.
 = Midnight Repairs#card
-Heal up to 4 damage from a unit. Heal up to 4 damage from a unit.
+Heal up to 8 total damage from any number of units.
 = Migrate#card
 Create a Beast token.
 = Migs Mayfeld | How About a Toast?#card
@@ -29,7 +29,7 @@ On Attack: Deal 1 damage to the defending unit.
 = Millennium Falcon | Ya-Hoo!#card
 !
 = Mind Trick#card
-Exhaust up to 2 units with 2 or less power.
+Exhaust any number of units with a combined power of 4 or less.
 = Miraj Scintel | The Weak Deserve to Kneel#card
 ~
 = Mission Briefing#card
@@ -57,7 +57,7 @@ When Defeated: You may return a unit from your discard pile to your hand.
 = Mon Cal Cruiser#card
 !
 = Mon Mothma | Clinging to Hope#card
-When Played: You may attack with a unit, even if it's exhausted. It can't attack bases for this attack.
+When Played: You may attack with another unit, even if it's exhausted. It can't attack bases for this attack. If you do, you may attack with another unit, even if it's exhausted. It can't attack bases for this attack. If you do, you may attack with another unit, even if it's exhausted. It can't attack bases for this attack. If you do, you may attack with another unit, even if it's exhausted. It can't attack bases for this attack.
 = Mon Mothma | Forming a Coalition#leader
 ~
 = Mon Mothma | Forming a Coalition#unit
@@ -128,7 +128,7 @@ Attack with a Force unit, even if it's exhausted. It gets +1/+0 for this attack.
 = Nimble Prowess#card
 When Played: You may exhaust a unit.
 = Ninth Sister | Hulking Inquisitor#card
-When Played: Each opponent discards a card from their hand. You may deal 2 damage to a unit.
+When Played: Each opponent discards a card from their hand. You may deal damage equal to its cost divided as you choose among any number of units.
 = No Disintegrations#card
 !
 = No Good to Me Dead#card

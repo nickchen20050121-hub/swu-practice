@@ -384,7 +384,7 @@
       // req: {prompt, options:[{id,label,uid?}], min, max}
       if (!req.options.length) return [];
       const min = req.min == null ? 1 : req.min;
-      if (req.options.length === 1 && min >= 1 && (req.max || 1) === 1 && !req.forceAsk) return [req.options[0].id];
+      if (req.options.length === 1 && min >= 1 && (req.max || 1) === 1 && !req.forceAsk && !(this.io[p] && this.io[p].isHuman && !this.io[p].autoSingle && req.kind !== 'internal')) return [req.options[0].id];
       this.emit({ type: 'prompt', p, req });
       const r = await this.io[p].choose(this, p, req);
       this.emit({ type: 'prompt-done', p });
@@ -419,15 +419,32 @@
       if (String(r[0]).startsWith('base')) return { base: +String(r[0]).slice(4) };
       return { unit: this.findUnit(r[0]) };
     }
+    async orderUnits(p, units, prompt) {
+      const out = [];
+      const rest = [...units];
+      while (rest.length > 1) {
+        const i = await this.pickOption(p, prompt + ' (' + (out.length + 1) + ')', rest.map((u) => u.card.n));
+        const k = i < 0 ? 0 : i;
+        out.push(rest[k]);
+        rest.splice(k, 1);
+      }
+      return out.concat(rest);
+    }
     async pickOption(p, prompt, labels, opts = {}) {
       const options = labels.map((l, i) => ({ id: i, label: l }));
       const r = await this.choose(p, { kind: 'option', prompt, options, min: opts.optional ? 0 : 1, max: 1, forceAsk: true, ctx: opts.ctx });
       return r.length ? +r[0] : -1;
     }
-    async pickCards(p, prompt, cards, min, max, ctx) {
-      const options = cards.map((c) => ({ id: c.uid, label: c.card.key, card: c.card.key }));
-      const r = await this.choose(p, { kind: 'cards', prompt, options, min, max, forceAsk: true, ctx });
-      return r.map((id) => cards.find((c) => c.uid === id)).filter(Boolean);
+    async pickCards(p, prompt, cards, min, max, ctx, lim = {}) {
+      const val = (c) => (lim.sumKey === 'power' ? c.card.p || 0 : c.card.c || 0);
+      const options = cards.map((c) => ({ id: c.uid, label: c.card.key, card: c.card.key, val: lim.sumMax != null ? val(c) : undefined }));
+      const r = await this.choose(p, { kind: 'cards', prompt, options, min, max, forceAsk: true, ctx, sumMax: lim.sumMax, sumKey: lim.sumKey });
+      let out = r.map((id) => cards.find((c) => c.uid === id)).filter(Boolean);
+      if (lim.sumMax != null) {
+        let used = 0;
+        out = out.filter((c) => (used + val(c) <= lim.sumMax ? ((used += val(c)), true) : false));
+      }
+      return out;
     }
 
     // ---------- 基本操作 ----------
@@ -505,6 +522,23 @@
     }
     autoDistribute(chooser, req) {
       const alloc = {};
+      if (req.mode === 'heal') {
+        let left = req.total;
+        const dmgOf = (t) => (t.base != null ? this.P(t.base).base.damage : (this.findUnit(t.uid) || {}).damage || 0);
+        const mine = req.targets.filter((t) => (t.base != null ? t.base === chooser : (this.findUnit(t.uid) || {}).ctrl === chooser)).sort((a, b) => dmgOf(b) - dmgOf(a));
+        for (const t of mine) {
+          const k = Math.min(left, dmgOf(t));
+          if (k > 0) ((alloc[t.id] = k), (left -= k));
+        }
+        return alloc;
+      }
+      if (req.mode === 'token') {
+        const us = req.targets.map((t) => ({ t, u: this.findUnit(t.uid) })).filter((x) => x.u);
+        const good = !req.harmful;
+        const pick = us.filter((x) => (good ? x.u.ctrl === chooser : x.u.ctrl !== chooser)).sort((a, b) => this.power(b.u) - this.power(a.u))[0] || us[0];
+        if (pick) alloc[pick.t.id] = req.total;
+        return alloc;
+      }
       let left = req.total;
       const units = req.targets.filter((t) => t.uid != null).map((t) => ({ t, u: this.findUnit(t.uid) })).filter((x) => x.u);
       const baseT = req.targets.find((t) => t.base != null);
@@ -661,13 +695,20 @@
       let again = true;
       while (again) {
         again = false;
-        for (const u of this.allUnits()) {
-          if (this.remaining(u) <= 0) {
-            await this.defeat(u, { state: true });
-            again = true;
-            break;
+        const dead = this.allUnits().filter((u) => this.remaining(u) <= 0);
+        if (!dead.length) break;
+        let order = dead;
+        for (const q of [0, 1]) {
+          const io = this.io[q];
+          const mine = dead.filter((u) => u.ctrl === q && (() => { const e = this.eff(u); return e && e.whenDefeated; })());
+          if (io && io.isHuman && mine.length > 1) {
+            const sorted = await this.orderUnits(q, mine, SWU.t('promptOrderDefeat'));
+            order = order.filter((u) => !mine.includes(u));
+            order = q === this.G.active ? [...sorted, ...order] : [...order, ...sorted];
           }
         }
+        for (const u of order) if (this.findUnit(u.uid)) await this.defeat(u, { state: true });
+        again = true;
       }
       // 「受到傷害且存活」
       const dmg = this.pendingDamaged || [];

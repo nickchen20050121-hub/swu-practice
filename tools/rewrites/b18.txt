@@ -1,5 +1,5 @@
 = The Desolation of Hoth#card
-Defeat an enemy unit that costs 3 or less. Defeat an enemy unit that costs 3 or less.
+Defeat up to 2 enemy units that cost 3 or less.
 = The Elite Squad | Neutralizing Insurgents#card
 When Played: You may deal 2 damage to another unit.
 = The Emperor's Legion#card
@@ -117,7 +117,7 @@ Create an X-Wing token. Create an X-Wing token.
 = Top Target#card
 Attached unit gains: "Bounty - Heal 4 damage from a unit or base."
 = Trace Martez | Trusting Sister#card
-Attached unit gains: "On Attack: You may heal 2 damage from a unit."
+Attached unit gains: "On Attack: You may heal up to 2 total damage from any number of units."
 = Trade Route Taxation#card
 !
 = Traitorous#card

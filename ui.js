@@ -23,7 +23,7 @@
     needDecks: '先到組牌器建一副牌，或直接用內建的路克牌組。', aiStatusOn: '由奈會用 Claude 思考（{0}）', aiStatusOff: '還沒設定 API 金鑰，由奈先用內建打法。到「設定」輸入金鑰就能變聰明。',
     round: '第 {0} 回合', phase_setup: '開局', phase_action: '行動階段', phase_regroup: '整備階段', initiative: '主動權', taken: '已拿',
     yourTurn: '輪到你', yunaTurn: '由奈思考中…', hand: '手牌', deck: '牌庫', discard: '棄牌', resources: '資源', ground: '地面', space: '太空',
-    tapTwice: '點兩下卡牌直接打出／攻擊', distLeft: '還剩 {0} 點', distHint: '點場上發亮的單位或基地，每點一下分配 1 點', distReset: '重新分配', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
+    tapTwice: '點兩下卡牌直接打出／攻擊', setAutoSingle: '只有一個合法目標時', setAutoSingleOff: '一律讓我點（預設）', setAutoSingleOn: '自動幫我選', distLeft: '還剩 {0} 點', distHint: '點場上發亮的單位或基地，每點一下分配 1 點', distReset: '重新分配', takeInitTitle: '拿走先攻指示物？', takeInitBody: '拿先攻後你這一輪就不能再行動（等同 Pass），下一輪由你先手。', takeInitYes: '拿先攻', initToken: '先攻', initTokenTake: '點我搶先攻', effectFrom: '效果', passBig: 'Pass',
     confirm: '確定', skip: '略過', cancel: '取消', done: '完成', select: '選擇', log: '對戰紀錄', chat: '由奈',
     manualTitle: '需要手動處理的效果', manualHint: '這個效果還沒自動化。用下面的工具照卡片文字調整，或請由奈幫你判讀。', manualAsk: '請由奈幫我處理',
     toolTarget: '先點選目標（單位或基地）', toolDmg: '+1 傷害', toolHeal: '回復 1', toolShield: '護盾', toolExp: '經驗', toolDefeat: '擊敗', toolExhaust: '橫置', toolReady: '準備',
@@ -55,7 +55,7 @@
     tabPlay: 'Play', tabBuild: 'Deck builder', tabSettings: 'Settings', tabHelp: 'Help',
     lobbyTitle: 'Start a practice game', yourDeck: 'Your deck', yunaDeck: "Yuna's deck", start: 'Start game', resume: 'Back to game', newGame: 'New game',
     needDecks: 'Build a deck in the deck builder first, or use the built-in Luke deck.', aiStatusOn: 'Yuna thinks with Claude ({0})', aiStatusOff: 'No API key yet, so Yuna uses the built-in strategy. Add a key in Settings.',
-    tapTwice: 'Double-click a card to play / attack', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
+    tapTwice: 'Double-click a card to play / attack', setAutoSingle: 'When there is only one legal target', setAutoSingleOff: 'Always let me click (default)', setAutoSingleOn: 'Choose it automatically', distLeft: '{0} left', distHint: 'Click a highlighted unit or base to assign 1 point each', distReset: 'Reset', takeInitTitle: 'Take the initiative?', takeInitBody: 'Taking the initiative ends your actions this round (like passing). You go first next round.', takeInitYes: 'Take initiative', initToken: 'Initiative', initTokenTake: 'Click to claim', effectFrom: 'Effect', passBig: 'Pass',
     round: 'Round {0}', phase_setup: 'Setup', phase_action: 'Action phase', phase_regroup: 'Regroup', initiative: 'Initiative', taken: 'taken',
     yourTurn: 'Your turn', yunaTurn: 'Yuna is thinking…', hand: 'Hand', deck: 'Deck', discard: 'Discard', resources: 'Resources', ground: 'Ground', space: 'Space',
     confirm: 'Confirm', skip: 'Skip', cancel: 'Cancel', done: 'Done', select: 'Select', log: 'Game log', chat: 'Yuna',
@@ -229,6 +229,10 @@
 
   // ---------- 人類玩家 IO ----------
   const humanIO = {
+    isHuman: true,
+    get autoSingle() {
+      return !!SWU.AI.settings.autoSingle;
+    },
     chooseAction(g, p, acts) {
       return new Promise((resolve) => {
         S.pending = { type: 'action', acts, resolve };
@@ -839,6 +843,9 @@
     m.innerHTML = '';
     const min = req.min == null ? 1 : req.min;
     const max = req.max || 1;
+    const lim = req.sumMax;
+    const used = lim == null ? 0 : req.options.filter((o) => pd.sel.includes(o.id)).reduce((s, o) => s + (o.val || 0), 0);
+    const over = (o) => lim != null && !pd.sel.includes(o.id) && used + (o.val || 0) > lim;
     m.append(
       h(
         'div',
@@ -853,9 +860,10 @@
             return h(
               'div',
               {
-                class: 'pick' + (pd.sel.includes(o.id) ? ' sel' : ''),
+                class: 'pick' + (pd.sel.includes(o.id) ? ' sel' : '') + (over(o) ? ' off' : ''),
                 onmouseenter: () => card && setPreview(card, 'card'),
                 onclick: () => {
+                  if (over(o)) return;
                   if (max === 1 && min <= 1) return settle([o.id]);
                   const i = pd.sel.indexOf(o.id);
                   if (i >= 0) pd.sel.splice(i, 1);
@@ -871,7 +879,7 @@
         h(
           'div',
           { class: 'row end' },
-          h('span', { class: 'muted' }, pd.sel.length + ' / ' + max),
+          h('span', { class: 'muted' }, (max >= 20 ? pd.sel.length : pd.sel.length + ' / ' + max) + (lim != null ? (SWU.lang !== 'zh' ? ` · total ${req.sumKey || 'cost'} ${used} / ${lim}` : ` · 總${req.sumKey === 'power' ? '戰力' : '費用'} ${used} / ${lim}`) : '')),
           min === 0 ? h('button', { class: 'ghost', onclick: () => settle([]) }, t('skip')) : null,
           max > 1 || min === 0 ? h('button', { class: 'primary', disabled: pd.sel.length < min, onclick: () => settle(pd.sel) }, t('confirm')) : null
         )
@@ -1614,6 +1622,17 @@
       h(
         'section',
         { class: 'panel settings' },
+        h(
+          'div',
+          { class: 'field' },
+          h('label', {}, t('setAutoSingle')),
+          h(
+            'div',
+            { class: 'row' },
+            h('button', { class: !st.autoSingle ? 'on' : '', onclick: () => ((st.autoSingle = false), save(), render()) }, t('setAutoSingleOff')),
+            h('button', { class: st.autoSingle ? 'on' : '', onclick: () => ((st.autoSingle = true), save(), render()) }, t('setAutoSingleOn'))
+          )
+        ),
         h('div', { class: 'field' }, h('label', {}, t('setLang')), h('div', { class: 'row' }, h('button', { class: SWU.lang === 'zh' ? 'on' : '', onclick: () => (SWU.setLang('zh'), render()) }, '繁體中文'), h('button', { class: SWU.lang === 'en' ? 'on' : '', onclick: () => (SWU.setLang('en'), render()) }, 'English'))),
         h(
           'div',

@@ -21,7 +21,7 @@ Attached unit gains: "On Attack: Discard a card from your deck. Create a Credit 
 = Hardpoint Heavy Blaster#card
 Attached unit gains: "On Attack: If this unit is attacking a unit, you may deal 2 damage to a unit."
 = Headhunting#card
-Attack with a unit. It can't attack bases for this attack. Attack with a unit. It can't attack bases for this attack. Attack with a unit. It can't attack bases for this attack.
+You may attack with a unit. It can't attack bases for this attack. You may attack with a unit. It can't attack bases for this attack. You may attack with a unit. It can't attack bases for this attack.
 = Heartless Tactics#card
 Exhaust a unit and give it -2/-0 for this phase.
 = Heavy Blaster Cannon#card
@@ -31,7 +31,7 @@ When Played: You may deal 3 damage to a ground unit.
 = Heirloom Lightsaber#card
 While attached unit is a Force unit, attached unit gains Restore 1.
 = Helgait | Dooku was a Visionary#card
-When Defeated: Give 2 Advantage tokens to a friendly unit.
+{"trigger":"multi","tinfo":[{"t":"whenDefeated"}],"steps":[{"op":"divToken","n":{"x":"power","of":"self"},"name":"Advantage","optional":true,"target":{"side":"friendly","f":{"notSelf":true}}}]}
 = Helix Starfighter#card
 When Played: Give a Shield token to this unit.
 = Hello There#card

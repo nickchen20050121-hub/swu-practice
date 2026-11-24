@@ -5,7 +5,7 @@ Give a unit -2/-2 for this phase. If you control fewer units than an opponent, g
 = Escape Pod#card
 ~
 = Evade Arrest#card
-Exhaust up to 3 non-unique units.
+Exhaust any number of non-unique units.
 = Every Day, More Lies#card
 Discard a card from your hand. Each opponent discards a card from their hand.
 = Evidence of the Crime#card
@@ -47,7 +47,7 @@ Attached unit gains: "On Attack: If this unit is a Force unit, deal 1 damage to 
 = Familiar Strategem#card
 Attack with a unit. It gets +2/+0 for this attack.
 = Fateful Goodbye#card
-If a friendly unit was defeated this phase, give 3 Advantage tokens to a friendly unit.
+{"trigger":"event","steps":[{"op":"divToken","n":3,"name":"Advantage","target":{"side":"friendly","f":{}},"cond":{"defeatedThisPhase":"friendly"}}]}
 = Fear and Dead Men#card
 Deal 4 damage to each enemy ground unit.
 = Fearless Attack#card
@@ -132,7 +132,7 @@ Attack with a unit.
 = Force Throw#card
 Each opponent discards a card from their hand. If you control a Force unit, you may deal 3 damage to a unit.
 = Forced Pacification#card
-Defeat a friendly unit. If you do, exhaust up to 2 enemy units.
+Defeat any number of friendly units. Exhaust up to 2 enemy units.
 = Forced Surrender#card
 Draw 2 cards. If you've attacked with a unit this phase, each opponent discards 2 cards from their hand.
 = Foresight#card

@@ -50,7 +50,7 @@ On Attack: You may discard 2 cards from your deck. If you do, ready a resource.
 = Secret Battle of Pretend#card
 Exhaust a friendly unit. If you do, exhaust an enemy unit.
 = Secret Marriage#card
-Give a Shield token to a non-Vehicle unit. Give a Shield token to a non-Vehicle unit.
+Give a Shield token to each of up to 2 non-Vehicle units.
 ~
 = Seismic Detonation#card
 !
@@ -59,7 +59,9 @@ When Defeated: You may disclose Vigilance. If you do, give an Experience token t
 = Sense Through the Force#card
 Search the top 5 cards of your deck for a card, reveal it, and draw it.
 = Separatist Council | Quarrelsome Holdouts#card
-When Played/On Attack: Create a Battle Droid token.
+When Played/On Attack: Choose one
+- Create a Battle Droid token.
+- Give 2 Experience tokens to a friendly token unit.
 = Separatist Harbinger#card
 When Played/On Attack: You may deal 2 damage to an enemy unit or base.
 = Seventh Sister | Implacable Inquisitor#card

@@ -2,7 +2,7 @@
 ~
 When Played: Deal 4 indirect damage to each opponent.
 = Dexter Jettster | OBI-WANNNN!!!#card
-~
+On Attack: You may pay 1 resource. If you do, look at the top 3 cards of your deck. Put any number of them on the bottom of your deck and the rest on top in any order.
 = Diplomatic Envoy#card
 ~
 = Diplomatic Immunity#card
@@ -24,7 +24,7 @@ Action [C=2, Exhaust]: Deal 2 damage to a base.
 = Disciples' Devotion#card
 While attached unit is exhausted, attached unit gains Sentinel.
 = Dismantle the Conspiracy#card
-A friendly unit captures an enemy non-leader unit with 7 or less remaining HP.
+A friendly unit captures any number of enemy non-leader units with a total of 7 or less remaining HP.
 = Display Piece#card
 Defeat an enemy non-leader unit.
 = Disposable B1#card
@@ -100,7 +100,7 @@ Draw a card.
 ~
 = Elzar Mann | Haunted by a Vision#card
 ~
-When Played: Give 2 Advantage tokens to another friendly unit.
+{"trigger":"multi","tinfo":[{"t":"whenPlayed"}],"steps":[{"op":"divToken","n":5,"upTo":true,"name":"Advantage","target":{"side":"friendly","f":{"notSelf":true}}}]}
 = Embo | Stoic and Resolute#card
 When this unit completes an attack: If the defending unit was defeated, heal up to 2 damage from a unit.
 = Emergency Powers#card
