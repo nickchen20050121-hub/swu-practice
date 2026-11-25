@@ -768,7 +768,7 @@
   };
   SWU.GameLog = GameLog;
   function recordGame(g, unfinished) {
-    if (!SWU.AI.settings.owner || g._logged || (g.G.winner == null && !(unfinished && g.G.round >= 2))) return;
+    if (!SWU.AI.settings.owner || g._logged || (g.G.winner == null && !(unfinished && (g.G.round >= 2 || (g.advice && g.advice.length))))) return;
     // 進行中（autosave）不鎖；打完或換新局才鎖
     if (unfinished !== 'auto') g._logged = true;
     const deckOf = (d) => {
@@ -798,6 +798,7 @@
       seed: g.seed,
       uid0: g.uid0,
       rec: g.rec,
+      advice: g.advice || [],
       log: g.G.log.map((l) => {
         try {
           return SWU.fmtLog(l, 'en');
@@ -948,12 +949,102 @@
     );
     setTimeout(() => box.focus(), 50);
   }
+  // ---------- 給由奈的建議：針對她最近的動作打字，連同當下局面存進這局的紀錄 ----------
+  const AKEY = 'swu.advice.v1';
+  const Advice = {
+    list() {
+      try {
+        return JSON.parse(localStorage.getItem(AKEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    },
+    save(a) {
+      let all = Advice.list();
+      all.push(a);
+      while (all.length) {
+        try {
+          localStorage.setItem(AKEY, JSON.stringify(all.slice(-300)));
+          return true;
+        } catch (e) {
+          all = all.slice(1);
+        }
+      }
+      return false;
+    },
+  };
+  function openAdvice() {
+    const g = S.game;
+    if (!g) return;
+    const zh = SWU.lang !== 'en';
+    const aiLines = g.G.log.filter((l) => l.p === 1).slice(-4).map((l) => {
+      try {
+        return SWU.fmtLog(l);
+      } catch (e) {
+        return l.k;
+      }
+    });
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    const box = h('textarea', { rows: '4', placeholder: zh ? '例如：這裡應該先攻擊基地再出牌／這隻不該拿去換／應該留著先攻' : 'e.g. should have attacked the base before playing a card' });
+    const send = () => {
+      const note = box.value.trim();
+      if (!note) return closeModal();
+      let a;
+      try {
+        a = {
+          gid: String(g.seed) + ':' + String(g.uid0),
+          date: new Date().toISOString(),
+          level: SWU.AI.levelNum(),
+          round: g.G.round,
+          phase: g.G.phase,
+          step: g.rec.length,
+          aiRecent: g.G.log.filter((l) => l.p === 1).slice(-4).map((l) => {
+            try {
+              return SWU.fmtLog(l, 'en');
+            } catch (e) {
+              return l.k;
+            }
+          }),
+          note,
+          state: snapState(g),
+        };
+      } catch (e) {
+        a = { date: new Date().toISOString(), note, err: String(e) };
+      }
+      (g.advice = g.advice || []).push(a);
+      const ok = Advice.save(a);
+      try {
+        recordGame(g, 'auto');
+      } catch (e) {}
+      closeModal();
+      toast(ok ? (zh ? '記下了 ✓ 下載對局紀錄時會一起帶走' : 'Saved ✓ included when you download records') : zh ? '存不下來，空間不夠' : 'Could not save (storage full)');
+    };
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send();
+    });
+    m.append(
+      h(
+        'div',
+        { class: 'dialog' },
+        h('h3', {}, zh ? '給由奈的建議' : 'Advice for the AI'),
+        aiLines.length ? h('div', { class: 'small muted' }, (zh ? '由奈最近的動作：' : 'Recent AI moves:'), h('ul', {}, ...aiLines.map((x) => h('li', {}, x)))) : null,
+        h('p', { class: 'small muted' }, zh ? '會連同現在的局面一起存進這局的紀錄。由奈要等你在設定頁「下載對局紀錄」並傳給她之後才讀得到。' : 'Saved with the current board into this game record. The AI only reads it after you download records in Settings and send the file.'),
+        box,
+        h('div', { class: 'row end' }, h('button', { class: 'ghost advdl', onclick: () => downloadGames() }, zh ? '⬇ 下載對局紀錄' : '⬇ Download records'), h('button', { class: 'ghost', onclick: closeModal }, t('cancel')), h('button', { class: 'primary', onclick: send }, zh ? '記下' : 'Save'))
+      )
+    );
+    setTimeout(() => box.focus(), 50);
+  }
   function downloadGames() {
     const all = GameLog.list();
-    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list() })], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list(), advice: Advice.list() })], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'swu-games-' + new Date().toISOString().slice(0, 10) + '.json';
+    const d = new Date(), z = (x) => String(x).padStart(2, '0');
+    // 檔名只用英數（有些瀏覽器不接受中文檔名，會變成 download）
+    a.download = `SWU_Practice_Records_${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}_${all.length}games.json`;
     document.body.append(a);
     a.click();
     setTimeout(() => (URL.revokeObjectURL(a.href), a.remove()), 1000);
@@ -1704,6 +1795,7 @@
       G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null,
       h('button', { class: 'chip logbtn', onclick: () => document.body.classList.toggle('sideopen') }, '📜 ' + t('log')),
       h('button', { class: 'chip reportbtn', title: SWU.lang === 'en' ? 'Report a problem' : '回報問題', onclick: openReport }, '🐞 ' + (SWU.lang === 'en' ? 'Report' : '回報')),
+      SWU.AI.settings.owner ? h('button', { class: 'chip advbtn', title: SWU.lang === 'en' ? 'Advice for the AI' : '給由奈的建議', onclick: openAdvice }, '💬 ' + (SWU.lang === 'en' ? 'Advice' : '建議')) : null,
       h(
         'button',
         {
