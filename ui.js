@@ -747,6 +747,8 @@
     },
     save(entry) {
       let all = GameLog.list();
+      // 同一局（同種子）只留最新一筆：進行中自動存，打完再覆蓋
+      if (entry.gid) all = all.filter((x) => x.gid !== entry.gid);
       all.push(entry);
       // 空間不夠就丟掉最舊的
       while (all.length) {
@@ -767,7 +769,8 @@
   SWU.GameLog = GameLog;
   function recordGame(g, unfinished) {
     if (!SWU.AI.settings.owner || g._logged || (g.G.winner == null && !(unfinished && g.G.round >= 2))) return;
-    g._logged = true;
+    // 進行中（autosave）不鎖；打完或換新局才鎖
+    if (unfinished !== 'auto') g._logged = true;
     const deckOf = (d) => {
       const cnt = {};
       for (const c of d.cards || []) cnt[c.key] = (cnt[c.key] || 0) + 1;
@@ -780,6 +783,7 @@
       ver = s ? s.split('v=')[1] : '';
     } catch (e) {}
     GameLog.save({
+      gid: String(g.seed) + ':' + String(g.uid0),
       date: new Date().toISOString(),
       ver,
       level: SWU.AI.levelNum(),
@@ -954,6 +958,13 @@
     a.click();
     setTimeout(() => (URL.revokeObjectURL(a.href), a.remove()), 1000);
   }
+  // 關掉或切走網頁時也存一下進行中的對局
+  addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && S.game && S.game.G.winner == null)
+      try {
+        recordGame(S.game, 'auto');
+      } catch (e) {}
+  });
   function attachGame(g) {
     S.game = g;
     g.pauseFor = (kind, p) => (p === 1 && animOn() ? new Promise((r) => setTimeout(r, kind === 'attack' ? 750 : 600)) : null);
@@ -979,7 +990,13 @@
         renderFeed();
         SWU.sfx && SWU.sfx.onLog(g.G.log[g.G.log.length - 1]);
       }
-      else if (ev.type === 'gameover') {
+      else if (ev.type === 'update' && g.G.round !== g._lastSavedRound && g.G.round >= 2 && !g.replaying) {
+        g._lastSavedRound = g.G.round;
+        try {
+          recordGame(g, 'auto');
+        } catch (e) {}
+        renderBoard();
+      } else if (ev.type === 'gameover') {
         S.pending = null;
         renderBoard();
         recordGame(g);
