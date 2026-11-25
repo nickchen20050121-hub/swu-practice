@@ -6,7 +6,7 @@ const dir = path.join(__dirname, '..');
 global.window = global; global.localStorage = { getItem: () => null, setItem: () => {} };
 for (const f of ['cards.js', 'engine.js', 'i18n.js', 'deck.js', 'meta_decks.js']) vm.runInThisContext(fs.readFileSync(path.join(dir, f), 'utf8'), { filename: f });
 SWU.initDB(window.SWU_CARDS);
-const SINCE = process.env.SINCE || '2026-11-09', MAX = +(process.env.MAX || 36);
+const TOP = +(process.env.TOP || 1), SINCE = process.env.SINCE || '2026-11-09', MAX = +(process.env.MAX || 36);
 const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’‘]/g, "'").replace(/…/g, '').replace(/\s+/g, ' ').trim();
 const byFull = new Map(), byName = new Map();
 for (const c of SWU.DB.list) {
@@ -35,17 +35,16 @@ const find = (card, type) => {
 const seen = new Set(), all = [];
 for (const f of process.argv.slice(2)) for (const d of JSON.parse(fs.readFileSync(f, 'utf8')).decklists || []) if (!seen.has(d.id)) seen.add(d.id), all.push(d);
 const old = window.SWU_META_DECKS || [];
-const combos = new Set(old.map((d) => d.leader + '/' + d.base));
+// 同一個領袖只留一副：名次最好（冠軍優先），同名次取較新的
+const rank = (d) => d.standing || +((d.event || '').match(/(\d+)(?:st|nd|rd|th)/) || [0, 99])[1];
 const picked = [];
 all
-  .filter((d) => d.standing <= 8 && (d.tournament.startDate || '') >= SINCE && d.cards)
+  .filter((d) => d.standing <= TOP && (d.tournament.startDate || '') >= SINCE && d.cards)
   .sort((a, b) => a.standing - b.standing || (b.tournament.startDate || '').localeCompare(a.tournament.startDate || ''))
   .forEach((d) => {
-    if (old.length + picked.length >= MAX) return;
     const leader = find(d.leaderCard || { name: d.leaderName }, 'Leader'), base = find({ ...(d.baseCard || {}), name: d.baseName }, 'Base');
     if (!leader || !base) return console.log('skip (leader/base?)', d.leaderName, d.baseName), problems++;
     const k = leader.key + '/' + base.key;
-    if (combos.has(k)) return;
     const main = {}, side = {};
     let bad = 0;
     for (const c of d.cards) {
@@ -57,13 +56,14 @@ all
     }
     const n = Object.values(main).reduce((a, b) => a + b, 0);
     if (bad || n < 50) return console.log('skip', k, 'bad', bad, 'main', n), problems++;
-    combos.add(k);
     const date = (d.tournament.startDate || '').slice(0, 10);
-    const ev = `${d.tournament.name} ${date} #${d.standing}`;
-    const short = leader.n + (leader.s ? '' : '');
-    picked.push({ preset: true, meta: true, name: short + '｜' + ev, event: ev, leader: leader.key, base: base.key, main, side });
+    const ev = `${d.tournament.name.replace(/\s+/g, ' ').trim()} ${date} ${d.standing === 1 ? '冠軍' : '#' + d.standing}`;
+    picked.push({ preset: true, meta: true, name: leader.key + '｜' + base.n + '｜' + date.slice(5) + (d.standing === 1 ? ' 冠軍' : ' #' + d.standing), event: ev, standing: d.standing, date, leader: leader.key, base: base.key, main, side });
     console.log(`${leader.key} / ${base.key}: main ${n} side ${Object.values(side).reduce((a, b) => a + b, 0)} | ${ev}`);
   });
-const out = [...old, ...picked].map((d, i) => ({ ...d, id: 'meta' + (i + 1) }));
+const best = new Map();
+for (const d of [...old, ...picked].filter((d) => rank(d) <= TOP).sort((a, b) => rank(a) - rank(b) || (b.date || '').localeCompare(a.date || ''))) if (!best.has(d.leader)) best.set(d.leader, d);
+const out = [...best.values()].map(({ standing, date, ...d }, i) => ({ ...d, id: 'meta' + (i + 1) }));
+for (const d of out) console.log('KEEP', d.name);
 fs.writeFileSync(path.join(dir, 'meta_decks.js'), '/* 2026-11 比賽得名牌表（tools/build_meta.js、tools/build_meta_api.js 產生；後者資料來自 swumetastats.com／Melee.gg） */\nwindow.SWU_META_DECKS=' + JSON.stringify(out) + ';\n');
-console.log(old.length, 'old +', picked.length, 'new decks,', problems, 'problems');
+console.log(out.length, 'decks (one per leader),', problems, 'problems');
