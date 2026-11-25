@@ -2686,12 +2686,18 @@
     if (!root) return;
     const keepScroll = $('.results') ? $('.results').scrollTop : 0;
     const focus = document.activeElement && document.activeElement.id;
+    // 手機：整頁捲動，重畫時先撐住高度、畫完把捲動位置放回去，加減卡時畫面不會跳
+    const winY = window.scrollY;
+    root.style.minHeight = root.offsetHeight + 'px';
     root.innerHTML = '';
     root.append(deckListPanel(), searchPanel(), deckPanel());
     if ($('.results')) $('.results').scrollTop = keepScroll;
-    if (focus && $('#' + focus)) {
+    root.style.minHeight = '';
+    if (Math.abs(window.scrollY - winY) > 1) window.scrollTo(0, winY);
+    // 手機：只有剛在打字時才把游標放回搜尋框（不然點卡片加牌會跳回搜尋框、跳出鍵盤）
+    if (focus && $('#' + focus) && (!isTouch() || Date.now() - (S.typedAt || 0) < 1500)) {
       const el = $('#' + focus);
-      el.focus();
+      el.focus({ preventScroll: true });
       if (el.setSelectionRange && el.value != null && el.type === 'text') el.setSelectionRange(el.value.length, el.value.length);
     }
   }
@@ -2842,6 +2848,7 @@
           placeholder: t('search'),
           oninput: (e) => {
             clearTimeout(timer);
+            S.typedAt = Date.now();
             timer = setTimeout(() => {
               f.q = e.target.value;
               rerender();
