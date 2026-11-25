@@ -31,7 +31,9 @@
     if (!D.card(deck.leader)) errs.push(SWU.t('errNoLeader'));
     if (!D.card(deck.base)) errs.push(SWU.t('errNoBase'));
     const n = D.count(deck);
-    if (n < 50) errs.push(SWU.t('errTooFew', n));
+    const bc = D.card(deck.base);
+    const min = 50 + (bc && /minimum deck size is increased by (\d+)/i.test(bc.tx || '') ? +bc.tx.match(/increased by (\d+)/i)[1] : 0);
+    if (n < min) errs.push(SWU.t('errTooFew', n) + (min > 50 ? ' (≥' + min + ')' : ''));
     for (const [k, c] of Object.entries(deck.main)) if (c + (deck.side[k] || 0) > 3) errs.push(SWU.t('errTooMany', k));
     const side = D.count(deck, 'side');
     if (side > 10) errs.push(SWU.t('errSide', side));

@@ -2,7 +2,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const dir=path.join(__dirname,'..');
 global.window=global; global.localStorage={getItem:()=>null,setItem:()=>{}};
-for(const f of ['cards.js','engine.js','i18n.js','effects.js','gfx.js','programs.js','meta_decks.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['cards.js','engine.js','i18n.js','effects.js','effects2.js','gfx.js','programs.js','meta_decks.js','deck.js','ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
 const metas=SWU.Deck.presets().filter(d=>d.meta);
 const mk=(d)=>({name:d.name.slice(2,14),leader:SWU.Deck.card(d.leader),base:SWU.Deck.card(d.base),cards:SWU.Deck.expand(d)});

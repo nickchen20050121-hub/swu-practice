@@ -48,6 +48,7 @@
     return k;
   }
   SWU.parseKeywords = parseKeywords;
+  SWU.AURA_LOSEKW = new Set(['Domesticated Loth-Cat']);
 
   // 卡片文字有沒有「關鍵字以外」的能力
   SWU.abilityLines = function (card, side) {
@@ -226,14 +227,53 @@
       return u.ctrl;
     }
     eff(u) {
+      if (u.upgrades && this.isBlank(u)) {
+        // 失去所有能力：只留下「保留」型的升級給的能力（例如 Condemn）
+        let out = { implemented: true };
+        for (const up of u.upgrades) {
+          const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
+          if (ue && ue.keepGrant && SWU.GFX) out = SWU.GFX.mergeHooks(out, ue.keepGrant);
+        }
+        return out;
+      }
       const base = SWU.EFFECTS.get(u.card, u.isLeader ? 'unit' : 'card');
       if (!u.upgrades || !u.upgrades.length || !SWU.GFX) return base;
       let out = base;
       for (const up of u.upgrades) {
-        const ue = SWU.EFFECTS.get(up.card, 'card');
+        const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
         if (ue && ue.grant) out = SWU.GFX.mergeHooks(out, ue.grant);
+        if (ue && ue.grantFor) {
+          const gr = ue.grantFor(this, up, u);
+          if (gr) out = SWU.GFX.mergeHooks(out, gr);
+        }
       }
       return out;
+    }
+    upSide(up) {
+      return up.leaderPilot ? 'unit' : 'card';
+    }
+    // 卡片是否「失去所有能力」：The Tree Remembers（本階段）、Condemn（攻擊中）、Galen Erso 指名
+    isBlank(u) {
+      const G = this.G;
+      if (u.blankPhase != null && u.blankPhase === G.phaseId) return true;
+      if (G.attack && G.attack.attacker === u && u.upgrades.some((x) => x.card.n === 'Condemn')) return true;
+      if (!u.isLeader && this.cardBlank(u.owner, u.card)) return true;
+      return false;
+    }
+    cardBlank(owner, card) {
+      for (const nm of this.G.named || []) {
+        if (nm.kind !== 'blank' || nm.victim !== owner || nm.name !== card.n || card.t === 'Leader') continue;
+        if (this.findUnit(nm.src)) return true;
+      }
+      return false;
+    }
+    cardBanned(p, card) {
+      for (const nm of this.G.named || []) if (nm.kind === 'ban' && nm.victim === p && nm.name === card.n && this.findUnit(nm.src)) return true;
+      return false;
+    }
+    // 「領袖單位」：本身是領袖，或身上有領袖駕駛員／黑暗劍
+    isLeaderUnit(u) {
+      return !!(u && (u.isLeader || (u.upgrades || []).some((x) => x.leaderPilot || x.card.n === 'The Darksaber')));
     }
     statics(u) {
       // 持續效果：卡片本身、場上其他卡的光環、升級卡
@@ -260,6 +300,13 @@
       };
       const e = this.eff(u);
       if (e && e.static) add(e.static(this, u));
+      const blank = this.isBlank(u);
+      for (const P of this.G.players)
+        for (const up of P.base.upgrades) {
+          const be = SWU.EFFECTS.get(up.card, 'card');
+          if (be && be.baseAura) add(be.baseAura(this, up, P.idx, u));
+        }
+      if (blank) return out;
       for (const other of this.allUnits()) {
         const oe = this.eff(other);
         if (oe && oe.aura && other !== u) add(oe.aura(this, other, u));
@@ -270,8 +317,9 @@
         if (le && le.aura) add(le.aura(this, P.leader, u));
       }
       for (const up of u.upgrades) {
-        const ue = SWU.EFFECTS.get(up.card, 'card');
+        const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
         if (ue && ue.attachedStatic) add(ue.attachedStatic(this, up, u));
+        if (up.leaderPilot) continue;
         const g = (up.card.tx || '').match(/^Attached unit gains (Sentinel|Overwhelm|Saboteur|Grit|Ambush|Hidden|Raid (\d+)|Restore (\d+))\.?$/m);
         if (g && !(ue && ue.attachedStatic)) {
           if (g[2]) add({ kw: { Raid: +g[2] } });
@@ -298,6 +346,23 @@
       for (const k in s.kw) merge(k, s.kw[k]);
       for (const m of this.activeMods(u)) for (const k in m.kw || {}) merge(k, m.kw[k]);
       for (const k of u.lost || []) delete res[k];
+      if (this.isBlank(u) || (u.noKwPhase != null && u.noKwPhase === this.G.phaseId)) {
+        for (const k in res) delete res[k];
+        return res;
+      }
+      if (e && e.loseKw) for (const k of e.loseKw(this, u) || []) delete res[k];
+      if ((this._lkDepth || 0) < 2) {
+        this._lkDepth = (this._lkDepth || 0) + 1;
+        try {
+          for (const o of this.allUnits()) {
+            if (o === u || !SWU.AURA_LOSEKW.has(o.card.n)) continue;
+            const oe = this.eff(o);
+            if (oe && oe.auraLoseKw) for (const k of oe.auraLoseKw(this, o, u) || []) delete res[k];
+          }
+        } finally {
+          this._lkDepth--;
+        }
+      }
       return res;
     }
     has(u, k) {
@@ -309,7 +374,7 @@
     power(u, attacking) {
       const s = this.statics(u);
       let p = this.basePower(u) + s.p;
-      for (const up of u.upgrades) p += up.card.p || 0;
+      for (const up of u.upgrades) p += up.leaderPilot ? up.pilotMod[0] : up.card.p || 0;
       for (const m of this.activeMods(u)) p += m.p || 0;
       const k = this.kw(u);
       if (k.Grit) p += u.gritDamage != null ? u.gritDamage : u.damage;
@@ -319,7 +384,7 @@
     hp(u) {
       const s = this.statics(u);
       let h = (u.card.h || 0) + s.h;
-      for (const up of u.upgrades) h += up.card.t === 'Upgrade' || /Token/.test(up.card.t) ? up.card.h || 0 : 0;
+      for (const up of u.upgrades) h += up.leaderPilot ? up.pilotMod[1] : up.card.t === 'Upgrade' || /Token/.test(up.card.t) ? up.card.h || 0 : 0;
       for (const m of this.activeMods(u)) h += m.h || 0;
       return h;
     }
@@ -331,6 +396,7 @@
     }
     hasTrait(c, t) {
       const card = c.card || c;
+      if (c.upgrades && t.toUpperCase() === 'MANDALORIAN' && c.upgrades.some((x) => x.card.n === 'The Darksaber')) return true;
       return (card.tr || []).includes(t.toUpperCase());
     }
     controlsBaseTrait(p, trait) {
@@ -338,6 +404,7 @@
     }
     aspectPenalty(p, card) {
       const have = [...this.P(p).aspects];
+      for (const u of this.P(p).units) if (u.upgrades.some((x) => x.card.n === 'The Darksaber')) have.push(...(u.card.a || []));
       let missing = 0;
       for (const a of card.a || []) {
         const i = have.indexOf(a);
@@ -400,6 +467,8 @@
         base = false;
       }
       if (opts.unitsOnly) base = false;
+      const ae = this.eff(attacker);
+      if (ae && ae.cantAttackBase && ae.cantAttackBase(this, attacker)) base = false;
       if (opts.filter) units = units.filter(opts.filter);
       return { units, base };
     }
@@ -540,6 +609,7 @@
       return n;
     }
     healBase(p, n) {
+      if (this.allUnits().some((u) => { const e = this.eff(u); return e && e.noBaseHeal; })) return 0;
       const B = this.P(p).base;
       const h = Math.min(n, B.damage);
       B.damage -= h;
@@ -559,18 +629,31 @@
     // 傷害單位（回傳實際傷害）
     async damageUnit(u, n, src = {}) {
       if (!u || n <= 0 || !this.findUnit(u.uid)) return 0;
-      const sh = u.upgrades.findIndex((x) => x.card.n === 'Shield');
-      if (sh >= 0) {
-        u.upgrades.splice(sh, 1);
-        this.log('logShield', u.card.n);
-        return 0;
+      if (!src.unpreventable) {
+        const sh = u.upgrades.findIndex((x) => x.card.n === 'Shield');
+        if (sh >= 0) {
+          u.upgrades.splice(sh, 1);
+          this.log('logShield', u.card.n);
+          return 0;
+        }
+        // 取代效果：防止傷害（Queen Amidala、The Mandalorian…）
+        for (const { src: s, e } of this.sources(u.ctrl)) {
+          if (!e.preventDamage || !this.findUnit(s.uid)) continue;
+          let ok = false;
+          await this.safe(async () => (ok = await e.preventDamage(this, s, u, n, src)));
+          if (ok) return 0;
+        }
       }
       u.damage += n;
       this.log('logUnitDmg', u.card.n, n);
-      this.pendingDamaged = this.pendingDamaged || [];
-      this.pendingDamaged.push(u);
+      this.noteDamage(u, n, src);
       if (!src.combat) await this.checkState();
       return n;
+    }
+    noteDamage(u, n, src = {}) {
+      this.pendingDamaged = this.pendingDamaged || [];
+      this.pendingDamaged.push(u);
+      (this.pendingDmgEv = this.pendingDmgEv || []).push({ u, n, ctrl: u.ctrl, card: u.card, combat: !!src.combat });
     }
     // ---------- 分配傷害（間接傷害／自行分配） ----------
     // req: {prompt, total, upTo, targets:[{id, uid?, base?}], own:bool}
@@ -672,8 +755,7 @@
           if (!u) continue;
           u.damage += k;
           this.log('logUnitDmg', u.card.n, k);
-          this.pendingDamaged = this.pendingDamaged || [];
-          this.pendingDamaged.push(u);
+          this.noteDamage(u, k, { indirect: true });
           hit.push(u);
         }
       }
@@ -701,7 +783,10 @@
     heal(u, n) {
       const h = Math.min(n, u.damage);
       u.damage -= h;
-      if (h) this.log('logHeal', u.card.n, h);
+      if (h) {
+        this.log('logHeal', u.card.n, h);
+        (this.pendingHealed = this.pendingHealed || []).push(u);
+      }
       return h;
     }
     giveShield(u) {
@@ -727,7 +812,26 @@
       u.exhausted = true;
     }
     ready(u) {
+      if (u.lockedBy != null && this.findUnit(u.lockedBy)) return;
+      const e = this.eff(u);
+      if (e && e.cantReady && e.cantReady(this, u)) return;
       u.exhausted = false;
+    }
+    // 升級卡離場：回棄牌堆／代幣消失／領袖駕駛員回領袖區
+    dropUpgrade(up) {
+      if (up.leaderPilot) {
+        const L = this.P(up.owner).leader;
+        L.deployed = false;
+        L.exhausted = true;
+        L.epicUsed = true;
+        this.log('logDefeat', up.card.n);
+        return;
+      }
+      if (!/Token/.test(up.card.t)) this.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
+    }
+    removeUpgrade(host, up) {
+      host.upgrades = host.upgrades.filter((x) => x !== up);
+      this.dropUpgrade(up);
     }
     async defeat(u, why = {}) {
       if (!u || !this.findUnit(u.uid)) return;
@@ -741,7 +845,7 @@
       (this.G.defeated = this.G.defeated || []).push({ uid: u.uid, ctrl, card: u.card, phaseId: this.G.phaseId, unique: !!u.card.u });
       if (u.captured && u.captured.length) this.rescue(u);
       // 升級卡回各自擁有者棄牌堆，代幣消失
-      for (const up of u.upgrades) if (!/Token/.test(up.card.t)) this.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
+      for (const up of u.upgrades) this.dropUpgrade(up);
       if (u.isLeader) {
         const L = this.P(u.owner).leader;
         L.deployed = false;
@@ -787,6 +891,22 @@
         const e = this.eff(u);
         if (e && e.whenDamagedSurvive) await this.safe(() => e.whenDamagedSurvive(this, u));
       }
+      const dev = this.pendingDmgEv || [];
+      this.pendingDmgEv = [];
+      for (const ev of dev) await this.fire(ev.ctrl, 'onFriendlyDamaged', ev);
+      const hl = this.pendingHealed || [];
+      this.pendingHealed = [];
+      for (const u of hl) {
+        if (!this.findUnit(u.uid)) continue;
+        const e = this.eff(u);
+        if (e && e.whenHealed) await this.safe(() => e.whenHealed(this, u));
+      }
+      if (dev.length || hl.length) {
+        if ((this._csDepth || 0) < 4) {
+          this._csDepth = (this._csDepth || 0) + 1;
+          try { await this.checkState(); } finally { this._csDepth--; }
+        }
+      }
     }
     async safe(fn) {
       try {
@@ -830,7 +950,7 @@
       if (!this.findUnit(t.uid)) return;
       const P = this.P(t.ctrl);
       P.units = P.units.filter((x) => x !== t);
-      for (const up of t.upgrades) if (!/Token/.test(up.card.t)) this.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
+      for (const up of t.upgrades) this.dropUpgrade(up);
       captor.captured = captor.captured || [];
       captor.captured.push({ uid: t.uid, card: t.card, owner: t.owner });
       this.log('logCapture', captor.card.n, t.card.n);
@@ -847,7 +967,7 @@
       if (!this.findUnit(u.uid) || u.isLeader) return;
       const P = this.P(u.ctrl);
       P.units = P.units.filter((x) => x !== u);
-      for (const up of u.upgrades) if (!/Token/.test(up.card.t)) this.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
+      for (const up of u.upgrades) this.dropUpgrade(up);
       if (!/Token/.test(u.card.t)) this.P(u.owner).hand.push({ uid: u.uid, card: u.card, owner: u.owner });
       this.log('logBounce', u.card.n);
     }
@@ -901,6 +1021,11 @@
           if (a) acts.push(a);
         }
       }
+      for (const fp of G.oppFreePlay || []) {
+        if (fp.for !== p || fp.phaseId !== G.phaseId) continue;
+        const c = this.P(fp.owner).discard.find((x) => x.uid === fp.uid);
+        if (c && !this.cardBanned(p, c.card)) acts.push({ type: 'play', uid: c.uid, from: 'odiscard', cost: 0, label: SWU.t('actPlay', c.card.n, 0) });
+      }
       for (const u of P.units) if (this.canAttackWith(u)) acts.push({ type: 'attack', uid: u.uid, label: SWU.t('actAttack', u.card.n) });
       // 行動能力
       for (const u of P.units) {
@@ -929,7 +1054,11 @@
           le.actions.forEach((ab, i) => {
             if (ab.can(this, L)) acts.push({ type: 'leaderAbility', manual: !!ab.manual, i, label: SWU.t('actLeaderAbility', L.card.n, ab.label ? SWU.t(ab.label) : ab.text || '') });
           });
-        if (!L.epicUsed && P.resources.length >= (L.card.c || 99)) acts.push({ type: 'deploy', label: SWU.t('actDeploy', L.card.n) });
+        if (!L.epicUsed && P.resources.length >= (L.card.c || 99)) {
+          acts.push({ type: 'deploy', label: SWU.t('actDeploy', L.card.n) });
+          if (/as an upgrade/i.test(L.card.ep || '') && this.pilotHosts(p).length)
+            acts.push({ type: 'deploy', pilot: true, label: (SWU.lang === 'en' ? 'Deploy as Pilot upgrade: ' : '部署為駕駛員升級：') + (SWU.cardName ? SWU.cardName(L.card) : L.card.n) });
+        }
       }
       const be = SWU.EFFECTS.get(P.base.card, 'card');
       if (be && be.actions)
@@ -952,6 +1081,7 @@
       if (!this.canPay(p, Math.max(0, cost - reduce))) return null;
       if (card.t === 'Upgrade' && !/^Fortify/m.test(card.tx || '') && !this.upgradeTargets(p, card).length) return null;
       if (e && e.canPlay && !e.canPlay(this, p)) return null;
+      if (this.cardBanned(p, card)) return null;
       return { type: 'play', uid: c.uid, from, cost, label: SWU.t(from === 'smuggle' ? 'actSmuggle' : 'actPlay', card.n, cost) };
     }
     upgradeTargets(p, card) {
@@ -964,7 +1094,8 @@
       else if (/Attach to a (friendly |enemy )?Vehicle/i.test(tx)) units = units.filter((u) => this.hasTrait(u, 'VEHICLE'));
       if (/non-leader/i.test(tx.split('\n')[0])) units = units.filter((u) => !u.isLeader);
       if (/Attach to a (friendly )?Unique/i.test(tx)) units = units.filter((u) => u.card.u);
-      units = units.filter((u) => !/Token/.test(u.card.t) || true);
+      const ue = SWU.EFFECTS.get(card, 'card');
+      if (ue && ue.attachFilter) units = units.filter((u) => ue.attachFilter(this, p, u));
       return units;
     }
     async doAction(p, act) {
@@ -1011,7 +1142,7 @@
           break;
         }
         case 'deploy':
-          await this.deployLeader(p);
+          await this.deployLeader(p, { pilot: !!act.pilot });
           break;
         case 'manualAbility': {
           const u = this.findUnit(act.uid);
@@ -1033,8 +1164,11 @@
     async playCard(p, uid, from = 'hand', opts = {}) {
       const P = this.P(p);
       let c;
-      if (from === 'smuggle') {
+      if (from === 'smuggle' || from === 'plot') {
         c = P.resources.find((r) => r.uid === uid);
+      } else if (from === 'odiscard') {
+        for (const Q of this.G.players) c = c || Q.discard.find((x) => x.uid === uid);
+        if (c) opts = { ...opts, free: true };
       } else if (from === 'deck') {
         c = opts.inst;
       } else c = P.hand.find((x) => x.uid === uid);
@@ -1060,9 +1194,13 @@
       }
       if (!this.canPay(p, cost)) return;
       this.pay(p, cost);
-      if (from === 'smuggle') {
+      if (from === 'smuggle' || from === 'plot') {
         P.resources = P.resources.filter((r) => r !== c);
         if (P.deck.length) P.resources.push({ ...P.deck.shift(), exhausted: true });
+      } else if (from === 'odiscard') {
+        const Q = this.P(c.owner);
+        Q.discard = Q.discard.filter((x) => x !== c);
+        this.G.oppFreePlay = (this.G.oppFreePlay || []).filter((x) => x.uid !== c.uid);
       } else if (from === 'hand') P.hand = P.hand.filter((x) => x !== c);
       this.log('logPlay', P.name, card.n, cost);
       this.emit({ type: 'cast', p, card });
@@ -1070,9 +1208,9 @@
       this.G.playedThisPhase[p].push(card);
       await this.fire(1 - p, 'onEnemyPlay', card);
       const inst = { uid: c.uid, card, owner: c.owner };
-      const e = SWU.EFFECTS.get(card, 'card');
+      const e = this.cardBlank(c.owner, card) ? { implemented: true } : SWU.EFFECTS.get(card, 'card');
       if (card.t === 'Unit') {
-        const u = this.makeUnit(inst, p, { exhausted: true });
+        const u = this.makeUnit(inst, p, { exhausted: !(e && e.entersReady) });
         P.units.push(u);
         await this.enforceUnique(p, u);
         this.emit({ type: 'play', u });
@@ -1085,7 +1223,7 @@
         if (this.findUnit(u.uid) && this.has(u, 'Ambush')) await this.ambush(u);
         if (this.findUnit(u.uid) && this.has(u, 'Support')) await this.support(u);
       } else if (card.t === 'Event') {
-        P.discard.push(inst);
+        this.P(c.owner).discard.push(inst);
         if (e && e.event) await this.safe(() => e.event(this, p, inst));
         else await this.unimplementedText({ card }, card.tx || '', p);
         await this.fire(p, 'onFriendlyEvent', card);
@@ -1134,9 +1272,32 @@
       const e = this.eff(u);
       if (a) await this.attack(a, { onAttackExtra: e && e.supportGrant ? (atk) => e.supportGrant(this, u, atk) : null });
     }
-    async deployLeader(p) {
+    pilotHosts(p) {
+      return this.P(p).units.filter((u) => this.hasTrait(u, 'VEHICLE') && !u.upgrades.some((x) => x.leaderPilot || x.pilot || this.hasTrait(x.card, 'PILOT')));
+    }
+    async deployLeader(p, opts = {}) {
       const P = this.P(p);
       const L = P.leader;
+      const plots = P.resources.filter((r) => /^Plot\b/m.test(r.card.tx || ''));
+      if (opts.pilot) {
+        const hosts = this.pilotHosts(p);
+        const t = hosts.length && (await this.pickUnit(p, SWU.lang === 'en' ? 'Deploy ' + L.card.n + ' as a Pilot on' : '把 ' + (SWU.cardName ? SWU.cardName(L.card) : L.card.n) + ' 部署為哪個載具的駕駛員', (u) => hosts.includes(u), { ctx: { card: L.card.key } }));
+        if (t) {
+          L.deployed = true;
+          L.epicUsed = true;
+          const mod = (SWU.PILOT_MOD || {})[L.card.key] || [0, 0];
+          t.upgrades.push({ uid: L.uid, card: L.card, owner: p, leaderPilot: true, pilotMod: mod });
+          this.log('logDeploy', P.name, L.card.n);
+          this.log('logAttach', L.card.n, t.card.n);
+          this.emit({ type: 'play', u: t });
+          if (this.pauseFor && !this.replaying) await this.pauseFor('cast', p);
+          const e = SWU.EFFECTS.get(L.card, 'unit');
+          if (e && e.whenDeployedAsUpgrade) await this.safe(() => e.whenDeployedAsUpgrade(this, t, L));
+          await this.checkState();
+          await this.plotPlays(p, plots);
+          return;
+        }
+      }
       L.deployed = true;
       L.epicUsed = true;
       const u = this.makeUnit({ uid: L.uid, card: L.card, owner: p }, p, { exhausted: false, isLeader: true, arena: 'Ground' });
@@ -1148,6 +1309,23 @@
       if (e && e.whenDeployed) await this.safe(() => e.whenDeployed(this, u));
       else if (!e || !e.implemented) await this.unimplemented(u, 'When Deployed', p);
       if (this.has(u, 'Shielded')) this.giveShield(u);
+      await this.checkState();
+      await this.plotPlays(p, plots);
+    }
+    // Plot：部署領袖時，可從資源區打出有 Plot 的卡（付費），用牌庫頂替補
+    async plotPlays(p, plots) {
+      const P = this.P(p);
+      let left = plots.filter((r) => P.resources.includes(r));
+      while (left.length) {
+        const ok = left.filter((r) => this.canPay(p, this.costOf(p, r.card)) && (r.card.t !== 'Upgrade' || /^Fortify/m.test(r.card.tx || '') || this.upgradeTargets(p, r.card).length) && !this.cardBanned(p, r.card));
+        if (!ok.length) break;
+        const pick = await this.pickCards(p, SWU.lang === 'en' ? 'Plot: you may play a card from your resources (paying its cost)' : '密謀（Plot）：可以從資源區打出一張卡（照常付費，用牌庫頂替補）', ok, 0, 1, { plot: true });
+        if (!pick.length) break;
+        left = left.filter((r) => r !== pick[0]);
+        this.revealCards(p, [pick[0]], 'plot');
+        await this.playCard(p, pick[0].uid, 'plot');
+        if (this.G.winner != null) return;
+      }
     }
 
     // ---------- 攻擊 ----------
@@ -1187,10 +1365,11 @@
         const e = this.eff(attacker);
         if (e && e.onAttack) await this.safe(() => e.onAttack(this, attacker, atk));
         else if (!e || !e.implemented) await this.unimplemented(attacker, 'On Attack', p);
-        for (const up of attacker.upgrades) {
-          const ue = SWU.EFFECTS.get(up.card, 'card');
-          if (ue && ue.attachedOnAttack) await this.safe(() => ue.attachedOnAttack(this, up, attacker, atk));
-        }
+        if (!this.isBlank(attacker))
+          for (const up of attacker.upgrades) {
+            const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
+            if (ue && ue.attachedOnAttack) await this.safe(() => ue.attachedOnAttack(this, up, attacker, atk));
+          }
         if (opts.onAttackExtra) await this.safe(() => opts.onAttackExtra(atk));
         // 其他友方「當友方單位攻擊時」
         await this.fire(p, 'onFriendlyAttack', atk);
@@ -1230,18 +1409,27 @@
         }
         return;
       }
-      if (!d || !this.findUnit(d.uid)) return;
+      if (!d || !this.findUnit(d.uid)) {
+        // 防守單位在戰鬥傷害前離場：有 Overwhelm 時全部算溢出傷害
+        if (d && this.has(a, 'Overwhelm') && ap > 0 && this.findUnit(a.uid)) {
+          this.damageBase(1 - a.ctrl, ap, { combat: true, attacker: a });
+          atk.baseDamage = ap;
+        }
+        return;
+      }
       const dp = this.power(d, false);
       // Grit 在戰鬥中同時結算：先鎖定目前傷害
       a.gritDamage = a.damage;
       d.gritDamage = d.damage;
       const remainingD = this.remaining(d);
       const hadShield = d.upgrades.some((x) => x.card.n === 'Shield');
-      const dealtToD = await this.damageUnit(d, ap, { combat: true });
-      await this.damageUnit(a, dp, { combat: true });
+      const ph = this.G.phaseId;
+      const yA = a.yodaPhase === ph, yD = d.yodaPhase === ph;
+      const dealtToD = yA || yD ? 0 : await this.damageUnit(d, ap, { combat: true });
+      if (!(yA || yD)) await this.damageUnit(a, dp, { combat: true });
       delete a.gritDamage;
       delete d.gritDamage;
-      if (this.has(a, 'Overwhelm') && !hadShield) {
+      if (this.has(a, 'Overwhelm') && !hadShield && dealtToD > 0) {
         const excess = ap - Math.max(0, remainingD);
         if (excess > 0) {
           this.damageBase(1 - a.ctrl, excess, { combat: true, attacker: a });
@@ -1374,7 +1562,7 @@
       }
       for (const P of G.players) {
         for (const r of P.resources) r.exhausted = false;
-        for (const u of P.units) u.exhausted = false;
+        for (const u of P.units) this.ready(u);
         P.leader.exhausted = false;
       }
       this.emit({ type: 'update' });

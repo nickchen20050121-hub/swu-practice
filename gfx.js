@@ -834,8 +834,8 @@
     if (!f) return true;
     if (f.notSelf && ctx.self && u.uid === ctx.self.uid) return false;
     if (f.costEqRevealed && !(ctx.revealed && ctx.revealed[0] && (u.card.c || 0) === (ctx.revealed[0].card.c || 0))) return false;
-    if (f.nonLeader && u.isLeader) return false;
-    if (f.leader && !u.isLeader) return false;
+    if (f.nonLeader && g.isLeaderUnit(u)) return false;
+    if (f.leader && !g.isLeaderUnit(u)) return false;
     if (f.unique && !u.card.u) return false;
     if (f.nonUnique && u.card.u) return false;
     if (f.damaged && !(u.damage > 0)) return false;
@@ -1046,8 +1046,8 @@
     }
     let pool = g.allUnits().filter((u) => sideOk(t.side, u, p) && unitMatch(g, ctx, u, t.f));
     if (st.op === 'attack') pool = pool.filter((u) => u.ctrl === p && (st.exhaustedOk ? !u.cantAttack : g.canAttackWith(u)) && g.attackTargets(u, { noBase: st.noBase }).units.length + (st.noBase ? 0 : 1) > 0);
-    if (st.op === 'capture') pool = pool.filter((u) => u.ctrl !== p && !u.isLeader);
-    if (st.op === 'bounce') pool = pool.filter((u) => !u.isLeader);
+    if (st.op === 'capture') pool = pool.filter((u) => u.ctrl !== p && !g.isLeaderUnit(u));
+    if (st.op === 'bounce') pool = pool.filter((u) => !g.isLeaderUnit(u));
     if (t.sel === 'each') return pool;
     const bases = t.sel === 'chooseBase' ? [p, 1 - p] : t.base ? (t.base === 'enemy' ? [1 - p] : t.base === 'friendly' ? [p] : [p, 1 - p]) : [];
     if (t.sel === 'chooseBase') pool = [];
@@ -1203,6 +1203,7 @@
             if (st.f && st.f.side === 'friendly' && up.owner !== p) continue;
             if (st.f && st.f.side === 'enemy' && up.owner === p) continue;
             if (st.f && st.f.maxCost != null && (up.card.c || 0) > st.f.maxCost) continue;
+            if (up.leaderPilot && /can't be defeated by enemy card abilities/.test(up.card.bt || '') && up.owner !== p) continue;
             ups.push({ uid: up.uid, card: up.card, host: u, up });
           }
         if (!ups.length) return false;
@@ -1217,9 +1218,8 @@
         const pick = st.all ? pool : await g.pickCards(p, `${ctx.card.n}：${many > 1 ? L('擊敗任意數量的升級卡', 'defeat any number of upgrades') : L('擊敗一張升級卡', 'defeat an upgrade')}`, pool, st.optional || many > 1 ? 0 : 1, many);
         if (!pick.length) return false;
         for (const { host, up } of pick) {
-          host.upgrades = host.upgrades.filter((x) => x !== up);
-          if (!/Token/.test(up.card.t)) g.P(up.owner).discard.push({ uid: up.uid, card: up.card, owner: up.owner });
-          g.log('logDefeat', up.card.n);
+          g.removeUpgrade(host, up);
+          if (!up.leaderPilot) g.log('logDefeat', up.card.n);
         }
         await g.checkState();
         return true;
