@@ -1669,7 +1669,7 @@
       })(),
       G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null,
       h('button', { class: 'chip logbtn', onclick: () => document.body.classList.toggle('sideopen') }, '📜 ' + t('log')),
-      SWU.AI.settings.owner ? h('button', { class: 'chip reportbtn', title: SWU.lang === 'en' ? 'Report a problem' : '回報問題', onclick: openReport }, '🐞 ' + (SWU.lang === 'en' ? 'Report' : '回報')) : null,
+      h('button', { class: 'chip reportbtn', title: SWU.lang === 'en' ? 'Report a problem' : '回報問題', onclick: openReport }, '🐞 ' + (SWU.lang === 'en' ? 'Report' : '回報')),
       h(
         'button',
         {
@@ -3268,13 +3268,13 @@
     const save = () => SWU.AI.save();
     const zh = SWU.lang !== 'en';
     const nG = st.owner ? GameLog.list().length : 0;
-    const nR = st.owner ? Reports.list().length : 0;
-    const gamesField = st.owner
+    const nR = Reports.list().length;
+    const gamesField = st.owner || nR
       ? h(
           'div',
           { class: 'field' },
           h('label', {}, zh ? `對局紀錄（這台裝置存了 ${nG} 局、${nR} 個問題回報）` : `Game records (${nG} games, ${nR} reports on this device)`),
-          h('p', { class: 'small muted' }, zh ? '每局打完會自動存下雙方每一步。下載後把檔案傳給 Claude，就能分析你怎麼贏、把電腦調強。' : 'Every finished game is saved with both players\' moves. Download and send the file to Claude to analyse and tune the AI.'),
+          st.owner ? h('p', { class: 'small muted' }, zh ? '每局打完會自動存下雙方每一步。下載後把檔案傳給 Claude，就能分析你怎麼贏、把電腦調強。' : 'Every finished game is saved with both players\' moves. Download and send the file to Claude to analyse and tune the AI.') : h('p', { class: 'small muted' }, zh ? '對戰中按「回報」存下的問題，可以在這裡下載成檔案。' : 'Problems saved with the in-game Report button can be downloaded here.'),
           h(
             'div',
             { class: 'row' },
