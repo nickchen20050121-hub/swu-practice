@@ -262,7 +262,16 @@
       // 本階段所有某區域單位獲得的能力（Treacherous Minefield）
       for (const pg of this.G.phaseGrants || []) if (pg.phaseId === this.G.phaseId && pg.match(this, u) && SWU.GFX) base = SWU.GFX.mergeHooks(base, pg.hooks);
       // Improvised Identity：本次攻擊獲得被棄掉單位的能力
-      if (u.borrow && this.G.attack && this.G.attack.id === u.borrow.attackId && SWU.GFX) base = SWU.GFX.mergeHooks(base, SWU.EFFECTS.get(u.borrow.card, 'card'));
+      // Support：本次攻擊獲得支援單位的其他所有能力
+      if (u.borrow && this.borrowOn(u) && SWU.GFX) {
+        let be = SWU.EFFECTS.get(u.borrow.card, u.borrow.side || 'card');
+        if (be) {
+          be = { ...be };
+          delete be.whenPlayed;
+          delete be.supportGrant;
+          base = SWU.GFX.mergeHooks(base, be);
+        }
+      }
       // 其他友方單位給的能力（Bo-Katan's Gauntlet…）
       if (SWU.GFX && SWU.AURA_GRANT.size && u.ctrl != null && this.G.players[u.ctrl])
         for (const o of this.G.players[u.ctrl].units) {
@@ -291,6 +300,10 @@
         }
       }
       return out;
+    }
+    borrowOn(u) {
+      const b = u.borrow;
+      return !!(b && (b.pre || (this.G.attack && this.G.attack.id === b.attackId)));
     }
     upSide(up) {
       return up.leaderPilot ? 'unit' : up.pilot ? 'pilot' : 'card';
@@ -399,6 +412,7 @@
       };
       for (const k in s.kw) merge(k, s.kw[k]);
       for (const m of this.activeMods(u)) for (const k in m.kw || {}) merge(k, m.kw[k]);
+      if (u.borrow && this.borrowOn(u)) for (const k in u.borrow.card.kwp || {}) if (k !== 'Support') merge(k, u.borrow.card.kwp[k]);
       for (const k of u.lost || []) delete res[k];
       if (u.loseKwPhase && u.loseKwPhase.phaseId === this.G.phaseId) for (const k of u.loseKwPhase.kws) delete res[k];
       if (this.isBlank(u) || (u.noKwPhase != null && u.noKwPhase === this.G.phaseId)) {
@@ -1735,8 +1749,10 @@
       const others = this.P(u.ctrl).units.filter((x) => x !== u && this.canAttackWith(x));
       if (!others.length) return;
       const a = await this.pickUnit(u.ctrl, SWU.t('promptSupport', u.card.n), (x) => others.includes(x), { optional: true });
-      const e = this.eff(u);
-      if (a) await this.attack(a, { onAttackExtra: e && e.supportGrant ? (atk) => e.supportGrant(this, u, atk) : null });
+      if (a) {
+        this.log('logSupport', u.card.n, a.card.n);
+        await this.attack(a, { borrowCard: u.card, borrowSide: u.isLeader ? 'unit' : 'card', support: u.uid });
+      }
     }
     pilotHosts(p, card) {
       return this.P(p).units.filter((u) => {
@@ -1808,11 +1824,13 @@
       if (!attacker || !this.findUnit(attacker.uid)) return;
       const G = this.G;
       const p = attacker.ctrl;
+      const atkId = UID++;
+      if (opts.borrowCard) attacker.borrow = { card: opts.borrowCard, side: opts.borrowSide, attackId: atkId, pre: true };
       const tg = this.attackTargets(attacker, opts);
+      if (attacker.borrow && attacker.borrow.attackId === atkId) attacker.borrow.pre = false;
       if (!tg.units.length && !tg.base) return;
       this.exhaust(attacker);
-      const atk = { id: UID++, attacker, p, opts };
-      if (opts.borrowCard) attacker.borrow = { card: opts.borrowCard, attackId: atk.id };
+      const atk = { id: atkId, attacker, p, opts };
       const prev = G.attack;
       G.attack = atk;
       try {

@@ -141,28 +141,32 @@
     return best;
   };
   // ---------- 預想一步：用重播把每個候選行動實際跑一次，看結果局面 ----------
+  // 局面評分權重（2026-11-25 起用自我對戰調整：tools/tune_eval.js）
+  H.EW0 = { pw: 1.1, rm: 0.9, cost: 0.3, leader: 3, shield: 2, rdyMe: 0.35, rdyOp: 0.5, hp: 1.25, opLow: 1.0, myLow: 0.8, hand: 1.6, res: 1.2, ldReady: 1 };
+  H.EW = { ...H.EW0 };
   H.evalState = function (g, p) {
+    const W = H.EW;
     const G = g.G;
     if (G.winner != null) return G.winner === p ? 10000 : -10000;
     const me = g.P(p), op = g.P(1 - p);
     const hpLeft = (P) => (P.base.card.h || 30) - P.base.damage;
     const unitV = (u, mine) => {
       const pw = g.power(u), rm = g.remaining(u);
-      let v = pw * 1.1 + rm * 0.9 + (u.card.c || 0) * 0.3 + (u.isLeader ? 3 : 0);
-      if ((u.upgrades || []).some((x) => x.card.n === 'Shield')) v += 2;
-      if (G.phase === 'action' && !u.exhausted) v += pw * (mine ? 0.35 : 0.5); // 還能攻擊／還能反擊
+      let v = pw * W.pw + rm * W.rm + (u.card.c || 0) * W.cost + (u.isLeader ? W.leader : 0);
+      if ((u.upgrades || []).some((x) => x.card.n === 'Shield')) v += W.shield;
+      if (G.phase === 'action' && !u.exhausted) v += pw * (mine ? W.rdyMe : W.rdyOp); // 還能攻擊／還能反擊
       return v;
     };
     let s = 0;
     const myHp = hpLeft(me), opHp = hpLeft(op);
-    s += (myHp - opHp) * 1.25;
+    s += (myHp - opHp) * W.hp;
     // 對方快死了就更積極打基地
-    if (opHp <= 10) s += (10 - opHp) * 1.0;
-    if (myHp <= 10) s -= (10 - myHp) * 0.8;
+    if (opHp <= 10) s += (10 - opHp) * W.opLow;
+    if (myHp <= 10) s -= (10 - myHp) * W.myLow;
     for (const u of me.units) s += unitV(u, true);
     for (const u of op.units) s -= unitV(u, false);
-    s += (me.hand.length - op.hand.length) * 1.6;
-    s += (me.resources.length - op.resources.length) * 1.2;
+    s += (me.hand.length - op.hand.length) * W.hand;
+    s += (me.resources.length - op.resources.length) * W.res;
     // 行為風格：侵略＝更看重打對方基地；控制＝更看重場面、手牌和自己的血量
     const st = AI.settings.style;
     if (st === 'aggro') s += (30 - opHp) * 0.9 - (me.units.length ? 0 : 1);
@@ -171,7 +175,7 @@
       for (const u of op.units) s -= unitV(u, false) * 0.4;
       s += (me.hand.length - op.hand.length) * 0.8 + myHp * 0.3;
     }
-    if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += 1;
+    if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += W.ldReady;
     return s;
   };
   // ---------- 推測對手手牌：看對手領袖＋基地的屬性、已經出過的牌、卡價（當作環境熱門度） ----------

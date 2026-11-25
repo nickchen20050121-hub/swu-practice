@@ -180,7 +180,6 @@
     async onAttack(g, u) {
       await leiaVfd(g, u, u);
     },
-    supportGrant: async (g, src, atk) => leiaVfd(g, atk.attacker, src),
   });
   async function leiaVfd(g, attacker, src) {
     if (g.remaining(attacker) <= 1 && !attacker.upgrades.some((x) => x.card.n === 'Shield')) {
