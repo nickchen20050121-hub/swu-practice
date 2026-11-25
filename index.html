@@ -199,6 +199,8 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .unit.leaderunit .face{box-shadow:0 0 0 2px var(--cun)}
 .unit .face.wide{aspect-ratio:5/7;width:var(--cw)}
 .unit .face.wide img{object-position:50% 40%}
+body.sideopen .logbtn,body.sideopen .fulllog{background:var(--accent2)!important;border-color:var(--accent2)!important;color:#fff!important;box-shadow:0 0 0 3px rgba(80,180,255,.35),0 0 14px rgba(80,180,255,.6);animation:logGlow 1.6s ease-in-out infinite}
+@keyframes logGlow{50%{box-shadow:0 0 0 3px rgba(80,180,255,.15),0 0 22px rgba(80,180,255,.9)}}
 .intro{position:fixed;inset:0;z-index:200;background:radial-gradient(ellipse at center,rgba(20,30,60,.92),rgba(5,8,20,.97));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;cursor:pointer;animation:introIn .35s ease-out;padding:16px}
 .intro.out{opacity:0;transition:opacity .4s}
 .introside{display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -608,21 +610,21 @@ body:has(.promptbar.effpop.onboard) #board{padding-bottom:120px}
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611260340"></script>
-<script src="engine.js?v=202611260340"></script>
-<script src="zh_cards.js?v=202611260340"></script>
-<script src="i18n.js?v=202611260340"></script>
-<script src="effects.js?v=202611260340"></script>
-<script src="pilots.js?v=202611260340"></script>
-<script src="effects2.js?v=202611260340"></script>
-<script src="gfx.js?v=202611260340"></script>
-<script src="effects3.js?v=202611260340"></script>
-<script src="programs.js?v=202611260340"></script>
-<script src="meta_decks.js?v=202611260340"></script>
-<script src="deck.js?v=202611260340"></script>
-<script src="ai.js?v=202611260340"></script>
-<script src="sfx.js?v=202611260340"></script>
-<script src="ui.js?v=202611260340"></script>
+<script src="cards.js?v=202611260400"></script>
+<script src="engine.js?v=202611260400"></script>
+<script src="zh_cards.js?v=202611260400"></script>
+<script src="i18n.js?v=202611260400"></script>
+<script src="effects.js?v=202611260400"></script>
+<script src="pilots.js?v=202611260400"></script>
+<script src="effects2.js?v=202611260400"></script>
+<script src="gfx.js?v=202611260400"></script>
+<script src="effects3.js?v=202611260400"></script>
+<script src="programs.js?v=202611260400"></script>
+<script src="meta_decks.js?v=202611260400"></script>
+<script src="deck.js?v=202611260400"></script>
+<script src="ai.js?v=202611260400"></script>
+<script src="sfx.js?v=202611260400"></script>
+<script src="ui.js?v=202611260400"></script>
 <script>SWU.boot();</script>
 </body>
 </html>

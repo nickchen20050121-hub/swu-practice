@@ -1783,7 +1783,7 @@
         { class: 'feed-head' },
         h('b', {}, lang === 'zh' ? '最近動作' : 'Recent actions'),
         h('button', { class: 'chip small', title: lang === 'zh' ? '切換紀錄語言' : 'Switch log language', onclick: toggleLogLang }, lang === 'zh' ? '中 / EN' : 'EN / 中'),
-        h('button', { class: 'chip small', onclick: () => document.body.classList.toggle('sideopen') }, lang === 'zh' ? '全部紀錄' : 'Full log')
+        h('button', { class: 'chip small fulllog', onclick: () => document.body.classList.toggle('sideopen') }, lang === 'zh' ? '全部紀錄' : 'Full log')
       ),
       rows.length
         ? h('div', { class: 'feed-rows' }, ...rows.map((r) => h('div', { class: 'feed-r ' + (r.l.p === 0 ? 'by-me' : 'by-opp') + (r.i === newest ? ' latest' : ''), title: r.text }, h('span', { class: 'who' }, whoTag(r.l.p, lang)), h('span', {}, r.text))))

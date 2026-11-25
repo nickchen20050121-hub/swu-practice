@@ -302,6 +302,11 @@
     const base = H.evalState(g, p) - H.oppThreat(g, p) * 0.6;
     const cands = [];
     for (const a of acts) {
+      // 不出牌也是一個選項：直接搶先攻或 Pass，一樣推演對手接下來會怎麼做再比較
+      if ((a.type === 'pass' || a.type === 'initiative') && opt.simPass) {
+        cands.push({ a });
+        continue;
+      }
       if (a.type === 'pass' || a.type === 'initiative' || a.type === 'manualAbility' || a.type === 'manualLeader' || a.manual) continue;
       if (a.type === 'attack') {
         const u = g.findUnit(a.uid);
@@ -515,6 +520,7 @@
       }
       return x;
     };
+    if (opt.simPass && r.best && (r.best.type === 'pass' || r.best.type === 'initiative')) return done({ act: r.best });
     if (r.best && r.gain > 0.3) return done({ act: r.best, force: r.force });
     // 還有費用能下牌時，先把場面鋪好再搶先攻（資源留到回合結束就浪費了）
     if (opt.initFix && init && r.best && r.best.type === 'play' && r.gain > -1.5) return { act: r.best, force: r.force };
