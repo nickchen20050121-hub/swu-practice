@@ -145,7 +145,7 @@
   H.EW0 = { pw: 1.1, rm: 0.9, cost: 0.3, leader: 3, shield: 2, rdyMe: 0.35, rdyOp: 0.5, hp: 1.25, opLow: 1.0, myLow: 0.8, hand: 1.6, res: 1.2, ldReady: 1 };
   H.EW = { ...H.EW0 };
   H.evalState = function (g, p) {
-    const W = H.EW;
+    const W = (H.cfg && H.cfg.ew) || H.EW;
     const G = g.G;
     if (G.winner != null) return G.winner === p ? 10000 : -10000;
     const me = g.P(p), op = g.P(1 - p);
@@ -426,13 +426,33 @@
     if (!r) return { act: H.chooseAction(g, p, acts) };
     const init = acts.find((a) => a.type === 'initiative');
     const pass = acts.find((a) => a.type === 'pass');
-    if (r.best && r.gain > 0.3) return { act: r.best, force: r.force };
+    // 要 Pass／搶先攻之前，能免費打對方基地就先打（攻擊基地自己不受傷，橫置也不影響防守）
+    const baseAtk = () => {
+      let b = null, bp = 0;
+      for (const a of acts) {
+        if (a.type !== 'attack') continue;
+        const u = g.findUnit(a.uid);
+        if (!u || !g.attackTargets(u).base) continue;
+        const pw = g.power(u, true);
+        if (pw > bp) (bp = pw), (b = a);
+      }
+      return b && { act: b, force: 'base' + (1 - p), pw: bp };
+    };
+    const done = (x) => {
+      const t = x.act && x.act.type;
+      if (opt.baseFirst && (t === 'pass' || (t === 'initiative' && opt.baseFirst >= 2))) {
+        const b = baseAtk();
+        if (b && (t === 'pass' || b.pw >= (opt.baseFirstMin || 1))) return { act: b.act, force: b.force };
+      }
+      return x;
+    };
+    if (r.best && r.gain > 0.3) return done({ act: r.best, force: r.force });
     // 還有費用能下牌時，先把場面鋪好再搶先攻（資源留到回合結束就浪費了）
     if (opt.initFix && init && r.best && r.best.type === 'play' && r.gain > -1.5) return { act: r.best, force: r.force };
     // 沒什麼好做的：能搶先攻就搶（等於 Pass 但下回合先手）
-    if (init) return { act: init };
-    if (r.best && r.gain > -0.5 && !pass) return { act: r.best, force: r.force };
-    return { act: pass || r.best || acts[0] };
+    if (init) return done({ act: init });
+    if (r.best && r.gain > -0.5 && !pass) return done({ act: r.best, force: r.force });
+    return done({ act: pass || r.best || acts[0] });
   };
   const HARM = /damage|defeat|capture|-\d|傷害|擊敗|俘虜|攻擊誰|attack/i;
   H.choose = function (g, p, req) {
