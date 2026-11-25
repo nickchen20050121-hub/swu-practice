@@ -1211,6 +1211,7 @@
             if (st.f && st.f.side === 'enemy' && up.owner === p) continue;
             if (st.f && st.f.maxCost != null && (up.card.c || 0) > st.f.maxCost) continue;
             if (up.leaderPilot && /can't be defeated by enemy card abilities/.test(up.card.bt || '') && up.owner !== p) continue;
+            if (u.upgrades.length === 1 && up.owner === u.ctrl && u.ctrl !== p && (g.eff(u) || {}).protectOneUpgrade) continue;
             ups.push({ uid: up.uid, card: up.card, host: u, up });
           }
         if (!ups.length) return false;
@@ -1302,10 +1303,8 @@
         return d.length > 0;
       }
       case 'mill': {
-        const Q = g.P(who);
-        const cs = Q.deck.splice(0, st.n || 1);
-        Q.discard.push(...cs);
-        if (cs.length) g.log('logMill', Q.name, cs.length);
+        const cs = g.mill(who, st.n || 1);
+        ctx.prev = cs;
         return cs.length > 0;
       }
       case 'credit':
@@ -1340,8 +1339,7 @@
       case 'useForce':
         if (!P.force) return false;
         if (!(await ask(ctx, st, L('使用原力', 'use the Force')))) return false;
-        P.force = false;
-        return true;
+        return g.useForce(p);
       case 'pay':
         if (!g.canPay(p, st.n)) return false;
         if (!(await ask(ctx, st, L(`支付 ${st.n} 資源`, `pay ${st.n}`)))) return false;
@@ -1565,7 +1563,7 @@
           async run(g, src) {
             const p = src.ctrl != null ? src.ctrl : src.owner;
             if (cost.exhaust) src.exhausted = true;
-            if (cost.force) g.P(p).force = false;
+            if (cost.force) g.useForce(p);
             if (ab.epic) src.epicUsed = true;
             g.pay(p, cost.res || 0);
             await exec({ g, p, self: src });

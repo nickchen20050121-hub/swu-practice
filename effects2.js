@@ -479,7 +479,7 @@
         text: L('移到地面', 'move to ground'),
         can: (g, u) => u.arena === 'Space' && g.P(u.ctrl).force,
         async run(g, u) {
-          g.P(u.ctrl).force = false;
+          g.useForce(u.ctrl);
           u.arena = 'Ground';
           g.log('logManual', u.card.n, L('移到地面戰區', 'moves to the ground arena'));
           for (const x of g.P(u.ctrl).units.filter((x) => (x.card.a || []).includes('Heroism'))) g.buff(x, 2, 2, 'phase');
