@@ -801,9 +801,135 @@
       }),
     });
   }
+  // ---------- 回報問題：寫下說明，連同當下局面、最近紀錄和整局重播資料一起存起來 ----------
+  const RKEY = 'swu.reports.v1';
+  const Reports = {
+    list() {
+      try {
+        return JSON.parse(localStorage.getItem(RKEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    },
+    save(r) {
+      let all = Reports.list();
+      all.push(r);
+      while (all.length) {
+        try {
+          localStorage.setItem(RKEY, JSON.stringify(all.slice(-40)));
+          return true;
+        } catch (e) {
+          all = all.slice(1);
+        }
+      }
+      return false;
+    },
+    clear() {
+      try {
+        localStorage.removeItem(RKEY);
+      } catch (e) {}
+    },
+  };
+  SWU.Reports = Reports;
+  function snapUnit(g, x) {
+    return {
+      uid: x.uid,
+      card: x.card.key,
+      ctrl: x.ctrl,
+      power: g.power(x),
+      hp: g.hp(x),
+      damage: x.damage,
+      exhausted: !!x.exhausted,
+      arena: x.arena,
+      leader: !!x.isLeader,
+      kw: Object.keys(g.kw(x)),
+      upgrades: (x.upgrades || []).map((y) => y.card.key),
+    };
+  }
+  function snapState(g) {
+    const G = g.G;
+    return {
+      round: G.round,
+      phase: G.phase,
+      active: G.active,
+      initiative: G.initiative,
+      winner: G.winner,
+      players: G.players.map((P) => ({
+        name: P.idx,
+        base: { card: P.base.card.key, damage: P.base.damage, upgrades: (P.base.upgrades || []).map((y) => y.card.key) },
+        leader: { card: P.leader.card.key, deployed: !!P.leader.deployed, exhausted: !!P.leader.exhausted, epicUsed: !!P.leader.epicUsed },
+        units: P.units.map((x) => snapUnit(g, x)),
+        resources: P.resources.length,
+        readyRes: P.resources.filter((r) => !r.exhausted).length,
+        hand: P.idx === 0 ? P.hand.map((c) => c.card.key) : P.hand.length,
+        deck: P.deck.length,
+        discard: P.discard.map((c) => c.card.key),
+      })),
+    };
+  }
+  function openReport() {
+    const g = S.game;
+    const zh = SWU.lang !== 'en';
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    const box = h('textarea', { rows: '5', placeholder: zh ? '發生了什麼？例如：對方用路克能力打我有護盾的單位，護盾沒有擋掉' : 'What went wrong? e.g. a Shield did not prevent damage' });
+    const send = () => {
+      const note = box.value.trim();
+      let ver = '';
+      try {
+        const s = [...document.scripts].map((x) => x.src).find((x) => /engine\.js\?v=/.test(x));
+        ver = s ? s.split('v=')[1] : '';
+      } catch (e) {}
+      const deckOf = (d) => {
+        const cnt = {};
+        for (const c of d.cards || []) cnt[c.key] = (cnt[c.key] || 0) + 1;
+        return { leader: d.leader && d.leader.key, base: d.base && d.base.key, cards: cnt };
+      };
+      let r = null;
+      try {
+        r = {
+          date: new Date().toISOString(),
+          ver,
+          note,
+          level: SWU.AI.levelNum(),
+          state: g ? snapState(g) : null,
+          recent: g
+            ? g.G.log.slice(-40).map((l) => {
+                try {
+                  return SWU.fmtLog(l, 'en');
+                } catch (e) {
+                  return l.k;
+                }
+              })
+            : [],
+          decks: g ? g.decks.map(deckOf) : null,
+          seed: g && g.seed,
+          uid0: g && g.uid0,
+          rec: g && g.rec,
+        };
+      } catch (e) {
+        r = { date: new Date().toISOString(), ver, note, err: String(e) };
+      }
+      const ok = Reports.save(r);
+      closeModal();
+      toast(ok ? (zh ? '已記下這個問題 ✓（設定頁可下載）' : 'Report saved ✓ (download in Settings)') : zh ? '存不下來，空間不夠' : 'Could not save (storage full)');
+    };
+    m.append(
+      h(
+        'div',
+        { class: 'dialog' },
+        h('h3', {}, zh ? '回報問題' : 'Report a problem'),
+        h('p', { class: 'small muted' }, zh ? '會連同現在的局面和這局每一步一起存在這台裝置，之後在設定頁下載對局紀錄就會一起帶走。' : 'Saved on this device together with the current board and every move of this game. It is included when you download records in Settings.'),
+        box,
+        h('div', { class: 'row end' }, h('button', { class: 'ghost', onclick: closeModal }, t('cancel')), h('button', { class: 'primary', onclick: send }, zh ? '送出' : 'Save'))
+      )
+    );
+    setTimeout(() => box.focus(), 50);
+  }
   function downloadGames() {
     const all = GameLog.list();
-    const blob = new Blob([JSON.stringify({ games: all })], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list() })], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'swu-games-' + new Date().toISOString().slice(0, 10) + '.json';
@@ -1543,6 +1669,7 @@
       })(),
       G.winner == null ? h('span', { class: 'turn ' + (mine ? 'me' : 'them') }, mine ? t('yourTurn') : S.thinking || G.active === 1 ? t('yunaTurn') : '…') : null,
       h('button', { class: 'chip logbtn', onclick: () => document.body.classList.toggle('sideopen') }, '📜 ' + t('log')),
+      SWU.AI.settings.owner ? h('button', { class: 'chip reportbtn', title: SWU.lang === 'en' ? 'Report a problem' : '回報問題', onclick: openReport }, '🐞 ' + (SWU.lang === 'en' ? 'Report' : '回報')) : null,
       h(
         'button',
         {
@@ -3119,24 +3246,26 @@
     const save = () => SWU.AI.save();
     const zh = SWU.lang !== 'en';
     const nG = st.owner ? GameLog.list().length : 0;
+    const nR = st.owner ? Reports.list().length : 0;
     const gamesField = st.owner
       ? h(
           'div',
           { class: 'field' },
-          h('label', {}, zh ? `對局紀錄（這台裝置存了 ${nG} 局）` : `Game records (${nG} saved on this device)`),
+          h('label', {}, zh ? `對局紀錄（這台裝置存了 ${nG} 局、${nR} 個問題回報）` : `Game records (${nG} games, ${nR} reports on this device)`),
           h('p', { class: 'small muted' }, zh ? '每局打完會自動存下雙方每一步。下載後把檔案傳給 Claude，就能分析你怎麼贏、把電腦調強。' : 'Every finished game is saved with both players\' moves. Download and send the file to Claude to analyse and tune the AI.'),
           h(
             'div',
             { class: 'row' },
-            h('button', { class: 'primary', disabled: !nG, onclick: downloadGames }, zh ? '下載對局紀錄' : 'Download records'),
+            h('button', { class: 'primary', disabled: !nG && !nR, onclick: downloadGames }, zh ? '下載對局紀錄' : 'Download records'),
             h(
               'button',
               {
                 class: 'ghost',
-                disabled: !nG,
+                disabled: !nG && !nR,
                 onclick: () => {
-                  if (!confirm(zh ? '確定要清除這台裝置上的對局紀錄嗎？' : 'Clear all game records on this device?')) return;
+                  if (!confirm(zh ? '確定要清除這台裝置上的對局紀錄和問題回報嗎？' : 'Clear all game records and reports on this device?')) return;
                   GameLog.clear();
+                  Reports.clear();
                   render();
                 },
               },
