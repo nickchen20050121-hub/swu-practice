@@ -366,7 +366,7 @@
     4: { smart: { rollout: 4, top: 6 } },
     5: { smart: { rollout: 14, top: 12, risk: 0.3 } },
     6: { smart: { rollout: 20, top: 14, risk: 0.3, samples: 2, h2: true, tA: 5000, tB: 10000 } },
-    7: { smart: { rollout: 30, top: 16, risk: 0.35, samples: 3, h2: true, tA: 7000, tB: 15000 } },
+    7: { smart: { rollout: 28, top: 16, risk: 0.3, samples: 2, h2: true, tA: 6000, tB: 14000 } },
   };
   H.randomAct = function (g, p, acts) {
     const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');
