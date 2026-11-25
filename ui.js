@@ -2827,8 +2827,12 @@
             }, 250);
           },
         }),
-        sel('fsort', f.sort, (v) => (f.sort = v), ['number', 'cost', 'aspect', 'type', 'name', 'power', 'hp', 'price'].map((x) => [x, t('sortBy') + '：' + t('sort_' + x)])),
-        h('button', { class: 'ghost small', id: 'fdir', title: f.dir > 0 ? '↑' : '↓', onclick: () => ((f.dir = -f.dir), rerender()) }, f.dir > 0 ? '↑' : '↓'),
+        h(
+          'span',
+          { class: 'sortgrp' },
+          sel('fsort', f.sort, (v) => (f.sort = v), ['number', 'cost', 'aspect', 'type', 'name', 'power', 'hp', 'price'].map((x) => [x, t('sortBy') + '：' + t('sort_' + x)])),
+          h('button', { id: 'fdir', title: SWU.lang === 'en' ? 'Sort direction' : '排序方向', onclick: () => ((f.dir = -f.dir), rerender()) }, f.dir > 0 ? (SWU.lang === 'en' ? '↑ Asc' : '↑ 小到大') : SWU.lang === 'en' ? '↓ Desc' : '↓ 大到小')
+        ),
         h('span', { class: 'modesel small' }, h('span', { class: 'muted small' }, t('addTo')), ...['main', 'side'].map((z) => h('button', { class: (f.addZone || 'main') === z ? 'on' : 'ghost', onclick: () => ((f.addZone = z), renderBuilderBody()) }, t(z)))),
         h('label', { class: 'chk' }, h('input', { type: 'checkbox', id: 'fgroup', checked: f.group, onchange: (e) => ((f.group = e.target.checked), rerender()) }), t('groupBy'))
       ),
