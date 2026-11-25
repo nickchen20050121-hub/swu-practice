@@ -147,7 +147,7 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .dimgbtn{white-space:nowrap}
 .dv-meta{display:grid;gap:4px}
 .dv-meta i{color:var(--muted)}
-.dv-list{columns:2 280px;column-gap:24px;max-height:52vh;overflow:auto;border-top:1px solid var(--line);padding-top:8px}
+.dv-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));column-gap:24px;align-items:start;max-height:52vh;overflow:auto;border-top:1px solid var(--line);padding-top:8px}
 .dl-sec{break-inside:avoid;margin-bottom:10px}
 .dl-sec h4{margin:4px 0}
 .dl-sec ul{list-style:none;margin:0;padding:0}
@@ -159,7 +159,7 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .dl-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dv-btns{flex-wrap:wrap;justify-content:flex-end}
 .dv-btns button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-@media (max-width:640px){.dv-list{columns:1;max-height:48vh;overflow-x:hidden}.dl-n{white-space:normal}}
+@media (max-width:640px){.dv-list{grid-template-columns:1fr;max-height:48vh;overflow-x:hidden}.dl-n{white-space:normal}}
 @media (max-width:900px){.qm{grid-template-columns:1fr}.qm-right{position:static}}
 @media (max-width:640px){.modecards{grid-template-columns:1fr;max-width:360px}.modecard{aspect-ratio:auto}.mc-art{height:150px;flex:none}.dgrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}.vs{font-size:20px}}
 .ai-status{margin:0;padding:8px 12px;border-radius:8px;background:var(--panel2);border:1px solid var(--line)}
@@ -610,21 +610,21 @@ body:has(.promptbar.effpop.onboard) #board{padding-bottom:120px}
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611260400"></script>
-<script src="engine.js?v=202611260400"></script>
-<script src="zh_cards.js?v=202611260400"></script>
-<script src="i18n.js?v=202611260400"></script>
-<script src="effects.js?v=202611260400"></script>
-<script src="pilots.js?v=202611260400"></script>
-<script src="effects2.js?v=202611260400"></script>
-<script src="gfx.js?v=202611260400"></script>
-<script src="effects3.js?v=202611260400"></script>
-<script src="programs.js?v=202611260400"></script>
-<script src="meta_decks.js?v=202611260400"></script>
-<script src="deck.js?v=202611260400"></script>
-<script src="ai.js?v=202611260400"></script>
-<script src="sfx.js?v=202611260400"></script>
-<script src="ui.js?v=202611260400"></script>
+<script src="cards.js?v=202611260420"></script>
+<script src="engine.js?v=202611260420"></script>
+<script src="zh_cards.js?v=202611260420"></script>
+<script src="i18n.js?v=202611260420"></script>
+<script src="effects.js?v=202611260420"></script>
+<script src="pilots.js?v=202611260420"></script>
+<script src="effects2.js?v=202611260420"></script>
+<script src="gfx.js?v=202611260420"></script>
+<script src="effects3.js?v=202611260420"></script>
+<script src="programs.js?v=202611260420"></script>
+<script src="meta_decks.js?v=202611260420"></script>
+<script src="deck.js?v=202611260420"></script>
+<script src="ai.js?v=202611260420"></script>
+<script src="sfx.js?v=202611260420"></script>
+<script src="ui.js?v=202611260420"></script>
 <script>SWU.boot();</script>
 </body>
 </html>
