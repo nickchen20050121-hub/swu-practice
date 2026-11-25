@@ -2677,7 +2677,8 @@
   }
   function renderBuilder(v) {
     S.decks = SWU.Deck.loadAll();
-    if (!S.edit) editDeck(S.decks[0] || SWU.Deck.blank(t('newDeck')));
+    // 進組牌器預設開一副新的空牌組；要改舊牌組就從左邊「我的牌組」點進去（避免加到舊牌組上）
+    if (!S.edit) editDeck(SWU.Deck.blank(t('newDeck')));
     v.append(h('div', { class: 'builder', id: 'builder' }));
     renderBuilderBody();
   }
@@ -2689,8 +2690,13 @@
     // 手機：整頁捲動，重畫時先撐住高度、畫完把捲動位置放回去，加減卡時畫面不會跳
     const winY = window.scrollY;
     root.style.minHeight = root.offsetHeight + 'px';
-    root.innerHTML = '';
-    root.append(deckListPanel(), searchPanel(), deckPanel());
+    const next = [deckListPanel(), searchPanel(), deckPanel()];
+    // 原地換掉三個區塊（不先清空），頁面高度不會瞬間變 0，手機就不會把畫面拉回上面
+    if (root.children.length === next.length) [...root.children].forEach((el, i) => el.replaceWith(next[i]));
+    else {
+      root.innerHTML = '';
+      root.append(...next);
+    }
     if ($('.results')) $('.results').scrollTop = keepScroll;
     root.style.minHeight = '';
     if (Math.abs(window.scrollY - winY) > 1) window.scrollTo(0, winY);
