@@ -8,13 +8,19 @@
 
   // ---------- 設定 ----------
   const SKEY = 'swu.settings.v1';
-  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true, level: 8, style: 'default' };
+  AI.settings = { apiKey: '', model: 'claude-opus-5-5', effort: 'low', mode: 'main', delay: 700, images: true, level: 7, lvVer: 2, style: 'default' };
   try {
     Object.assign(AI.settings, JSON.parse(localStorage.getItem(SKEY) || '{}'));
   } catch (e) {}
   if (AI.settings.level === 'full') AI.settings.level = 8;
   else if (AI.settings.level === 'basic') AI.settings.level = 4;
-  AI.levelNum = () => Math.min(8, Math.max(1, +AI.settings.level || 8));
+  // 舊的 1～8 級 → 新的 1～7 級（舊 8 級直接升到新 7 級；舊 1～4 都變新 1 級）
+  if (AI.settings.lvVer !== 2) {
+    const o = +AI.settings.level || 8;
+    AI.settings.level = o >= 8 ? 7 : Math.max(1, o - 3);
+    AI.settings.lvVer = 2;
+  }
+  AI.levelNum = () => Math.min(7, Math.max(1, +AI.settings.level || 7));
   AI.save = () => {
     try {
       localStorage.setItem(SKEY, JSON.stringify(AI.settings));
@@ -297,7 +303,7 @@
     try {
       const scored = [];
       for (const c of cands) {
-        if (Date.now() - t0 > (opt.samples > 1 ? 4000 : 2500)) break;
+        if (Date.now() - t0 > (opt.tA || (opt.samples > 1 ? 4000 : 2500))) break;
         let sc = 0;
         const ns = opt.samples || 1;
         for (let k = 0; k < ns; k++) sc += await sim(c, false);
@@ -313,7 +319,7 @@
         scored.sort((x, y) => y.sc - x.sc);
         let bd = -Infinity, bc = null;
         for (const x of scored.slice(0, opt.top || 5)) {
-          if (Date.now() - t0 > 6000) break;
+          if (Date.now() - t0 > (opt.tB || 6000)) break;
           const rs = [];
           for (let k = 0; k < opt.rollout; k++) rs.push(await sim(x.c, 'roll'));
           const mean = rs.reduce((a, b) => a + b, 0) / rs.length;
@@ -350,18 +356,17 @@
     return { best: best && best.a, force: best && best.force, gain: bestS - base, base };
   };
   // 預想版行動選擇：沒有好處的行動就搶先攻／Pass
-  // ---------- 難度 1～8 ----------
-  // 1～3：規則型，但有一定機率亂出、亂選目標；4：規則型；5：預想一步；6～8：預想一步後把前幾名推演到回合結束（越高推演越多）
+  // ---------- 難度 1～7（2026-11-25 柏偉：8 級還是太簡單 → 改 7 級整體往上）----------
+  // 1：規則型；2：預想一步；3～4：前幾名推演到回合結束；5：原本的最強（前 12 名各推演 14 次）；
+  // 6～7：推演看到下一回合（h2）、每個候選多抽幾種對手手牌、想更久
   H.LEVELS = {
-    1: { rand: 1 },
-    2: { rand: 0.6 },
-    3: { rand: 0.3 },
-    4: {},
-    5: { smart: {} },
-    6: { smart: { rollout: 2, top: 4 } },
-    7: { smart: { rollout: 4, top: 6 } },
-    // 2026-11-24 加強：前 12 名各推演 14 次（對柏偉的路克，比賽牌組勝率約 21%→40%）
-    8: { smart: { rollout: 14, top: 12, risk: 0.3 } },
+    1: {},
+    2: { smart: {} },
+    3: { smart: { rollout: 2, top: 4 } },
+    4: { smart: { rollout: 4, top: 6 } },
+    5: { smart: { rollout: 14, top: 12, risk: 0.3 } },
+    6: { smart: { rollout: 20, top: 14, risk: 0.3, samples: 2, h2: true, tA: 5000, tB: 10000 } },
+    7: { smart: { rollout: 30, top: 16, risk: 0.35, samples: 3, h2: true, tA: 7000, tB: 15000 } },
   };
   H.randomAct = function (g, p, acts) {
     const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');
@@ -370,13 +375,13 @@
     return pool[Math.floor(Math.random() * pool.length)];
   };
   H.levelAction = async function (g, p, acts, lv) {
-    const L = H.LEVELS[lv] || H.LEVELS[8];
+    const L = H.LEVELS[lv] || H.LEVELS[7];
     if (L.smart) return H.chooseActionSmart(g, p, acts, L.smart);
     if (L.rand && Math.random() < L.rand) return { act: H.randomAct(g, p, acts) };
     return { act: H.chooseAction(g, p, acts) };
   };
   H.levelChoose = function (g, p, req, lv) {
-    const L = H.LEVELS[lv] || H.LEVELS[8];
+    const L = H.LEVELS[lv] || H.LEVELS[7];
     if (L.rand && req.options.length > 1 && Math.random() < L.rand) {
       const ctx = req.ctx || {};
       if (req.kind === 'target') return [req.options[Math.floor(Math.random() * req.options.length)].id];
