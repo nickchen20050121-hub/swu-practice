@@ -51,8 +51,8 @@
     for (const [n, s] of score) if (s > bs) ((bs = s), (best = n));
     return best || (V.hand[0] && V.hand[0].card.n) || 'Nothing';
   }
-  async function chooseAspect(g, p, src) {
-    const i = await g.pickOption(p, L(`${N(src)}：選擇一個面向`, `${src.n}: choose an aspect`), ASPECTS.map(aspName));
+  async function chooseAspect(g, p, src, aiPick) {
+    const i = await g.pickOption(p, L(`${N(src)}：選擇一個面向`, `${src.n}: choose an aspect`), ASPECTS.map(aspName), { ctx: { aiPick } });
     return ASPECTS[i < 0 ? 0 : i];
   }
   async function lookHand(g, p, victim, src) {
@@ -189,7 +189,8 @@
     ],
   });
   async function landoSabacc(g, p, card) {
-    const asp = await chooseAspect(g, p, card);
+    const cnt = ASPECTS.map((a) => g.P(p).deck.filter((c) => (c.card.a || []).includes(a)).length);
+    const asp = await chooseAspect(g, p, card, cnt.indexOf(Math.max(...cnt)));
     const i = await g.pickOption(p, L('從哪個牌庫棄掉頂牌？', "Discard the top card of which deck?"), [L('自己的牌庫', 'your deck'), L('對手的牌庫', "opponent's deck")]);
     const Q = g.P(i === 1 ? 1 - p : p);
     if (!Q.deck.length) return;
@@ -283,7 +284,7 @@
     if (!owners.length) return;
     let q = owners[0];
     if (owners.length > 1) {
-      const i = await g.pickOption(p, L('亞維爾：要擊敗誰的 Credit？（可略過）', "Arvel: defeat whose Credit token? (optional)"), [L('自己的', 'yours'), L('對手的', "opponent's")], { optional: true });
+      const i = await g.pickOption(p, L('亞維爾：要擊敗誰的 Credit？（可略過）', "Arvel: defeat whose Credit token? (optional)"), [L('自己的', 'yours'), L('對手的', "opponent's")], { optional: true, ctx: { aiPick: 1 } });
       if (i < 0) return;
       q = owners[i];
     } else if (!(await g.yesno(p, L(`亞維爾：擊敗一個${q === p ? '自己' : '對手'}的 Credit 代幣，造成 1 點傷害？`, `Arvel: defeat a Credit token (${q === p ? 'yours' : "opponent's"}) to deal 1 damage?`), { uid: u.uid }))) return;
@@ -296,7 +297,7 @@
     async onAttack(g, u) {
       const P = g.P(u.ctrl);
       if (!P.credits) return;
-      const i = await g.pickOption(u.ctrl, L('凱德・班恩：要擊敗幾個友方 Credit 代幣？（每個給 1 經驗）', 'Cad Bane: defeat how many friendly Credit tokens? (1 Experience each)'), Array.from({ length: P.credits + 1 }, (_, k) => String(k)));
+      const i = await g.pickOption(u.ctrl, L('凱德・班恩：要擊敗幾個友方 Credit 代幣？（每個給 1 經驗）', 'Cad Bane: defeat how many friendly Credit tokens? (1 Experience each)'), Array.from({ length: P.credits + 1 }, (_, k) => String(k)), { ctx: { aiPick: P.credits } });
       const n = Math.max(0, i);
       if (!n) return;
       P.credits -= n;
@@ -465,7 +466,8 @@
     },
   });
   async function lawbringer(g, u) {
-    const asp = await chooseAspect(g, u.ctrl, u.card);
+    const val = ASPECTS.map((a) => g.P(1 - u.ctrl).units.filter((x) => (x.card.a || []).includes(a)).reduce((s, x) => s + (g.remaining(x) <= 2 ? 6 + (x.card.c || 0) : 1 + g.power(x) * 0.3), 0));
+    const asp = await chooseAspect(g, u.ctrl, u.card, val.indexOf(Math.max(...val)));
     for (const x of g.P(1 - u.ctrl).units.filter((x) => (x.card.a || []).includes(asp))) g.buff(x, -2, -2, 'phase');
     await g.checkState();
   }
@@ -543,7 +545,10 @@
       if (cands.length) opts.push(L('從棄牌堆打出本階段被擊敗的單位（減 5 費）', 'play a unit defeated this phase from your discard (costs 5 less)'));
       if (fresh.length) opts.push(L('本階段進場的單位 -5/-5', 'a unit that entered play this phase gets -5/-5'));
       if (!opts.length) return;
-      const i = await g.pickOption(p, L('歐比王：可以選一項', 'Obi-Wan: you may choose one'), opts, { optional: true });
+      const bestDead = cands.reduce((m, c) => Math.max(m, c.card.c || 0), 0);
+      const bestFresh = fresh.filter((x) => x.ctrl !== p).reduce((m, x) => Math.max(m, x.card.c || 0), -1);
+      const aiPick = cands.length && (bestDead >= bestFresh || !fresh.some((x) => x.ctrl !== p)) ? 0 : opts.length - 1;
+      const i = await g.pickOption(p, L('歐比王：可以選一項', 'Obi-Wan: you may choose one'), opts, { optional: true, ctx: { aiPick } });
       if (i < 0) return;
       if (opts[i] === opts[0] && cands.length) {
         const pick = await g.pickCards(p, L('選擇要打出的單位', 'choose a unit to play'), cands, 0, 1);

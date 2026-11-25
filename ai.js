@@ -96,7 +96,7 @@
       if (!best || s > best.s) best = { s, target: d };
     }
     if (t.base) {
-      const s = ap * 1.1 + (g.P(1 - u.ctrl).base.damage > 20 ? 6 : 0);
+      const s = ap * ((H.cfg && H.cfg.baseW) || 1.1) + (g.P(1 - u.ctrl).base.damage > 20 ? 6 : 0);
       if (!best || s >= best.s) best = { s, base: true };
     }
     return best;
@@ -417,8 +417,13 @@
     const ctx = req.ctx || {};
     if (req.kind === 'yesno') {
       if (ctx.mulligan) {
-        const cheap = g.P(p).hand.filter((c) => (c.card.c || 0) <= 3 && c.card.t === 'Unit').length;
-        return [cheap >= 2 ? 'no' : 'yes'];
+        const hand = g.P(p).hand;
+        const cheap = hand.filter((c) => (c.card.c || 0) <= 3 && c.card.t === 'Unit').length;
+        if (H.cfg && H.cfg.oldMull) return [cheap >= 2 ? 'no' : 'yes'];
+        // 留牌：前兩回合有東西下（≤3 費的牌至少 2 張、其中有單位），且手上不全是 6 費以上的大牌
+        const early = hand.filter((c) => (c.card.c || 0) <= 3).length;
+        const big = hand.filter((c) => (c.card.c || 0) >= 6).length;
+        return [early >= 2 && cheap >= 1 && big <= 3 ? 'no' : 'yes'];
       }
       if (ctx.uid) {
         const u = g.findUnit(ctx.uid);
@@ -432,8 +437,32 @@
       const min = req.min == null ? 1 : req.min;
       if (ctx.setupResource || ctx.regroupResource) {
         if (ctx.regroupResource && g.P(p).resources.length >= 8) return [];
-        // 放最貴、最不急著用的牌
-        cards.sort((a, b) => (b.c?.card.c || 0) - (a.c?.card.c || 0));
+        if (H.cfg && H.cfg.oldChoose) {
+          cards.sort((a, b) => (b.c?.card.c || 0) - (a.c?.card.c || 0));
+          return cards.slice(0, Math.max(min, ctx.regroupResource ? 1 : max)).map((x) => x.o.id);
+        }
+        // 放「最不會用到」的牌：近期打得出來的留著，離現在費用太遠的、重複的獨特卡先放
+        const P = g.P(p);
+        const R = P.resources.length + (ctx.setupResource ? 2 : 1);
+        const L = P.leader;
+        const needLeader = !L.deployed && !L.epicUsed && (L.card.c || 0) > R;
+        const names = {};
+        for (const x of cards) if (x.c) names[x.c.card.n] = (names[x.c.card.n] || 0) + 1;
+        const onBoard = new Set(P.units.map((u) => u.card.n));
+        const keep = (x) => {
+          if (!x.c) return 0;
+          const c = x.c.card, cost = c.c || 0;
+          let v;
+          if (cost <= R) v = 10 + cost * 0.8;
+          else if (cost <= R + 2) v = 7 + cost * 0.4;
+          else v = 4 - (cost - R) * 0.6;
+          if (c.u && (names[c.n] > 1 || onBoard.has(c.n))) v -= 6;
+          if (c.t === 'Upgrade') v -= 1;
+          if (c.t === 'Event' && /^Defeat|damage/i.test(c.tx || '') && !g.opp(p).units.length) v -= 1;
+          if (needLeader) v -= 0.5;
+          return v;
+        };
+        cards.sort((a, b) => keep(a) - keep(b));
         return cards.slice(0, Math.max(min, ctx.regroupResource ? 1 : max)).map((x) => x.o.id);
       }
       if (/discard|棄/i.test(req.prompt)) {
@@ -443,7 +472,7 @@
       cards.sort((a, b) => (b.c?.card.c || 0) - (a.c?.card.c || 0));
       return cards.slice(0, Math.max(min, Math.min(max, 1))).map((x) => x.o.id);
     }
-    if (req.kind === 'option') return [0];
+    if (req.kind === 'option') return [ctx.aiPick != null && opts.some((o) => o.id === ctx.aiPick) ? ctx.aiPick : 0];
     // 單位／目標
     const harm = HARM.test(req.prompt);
     let bestO = null;
