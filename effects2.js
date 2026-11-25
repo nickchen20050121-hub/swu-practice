@@ -94,7 +94,7 @@
   const allBases = [0, 1];
 
   // ===================== 領袖駕駛員加成（官方升級數值） =====================
-  SWU.PILOT_MOD = {
+  SWU.PILOT_MOD = window.SWU_PILOT || {
     'Luke Skywalker | Hero of Yavin': [4, 5],
     'Darth Vader | Victor Squadron Leader': [5, 5],
   };

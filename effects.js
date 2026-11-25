@@ -14,8 +14,16 @@
     get(card, side = 'card') {
       if (!card) return null;
       const h = REG.get((card.key || SWU.cardKey(card)).toLowerCase() + '#' + side);
-      if (h && !h.auto) return h;
-      const gx = SWU.GFX && SWU.GFX.impl(card, side);
+      if (h && !h.auto && !h.extend) return h;
+      const gx = SWU.GFX && (h && h.extend && SWU.GFX.implClean ? SWU.GFX.implClean(card, side) : SWU.GFX.impl(card, side));
+      // extend：只補自動判讀略過的那幾行，其他能力沿用自動判讀
+      if (h && h.extend) {
+        if (!h._merged || h._mergedFrom !== gx) {
+          h._merged = gx && SWU.GFX.mergeHooks ? SWU.GFX.mergeHooks(gx, h) : h;
+          h._mergedFrom = gx;
+        }
+        return h._merged;
+      }
       return gx || h || null;
     },
     hasHand(card, side) {

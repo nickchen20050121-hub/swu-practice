@@ -692,6 +692,8 @@
   // ================= 卡片 → 效果程式 =================
   const TRIGGERS = [
     [/^when played$/, 'whenPlayed'],
+    [/^when played as an upgrade$/, 'whenPlayed'],
+    [/^when this upgrade attaches to a unit$/, 'whenPlayed'],
     [/^on attack$/, 'onAttack'],
     [/^when defeated$/, 'whenDefeated'],
     [/^when deployed$/, 'whenDeployed'],
@@ -731,7 +733,7 @@
   }
   GFX.compileRegex = function (card, side) {
     const isLeaderFront = card.t === 'Leader' && side === 'leader';
-    const text = norm(side === 'unit' && card.t === 'Leader' ? card.bt || '' : card.tx || '');
+    const text = norm(SWU.sideText ? SWU.sideText(card, side) : side === 'unit' && card.t === 'Leader' ? card.bt || '' : card.tx || '');
     const out = { v: 1, src: 'regex', abilities: [], failed: [] };
     if (card.t === 'Event') {
       let lines = text
@@ -1071,11 +1073,14 @@
   async function runSteps(ctx, steps) {
     const g0 = ctx.g;
     const prevSrc = g0.srcCard;
+    const prevP = g0.srcP;
     if (ctx.card) g0.srcCard = ctx.card;
+    if (ctx.p != null) g0.srcP = ctx.p;
     try {
       return await runSteps0(ctx, steps);
     } finally {
       g0.srcCard = prevSrc;
+      g0.srcP = prevP;
     }
   }
   async function runSteps0(ctx, steps) {
@@ -1373,7 +1378,7 @@
         return true;
       }
       case 'search': {
-        const top = P.deck.splice(0, st.n);
+        const top = P.deck.splice(0, g.searchN ? g.searchN(p, st.n) : st.n);
         g.log('logSearch', P.name, top.length);
         const ok = top.filter((c) => cardMatch(c.card, st.f));
         const pick = ok.length ? await g.pickCards(p, `${ctx.card.n}：${st.to === 'play' ? L('選擇要打出的卡', 'choose cards to play') : L('選擇要加入手牌的卡', 'choose cards to draw')}${st.sumMax != null ? L(`（總費用 ${st.sumMax} 以內）`, ` (total cost ${st.sumMax} or less)`) : ''}`, ok, 0, st.count || 1, null, { sumMax: st.sumMax, sumKey: st.sumKey }) : [];
@@ -1529,7 +1534,7 @@
           }
         : fn;
     };
-    const isUpg = card.t === 'Upgrade';
+    const isUpg = card.t === 'Upgrade' || side === 'pilot';
     const runAb = async (ab, ctx) => {
       if (ab.cond && !checkCond(ctx, ab.cond)) return;
       ctx.card = card;
@@ -1621,7 +1626,7 @@
         switch (ti.t) {
           case 'whenPlayed':
             if (card.t === 'Event') break;
-            if (isUpg) add('whenPlayed', (g, inst, t) => exec({ g, p: inst.owner, attached: t, self: null }));
+            if (isUpg) add('whenPlayed', (g, inst, t) => exec({ g, p: t && t.ctrl != null ? t.ctrl : inst.owner, attached: t, self: null, prev: t ? [t] : [] }));
             else add('whenPlayed', (g, u) => exec({ g, p: u.ctrl, self: u }));
             break;
           case 'event':
@@ -1721,6 +1726,9 @@
 
   // 合併兩組觸發函式（單位本身＋升級卡給的能力）
   const STATIC_HOOKS = ['static', 'aura', 'attachedStatic'];
+  const OR_HOOKS = ['cantBeDefeatedBy', 'strikeFirst', 'noLethal', 'cantAttack', 'cantBeAttackedBy', 'protectFriendly', 'cantAttackBase', 'doubleSearch', 'cantReady', 'ignorePenalty', 'discardIgnorePenalty', 'cantBeBounced'];
+  const SUM_HOOKS = ['costFor', 'costMod'];
+  const CHAIN_HOOKS = ['modDamage', 'modBaseDamage', 'modFriendlyDamage'];
   function mergeHooks(a, b) {
     if (!a) return b;
     if (!b) return a;
@@ -1743,10 +1751,30 @@
         const fa = a[k],
           fb = b[k];
         out[k] = (...x) => (fa(...x) || 0) + (fb(...x) || 0);
-      } else if (k === 'cantBeDefeatedBy') {
+      } else if (OR_HOOKS.includes(k)) {
         const fa = a[k],
           fb = b[k];
         out[k] = (...x) => fa(...x) || fb(...x);
+      } else if (SUM_HOOKS.includes(k)) {
+        const fa = a[k],
+          fb = b[k];
+        out[k] = (...x) => (fa(...x) || 0) + (fb(...x) || 0);
+      } else if (CHAIN_HOOKS.includes(k)) {
+        // (g, s, u, n, src) 形式：n 依序被修改
+        const fa = a[k],
+          fb = b[k];
+        out[k] = (...x) => {
+          const i = x.length >= 5 ? 3 : 2;
+          const y = [...x];
+          const r = fa(...y);
+          if (r != null) y[i] = r;
+          const r2 = fb(...y);
+          return r2 != null ? r2 : y[i];
+        };
+      } else if (k === 'preventDamage') {
+        const fa = a[k],
+          fb = b[k];
+        out[k] = async (...x) => (await fa(...x)) || (await fb(...x));
       } else {
         const fa = a[k],
           fb = b[k];
@@ -1783,7 +1811,8 @@
   GFX.impl = function (card, side = 'card') {
     if (!card || /Token/.test(card.t)) return null;
     if (side === 'card' && card.t === 'Leader') return null;
-    if (side !== 'card' && card.t !== 'Leader') return null;
+    if (side === 'pilot' && !(SWU.pilotSplit && SWU.pilotSplit(card))) return null;
+    if (side !== 'card' && side !== 'pilot' && card.t !== 'Leader') return null;
     const k = ckey(card, side);
     if (memo.has(k)) return memo.get(k);
     let h = null;
@@ -1795,6 +1824,19 @@
       console.warn('gfx build failed', card.key, e);
     }
     memo.set(k, h);
+    return h;
+  };
+  // 去掉「判讀失敗、要手動」那幾行的版本（給 effects 的 extend 補上手寫）
+  const memoClean = new Map();
+  GFX.implClean = function (card, side = 'card') {
+    const k = ckey(card, side);
+    if (memoClean.has(k)) return memoClean.get(k);
+    let h = null;
+    try {
+      const prog = GFX.program(card, side);
+      if (prog.abilities.length) h = build({ ...prog, failed: [] }, card, side);
+    } catch (e) {}
+    memoClean.set(k, h);
     return h;
   };
   GFX.status = function (card, side = 'card') {

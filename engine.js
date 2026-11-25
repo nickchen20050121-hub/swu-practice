@@ -49,10 +49,24 @@
   }
   SWU.parseKeywords = parseKeywords;
   SWU.AURA_LOSEKW = new Set(['Domesticated Loth-Cat']);
+  SWU.AURA_GRANT = new Set();
 
   // 卡片文字有沒有「關鍵字以外」的能力
+  // Piloting 單位：Piloting 那行之後是「當升級時」的能力（side 'pilot'），之前是單位本身的能力
+  SWU.pilotSplit = function (card) {
+    const ls = (card.tx || '').split('\n');
+    const i = card.t === 'Unit' ? ls.findIndex((l) => /^Piloting\b/.test(l.trim())) : -1;
+    if (i < 0) return null;
+    return { unit: ls.slice(0, i).join('\n'), pilot: ls.slice(i + 1).join('\n') };
+  };
+  SWU.sideText = function (card, side) {
+    if (side === 'unit' && card.t === 'Leader') return card.bt || '';
+    const sp = SWU.pilotSplit(card);
+    if (sp) return side === 'pilot' ? sp.pilot : sp.unit;
+    return side === 'pilot' ? '' : card.tx || '';
+  };
   SWU.abilityLines = function (card, side) {
-    const text = side === 'unit' && card.t === 'Leader' ? card.bt || '' : card.tx || '';
+    const text = SWU.sideText(card, side);
     return text
       .split('\n')
       .map((l) => l.trim())
@@ -214,6 +228,11 @@
       const out = P.units.map((u) => ({ src: u, e: this.eff(u) }));
       if (!P.leader.deployed) out.push({ src: P.leader, e: SWU.EFFECTS.get(P.leader.card, 'leader') });
       out.push({ src: P.base, e: SWU.EFFECTS.get(P.base.card, 'card') });
+      // 基地上的升級：「Attached base gains: …」
+      for (const up of P.base.upgrades) {
+        const be = SWU.EFFECTS.get(up.card, 'card');
+        if (be && be.baseGains) out.push({ src: P.base, e: be.baseGains, up });
+      }
       return out.filter((x) => x.e);
     }
     async fire(p, hook, ...args) {
@@ -236,7 +255,17 @@
         }
         return out;
       }
-      const base = SWU.EFFECTS.get(u.card, u.isLeader ? 'unit' : 'card');
+      let base = SWU.EFFECTS.get(u.card, u.isLeader ? 'unit' : 'card');
+      // 其他友方單位給的能力（Bo-Katan's Gauntlet…）
+      if (SWU.GFX && SWU.AURA_GRANT.size && u.ctrl != null && this.G.players[u.ctrl])
+        for (const o of this.G.players[u.ctrl].units) {
+          if (o === u || !SWU.AURA_GRANT.has(o.card.key)) continue;
+          const oe = SWU.EFFECTS.get(o.card, o.isLeader ? 'unit' : 'card');
+          if (oe && oe.auraGrant && !this.cardBlank(o.owner, o.card)) {
+            const gr = oe.auraGrant(this, o, u);
+            if (gr) base = SWU.GFX.mergeHooks(base, gr);
+          }
+        }
       if (!u.upgrades || !u.upgrades.length || !SWU.GFX) return base;
       let out = base;
       for (const up of u.upgrades) {
@@ -250,7 +279,7 @@
       return out;
     }
     upSide(up) {
-      return up.leaderPilot ? 'unit' : 'card';
+      return up.leaderPilot ? 'unit' : up.pilot ? 'pilot' : 'card';
     }
     // 卡片是否「失去所有能力」：The Tree Remembers（本階段）、Condemn（攻擊中）、Galen Erso 指名
     isBlank(u) {
@@ -320,7 +349,7 @@
         const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
         if (ue && ue.attachedStatic) add(ue.attachedStatic(this, up, u));
         if (up.leaderPilot) continue;
-        const g = (up.card.tx || '').match(/^Attached unit gains (Sentinel|Overwhelm|Saboteur|Grit|Ambush|Hidden|Raid (\d+)|Restore (\d+))\.?$/m);
+        const g = SWU.sideText(up.card, this.upSide(up)).match(/^Attached unit gains (Sentinel|Overwhelm|Saboteur|Grit|Ambush|Hidden|Raid (\d+)|Restore (\d+))\.?$/m);
         if (g && !(ue && ue.attachedStatic)) {
           if (g[2]) add({ kw: { Raid: +g[2] } });
           else if (g[3]) add({ kw: { Restore: +g[3] } });
@@ -351,6 +380,9 @@
         return res;
       }
       if (e && e.loseKw) for (const k of e.loseKw(this, u) || []) delete res[k];
+      // Deadly Vulnerability：攻擊裝著它的單位時失去 Overwhelm
+      const A = this.G.attack;
+      if (A && A.attacker === u && A.defender && A.defender.upgrades.some((x) => x.card.n === 'Deadly Vulnerability')) delete res.Overwhelm;
       if ((this._lkDepth || 0) < 2) {
         this._lkDepth = (this._lkDepth || 0) + 1;
         try {
@@ -374,7 +406,7 @@
     power(u, attacking) {
       const s = this.statics(u);
       let p = this.basePower(u) + s.p;
-      for (const up of u.upgrades) p += up.leaderPilot ? up.pilotMod[0] : up.card.p || 0;
+      for (const up of u.upgrades) p += up.pilotMod ? up.pilotMod[0] : up.card.p || 0;
       for (const m of this.activeMods(u)) p += m.p || 0;
       const k = this.kw(u);
       if (k.Grit) p += u.gritDamage != null ? u.gritDamage : u.damage;
@@ -384,7 +416,7 @@
     hp(u) {
       const s = this.statics(u);
       let h = (u.card.h || 0) + s.h;
-      for (const up of u.upgrades) h += up.leaderPilot ? up.pilotMod[1] : up.card.t === 'Upgrade' || /Token/.test(up.card.t) ? up.card.h || 0 : 0;
+      for (const up of u.upgrades) h += up.pilotMod ? up.pilotMod[1] : up.card.t === 'Upgrade' || /Token/.test(up.card.t) ? up.card.h || 0 : 0;
       for (const m of this.activeMods(u)) h += m.h || 0;
       return h;
     }
@@ -420,6 +452,8 @@
       let base = opts.baseCost != null ? opts.baseCost : card.c || 0;
       let pen = opts.ignoreAspect ? 0 : this.aspectPenalty(p, card);
       if (pen && this.sources(p).some(({ src, e }) => e.ignorePenalty && e.ignorePenalty(this, src, card))) pen = 0;
+      // 棄牌堆裡的卡：「在你的棄牌堆時，忽略…的面向懲罰」
+      if (pen && this.P(p).discard.some((x) => { const de = SWU.EFFECTS.get(x.card, 'card'); return de && de.discardIgnorePenalty && de.discardIgnorePenalty(this, p, card); })) pen = 0;
       let cost = base + pen;
       const e = SWU.EFFECTS.get(card, 'card');
       if (e && e.costMod) cost += e.costMod(this, p) || 0;
@@ -428,11 +462,45 @@
         const oe = this.eff(u);
         if (oe && oe.discount) cost -= oe.discount(this, u, card) || 0;
       }
+      // 領袖／基地的減費、「下一張…少 N 費」
+      for (const { src, e: se } of this.sources(p)) if (!src.uid || !this.P(p).units.includes(src)) { if (se.costFor) cost -= se.costFor(this, src, card, opts) || 0; }
+      for (const u of this.P(p).units) { const oe = this.eff(u); if (oe && oe.costFor) cost -= oe.costFor(this, u, card, opts) || 0; }
+      for (const m of this.nextMods(p, card, opts)) cost -= m.n || 0;
       cost -= opts.discount || 0;
       return Math.max(0, cost);
     }
+    // 「本階段你打出的下一張 X 少 N 費／獲得某關鍵字」：P.nextMods = [{f(card, opts), n, kw, phaseId, round}]
+    nextMods(p, card, opts = {}) {
+      const P = this.P(p);
+      const G = this.G;
+      P.nextMods = (P.nextMods || []).filter((m) => (m.phaseId == null || m.phaseId === G.phaseId) && (m.round == null || m.round === G.round));
+      const out = [];
+      for (const m of P.nextMods) if ((!m.cost || !opts.noNext) && (!m.f || m.f(card, opts))) out.push(m);
+      return out;
+    }
+    winGame(p) {
+      if (this.G.winner != null) return;
+      this.G.winner = p;
+      this.log('logWin', this.P(p).name);
+      this.emit({ type: 'gameover' });
+      throw new GameOver();
+    }
+    delay(d) {
+      (this.G.delayed = this.G.delayed || []).push(d);
+    }
+    creditsUsable(p) {
+      return !this.opp(p).units.some((u) => { const e = this.eff(u); return e && e.blankEnemyCredits; });
+    }
+    // 搜尋牌庫頂 N 張（Arcana Star Map 會變兩倍）
+    searchN(p, n) {
+      return this.P(p).units.some((u) => { const e = this.eff(u); return e && e.doubleSearch; }) ? n * 2 : n;
+    }
+    addNext(p, m) {
+      const P = this.P(p);
+      (P.nextMods = P.nextMods || []).push(m);
+    }
     canPay(p, n) {
-      return this.readyResources(p) + this.P(p).credits >= n;
+      return this.readyResources(p) + (this.creditsUsable(p) ? this.P(p).credits : 0) >= n;
     }
     pay(p, n) {
       const P = this.P(p);
@@ -443,7 +511,7 @@
           n--;
         }
       }
-      while (n > 0 && P.credits > 0) {
+      while (n > 0 && P.credits > 0 && this.creditsUsable(p)) {
         P.credits--;
         n--;
       }
@@ -459,6 +527,9 @@
       let units = enemies.filter((u) => {
         if (this.has(u, 'Hidden') && u.playedPhase === this.G.phaseId && !this.has(u, 'Sentinel')) return false;
         if (u.cantBeAttacked && u.cantBeAttacked === this.G.phaseId) return false;
+        const de = this.eff(u);
+        if (de && de.cantBeAttackedBy && de.cantBeAttackedBy(this, u, attacker) && !this.has(u, 'Sentinel')) return false;
+        for (const { src: s, e } of this.sources(u.ctrl)) if (e.protectFriendly && e.protectFriendly(this, s, u, attacker) && !this.has(u, 'Sentinel')) return false;
         return true;
       });
       let base = !opts.noBase;
@@ -475,6 +546,8 @@
     canAttackWith(u) {
       if (u.exhausted) return false;
       if (u.cantAttack) return false;
+      const ce = this.eff(u);
+      if (ce && ce.cantAttack && ce.cantAttack(this, u)) return false;
       const t = this.attackTargets(u);
       return t.units.length > 0 || t.base;
     }
@@ -593,7 +666,10 @@
         }
         P.hand.push(P.deck.shift());
       }
-      if (n > 0) this.log('logDraw', P.name, n);
+      if (n > 0) {
+        this.log('logDraw', P.name, n);
+        this.queueEv({ type: 'draw', p, n });
+      }
     }
     damageBase(p, n, src) {
       if (n <= 0) return 0;
@@ -603,17 +679,37 @@
         const r = fe.baseDamage(this, p, n);
         if (r === 0) return 0;
       }
+      for (const { src: s, e } of this.sources(p)) if (e.modBaseDamage) n = Math.max(0, e.modBaseDamage(this, s, p, n, src || {}) ?? n);
+      if (n <= 0) return 0;
       B.damage += n;
       this.log('logBaseDmg', this.P(p).name, n);
+      if (src && src.attacker) (this.G.hitBase = this.G.hitBase || []).push({ uid: src.attacker.uid, phaseId: this.G.phaseId });
+      this.queueEv({ type: 'damage', base: p, n, combat: !!(src && src.combat), indirect: !!(src && src.indirect), by: this.dealerOf(src || {}) });
       this.checkWin();
       return n;
+    }
+    dealerOf(src = {}) {
+      if (src.p != null) return src.p;
+      if (src.attacker) return src.attacker.ctrl;
+      if (this.srcP != null) return this.srcP;
+      if (this.G.actor != null) return this.G.actor;
+      return this.G.active;
+    }
+    // 事件佇列：受到傷害、回復、抽牌…在 checkState 時通知所有卡片（hook：onEvent）
+    queueEv(ev) {
+      ev.phaseId = this.G.phaseId;
+      ev.phase = this.G.phase;
+      (this.evq = this.evq || []).push(ev);
     }
     healBase(p, n) {
       if (this.allUnits().some((u) => { const e = this.eff(u); return e && e.noBaseHeal; })) return 0;
       const B = this.P(p).base;
       const h = Math.min(n, B.damage);
       B.damage -= h;
-      if (h) this.log('logBaseHeal', this.P(p).name, h);
+      if (h) {
+        this.log('logBaseHeal', this.P(p).name, h);
+        this.queueEv({ type: 'heal', base: p, n: h });
+      }
       return h;
     }
     checkWin() {
@@ -644,6 +740,10 @@
           if (ok) return 0;
         }
       }
+      const me = this.eff(u);
+      if (me && me.modDamage) n = Math.max(0, me.modDamage(this, u, n, src) ?? n);
+      for (const { src: s, e } of this.sources(u.ctrl)) if (e.modFriendlyDamage && s !== u) n = Math.max(0, e.modFriendlyDamage(this, s, u, n, src) ?? n);
+      if (n <= 0) return 0;
       u.damage += n;
       this.log('logUnitDmg', u.card.n, n);
       this.noteDamage(u, n, src);
@@ -653,6 +753,7 @@
     noteDamage(u, n, src = {}) {
       this.pendingDamaged = this.pendingDamaged || [];
       this.pendingDamaged.push(u);
+      this.queueEv({ type: 'damage', u, uid: u.uid, ctrl: u.ctrl, card: u.card, n, combat: !!src.combat, indirect: !!src.indirect, by: this.dealerOf(src) });
       (this.pendingDmgEv = this.pendingDmgEv || []).push({ u, n, ctrl: u.ctrl, card: u.card, combat: !!src.combat });
     }
     // ---------- 分配傷害（間接傷害／自行分配） ----------
@@ -743,6 +844,7 @@
       const chooser = iAssign ? from : to;
       const targets = this.distTargets(this.P(to).units, to);
       this.log('logIndirect', this.P(to).name, n);
+      (this.G.indirectBy = this.G.indirectBy || []).push({ p: from, phaseId: this.G.phaseId });
       const alloc = await this.distribute(chooser, { kind: 'distribute', indirect: true, unpreventable: true, own: chooser === to, total: n, targets, prompt: SWU.t('promptIndirect', n, this.P(to).name) });
       const hit = [];
       let baseN = 0;
@@ -786,6 +888,7 @@
       if (h) {
         this.log('logHeal', u.card.n, h);
         (this.pendingHealed = this.pendingHealed || []).push(u);
+        this.queueEv({ type: 'heal', u, uid: u.uid, ctrl: u.ctrl, n: h });
       }
       return h;
     }
@@ -818,7 +921,8 @@
       u.exhausted = false;
     }
     // 升級卡離場：回棄牌堆／代幣消失／領袖駕駛員回領袖區
-    dropUpgrade(up) {
+    dropUpgrade(up, host) {
+      if (host) (this.pendingUpDefeat = this.pendingUpDefeat || []).push({ up, host: { ...host } });
       if (up.leaderPilot) {
         const L = this.P(up.owner).leader;
         L.deployed = false;
@@ -831,7 +935,7 @@
     }
     removeUpgrade(host, up) {
       host.upgrades = host.upgrades.filter((x) => x !== up);
-      this.dropUpgrade(up);
+      this.dropUpgrade(up, host);
     }
     async defeat(u, why = {}) {
       if (!u || !this.findUnit(u.uid)) return;
@@ -842,10 +946,10 @@
       if (e && e.cantBeDefeatedBy && e.cantBeDefeatedBy(this, u, why)) return;
       P.units = P.units.filter((x) => x !== u);
       this.log('logDefeat', u.card.n);
-      (this.G.defeated = this.G.defeated || []).push({ uid: u.uid, ctrl, card: u.card, phaseId: this.G.phaseId, unique: !!u.card.u });
+      (this.G.defeated = this.G.defeated || []).push({ uid: u.uid, ctrl, card: u.card, phaseId: this.G.phaseId, round: this.G.round, unique: !!u.card.u, leader: !!u.isLeader, token: /Token/.test(u.card.t), power: (() => { try { return this.power(u); } catch (e) { return 0; } })() });
       if (u.captured && u.captured.length) this.rescue(u);
       // 升級卡回各自擁有者棄牌堆，代幣消失
-      for (const up of u.upgrades) this.dropUpgrade(up);
+      for (const up of u.upgrades) this.dropUpgrade(up, u);
       if (u.isLeader) {
         const L = this.P(u.owner).leader;
         L.deployed = false;
@@ -868,7 +972,7 @@
       let again = true;
       while (again) {
         again = false;
-        const dead = this.allUnits().filter((u) => this.remaining(u) <= 0);
+        const dead = this.allUnits().filter((u) => this.remaining(u) <= 0 && !(() => { const e = this.eff(u); return e && e.noLethal && e.noLethal(this, u); })());
         if (!dead.length) break;
         let order = dead;
         for (const q of [0, 1]) {
@@ -901,7 +1005,17 @@
         const e = this.eff(u);
         if (e && e.whenHealed) await this.safe(() => e.whenHealed(this, u));
       }
-      if (dev.length || hl.length) {
+      // 升級卡被擊敗時（upWhenDefeated）
+      const ud = this.pendingUpDefeat || [];
+      this.pendingUpDefeat = [];
+      for (const { up, host } of ud) {
+        const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
+        if (ue && ue.upWhenDefeated) await this.safe(() => ue.upWhenDefeated(this, up, host));
+      }
+      const eq = this.evq || [];
+      this.evq = [];
+      for (const ev of eq) for (const q of [this.G.active == null ? 0 : this.G.active, this.G.active == null ? 1 : 1 - this.G.active]) await this.fire(q, 'onEvent', ev);
+      if (dev.length || hl.length || eq.length || ud.length) {
         if ((this._csDepth || 0) < 4) {
           this._csDepth = (this._csDepth || 0) + 1;
           try { await this.checkState(); } finally { this._csDepth--; }
@@ -950,14 +1064,15 @@
       if (!this.findUnit(t.uid)) return;
       const P = this.P(t.ctrl);
       P.units = P.units.filter((x) => x !== t);
-      for (const up of t.upgrades) this.dropUpgrade(up);
+      for (const up of t.upgrades) this.dropUpgrade(up, t);
       captor.captured = captor.captured || [];
       captor.captured.push({ uid: t.uid, card: t.card, owner: t.owner });
       this.log('logCapture', captor.card.n, t.card.n);
     }
     rescue(captor) {
       for (const c of captor.captured || []) {
-        const u = this.makeUnit(c, c.owner, { exhausted: true });
+        const ready = this.sources(c.owner).some(({ src, e }) => e.rescueReady && e.rescueReady(this, src, c));
+        const u = this.makeUnit(c, c.owner, { exhausted: !ready });
         this.P(c.owner).units.push(u);
         this.log('logRescue', c.card.n);
       }
@@ -965,9 +1080,11 @@
     }
     returnToHand(u) {
       if (!this.findUnit(u.uid) || u.isLeader) return;
+      const be = this.eff(u);
+      if (be && be.cantBeBounced && this.dealerOf({}) !== u.ctrl && be.cantBeBounced(this, u)) return;
       const P = this.P(u.ctrl);
       P.units = P.units.filter((x) => x !== u);
-      for (const up of u.upgrades) this.dropUpgrade(up);
+      for (const up of u.upgrades) this.dropUpgrade(up, u);
       if (!/Token/.test(u.card.t)) this.P(u.owner).hand.push({ uid: u.uid, card: u.card, owner: u.owner });
       this.log('logBounce', u.card.n);
     }
@@ -1013,6 +1130,8 @@
       for (const c of P.hand) {
         const a = this.playOption(p, c, 'hand');
         if (a) acts.push(a);
+        const pa = this.pilotOption(p, c);
+        if (pa) acts.push(pa);
       }
       for (const r of P.resources) {
         const k = r.card.kwp || {};
@@ -1069,6 +1188,20 @@
       acts.push({ type: 'pass', label: SWU.t('actPass') });
       return acts;
     }
+    // Piloting [C=2 Vigilance]：當成駕駛員升級打出的費用（括號裡的面向用來算罰費）
+    pilotCost(p, card) {
+      const m = (card.tx || '').match(/Piloting \[C=(\d+)([^\]]*)\]/);
+      if (!m) return null;
+      const asp = m[2].trim() ? m[2].trim().split(/\s+/) : [];
+      return this.costOf(p, { ...card, a: asp }, { baseCost: +m[1] });
+    }
+    pilotOption(p, c) {
+      const card = c.card;
+      if (card.t !== 'Unit' || !/^Piloting \[/m.test(card.tx || '') || !this.pilotHosts(p).length) return null;
+      const cost = this.pilotCost(p, card);
+      if (cost == null || !this.canPay(p, cost) || this.cardBanned(p, card)) return null;
+      return { type: 'play', uid: c.uid, from: 'hand', asPilot: true, cost, label: (SWU.lang === 'en' ? 'Play as Pilot: ' : '當駕駛員打出：') + (SWU.cardName ? SWU.cardName(card) : card.n) + ' (' + cost + ')' };
+    }
     playOption(p, c, from) {
       const card = c.card;
       if (!['Unit', 'Event', 'Upgrade'].includes(card.t)) return null;
@@ -1101,6 +1234,8 @@
     async doAction(p, act) {
       const G = this.G;
       const P = this.P(p);
+      G.actN = G.actN || {};
+      if (act.type !== 'pass') G.actN[p + ':' + G.phaseId] = (G.actN[p + ':' + G.phaseId] || 0) + 1;
       switch (act.type) {
         case 'pass':
           this.log('logPass', P.name);
@@ -1115,7 +1250,7 @@
           G.consecutivePasses = 0;
           return;
         case 'play':
-          await this.playCard(p, act.uid, act.from);
+          await this.playCard(p, act.uid, act.from, act.asPilot ? { asPilot: true } : {});
           break;
         case 'attack': {
           const u = this.findUnit(act.uid);
@@ -1174,7 +1309,7 @@
       } else c = P.hand.find((x) => x.uid === uid);
       if (!c) return;
       const card = c.card;
-      let cost = opts.free ? 0 : from === 'smuggle' ? this.costOf(p, card, { baseCost: card.kwp.Smuggle }) : this.costOf(p, card, { discount: opts.discount || 0, ignoreAspect: opts.ignoreAspect });
+      let cost = opts.free ? 0 : opts.asPilot ? this.pilotCost(p, card) : from === 'smuggle' ? this.costOf(p, card, { baseCost: card.kwp.Smuggle }) : this.costOf(p, card, { discount: opts.discount || 0, ignoreAspect: opts.ignoreAspect, from });
       // Exploit
       if (!opts.free && card.kwp.Exploit && P.units.length) {
         const max = Math.min(card.kwp.Exploit, P.units.length);
@@ -1203,14 +1338,35 @@
         this.G.oppFreePlay = (this.G.oppFreePlay || []).filter((x) => x.uid !== c.uid);
       } else if (from === 'hand') P.hand = P.hand.filter((x) => x !== c);
       this.log('logPlay', P.name, card.n, cost);
+      const usedNext = this.nextMods(p, card, { from, ...opts });
+      P.nextMods = (P.nextMods || []).filter((m) => !usedNext.includes(m));
+      (this.G.playLog = this.G.playLog || []).push({ p, card, from, phaseId: this.G.phaseId, round: this.G.round, cost });
       this.emit({ type: 'cast', p, card });
       if (this.pauseFor && !this.replaying) await this.pauseFor('cast', p);
       this.G.playedThisPhase[p].push(card);
+      for (const q of [p, 1 - p]) await this.fire(q, 'onCardPlayed', { p, card, from, uid: c.uid });
       await this.fire(1 - p, 'onEnemyPlay', card);
       const inst = { uid: c.uid, card, owner: c.owner };
       const e = this.cardBlank(c.owner, card) ? { implemented: true } : SWU.EFFECTS.get(card, 'card');
-      if (card.t === 'Unit') {
-        const u = this.makeUnit(inst, p, { exhausted: !(e && e.entersReady) });
+      if (card.t === 'Unit' && opts.asPilot) {
+        // Piloting：當成升級裝在友方沒有駕駛員的載具上
+        const hosts = this.pilotHosts(p);
+        const t = hosts.length ? await this.pickUnit(p, SWU.lang === 'en' ? 'Attach ' + card.n + ' as a Pilot to' : '把 ' + (SWU.cardName ? SWU.cardName(card) : card.n) + ' 當駕駛員裝在哪個載具', (u) => hosts.includes(u), { ctx: { card: card.key } }) : null;
+        if (!t) {
+          this.P(c.owner).discard.push(inst);
+          return;
+        }
+        const up = { ...inst, pilot: true, pilotMod: (SWU.PILOT_MOD || {})[card.key] || [0, 0] };
+        t.upgrades.push(up);
+        this.log('logAttach', card.n, t.card.n);
+        this.emit({ type: 'play', u: t });
+        if (e && e.whenPlayedAsUpgrade) await this.safe(() => e.whenPlayedAsUpgrade(this, up, t));
+        const pe = SWU.EFFECTS.get(card, 'pilot');
+        if (pe && pe.whenPlayed) await this.safe(() => pe.whenPlayed(this, up, t));
+        await this.fire(p, 'onFriendlyUpgradePlayed', up, t);
+      } else if (card.t === 'Unit') {
+        const u = this.makeUnit(inst, p, { exhausted: !(e && e.entersReady && e.entersReady !== false && (typeof e.entersReady !== 'function' || e.entersReady(this, inst, p))) });
+        for (const m of usedNext) if (m.kw) this.buff(u, 0, 0, 'phase', m.kw);
         P.units.push(u);
         await this.enforceUnique(p, u);
         this.emit({ type: 'play', u });
@@ -1241,6 +1397,7 @@
         }
         t.upgrades.push(inst);
         this.log('logAttach', card.n, t.card.n);
+        await this.fire(p, 'onFriendlyUpgradePlayed', inst, t);
         if (e && e.whenPlayed) await this.safe(() => e.whenPlayed(this, inst, t));
         else if (!e || !e.implemented) {
           const lines = SWU.abilityLines(card).filter((l) => /^When Played/i.test(l));
@@ -1317,7 +1474,7 @@
       const P = this.P(p);
       let left = plots.filter((r) => P.resources.includes(r));
       while (left.length) {
-        const ok = left.filter((r) => this.canPay(p, this.costOf(p, r.card)) && (r.card.t !== 'Upgrade' || /^Fortify/m.test(r.card.tx || '') || this.upgradeTargets(p, r.card).length) && !this.cardBanned(p, r.card));
+        const ok = left.filter((r) => this.canPay(p, this.costOf(p, r.card, { from: 'plot' })) && (r.card.t !== 'Upgrade' || /^Fortify/m.test(r.card.tx || '') || this.upgradeTargets(p, r.card).length) && !this.cardBanned(p, r.card));
         if (!ok.length) break;
         const pick = await this.pickCards(p, SWU.lang === 'en' ? 'Plot: you may play a card from your resources (paying its cost)' : '密謀（Plot）：可以從資源區打出一張卡（照常付費，用牌庫頂替補）', ok, 0, 1, { plot: true });
         if (!pick.length) break;
@@ -1394,8 +1551,22 @@
       }
     }
     async combatDamage(atk) {
-      const a = atk.attacker;
+      let a = atk.attacker;
       const d = atk.defender;
+      if (atk.base) {
+        // 手牌中的取代效果（Asajj Ventress｜Death From Above）
+        for (const x of [...this.P(a.ctrl).hand]) {
+          const he = SWU.EFFECTS.get(x.card, 'card');
+          if (!he || !he.fromHandBaseCombat) continue;
+          let nu = null;
+          await this.safe(async () => (nu = await he.fromHandBaseCombat(this, x, a, atk)));
+          if (nu) {
+            a = nu;
+            atk.attacker = nu;
+            break;
+          }
+        }
+      }
       const ap = this.power(a, true);
       if (atk.base) {
         const G = this.G;
@@ -1425,8 +1596,11 @@
       const hadShield = d.upgrades.some((x) => x.card.n === 'Shield');
       const ph = this.G.phaseId;
       const yA = a.yodaPhase === ph, yD = d.yodaPhase === ph;
-      const dealtToD = yA || yD ? 0 : await this.damageUnit(d, ap, { combat: true });
-      if (!(yA || yD)) await this.damageUnit(a, dp, { combat: true });
+      const ae0 = this.eff(a);
+      const first = !!(atk.strikeFirst || (ae0 && ae0.strikeFirst && ae0.strikeFirst(this, a, atk)));
+      const dealtToD = yA || yD ? 0 : await this.damageUnit(d, ap, { combat: true, attacker: a, p: a.ctrl });
+      // 「先造成戰鬥傷害」：防守單位因此被擊敗就不會反擊
+      if (!(yA || yD) && !(first && this.remaining(d) <= 0)) await this.damageUnit(a, dp, { combat: true, p: d.ctrl, defender: d });
       delete a.gritDamage;
       delete d.gritDamage;
       if (this.has(a, 'Overwhelm') && !hadShield && dealtToD > 0) {
@@ -1477,6 +1651,8 @@
         let n = 6;
         const le = SWU.EFFECTS.get(P.leader.card, 'leader');
         if (le && le.startingHand) n += le.startingHand;
+        const be = SWU.EFFECTS.get(P.base.card, 'card');
+        if (be && be.startingHand) n += be.startingHand;
         this.draw(P.idx, n);
       }
       this.emit({ type: 'update' });
@@ -1539,6 +1715,7 @@
       G.phase = 'regroup';
       G.phaseId++;
       this.log('logRegroup');
+      for (const d of (G.delayed || []).filter((d) => d.at === 'regroupStart' && d.round === G.round)) await this.safe(() => d.run(this));
       for (const q of [G.initiative, 1 - G.initiative]) await this.fire(q, 'onRegroupStart');
       for (const P of G.players)
         for (const u of [...P.units])
@@ -1562,7 +1739,20 @@
       }
       for (const P of G.players) {
         for (const r of P.resources) r.exhausted = false;
-        for (const u of P.units) this.ready(u);
+        // Count Dooku｜Silver-Tongued：對手每個區域最多重置 1 個單位
+        const lim = this.opp(P.idx).units.some((x) => { const e = this.eff(x); return e && e.regroupLimit; });
+        let toReady = P.units.filter((u) => !(u.skipRegroupReady != null && u.skipRegroupReady === this.G.round));
+        for (const u of P.units) if (u.skipRegroupReady === this.G.round) delete u.skipRegroupReady;
+        if (lim) {
+          const pickArena = async (ar) => {
+            const xs = toReady.filter((u) => u.arena === ar && u.exhausted);
+            if (xs.length <= 1) return xs;
+            const t = await this.pickUnit(P.idx, SWU.lang === 'en' ? 'Choose 1 ' + ar + ' unit to ready' : '選 1 個' + (ar === 'Space' ? '太空' : '地面') + '單位重置', (u) => xs.includes(u), {});
+            return t ? [t] : [xs[0]];
+          };
+          toReady = [...toReady.filter((u) => !u.exhausted), ...(await pickArena('Ground')), ...(await pickArena('Space'))];
+        }
+        for (const u of toReady) this.ready(u);
         P.leader.exhausted = false;
       }
       this.emit({ type: 'update' });
