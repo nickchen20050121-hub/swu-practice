@@ -248,6 +248,7 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 }
 .peek{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 8px 30px rgba(0,0,0,.25);max-height:60vh;overflow:auto;--cw:84px}
 .peek[hidden]{display:none}
+.peek.top{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto;max-height:45vh}
 .peek-body{flex:1;min-width:0;display:grid;gap:4px}
 .peek-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .peek-head b{font-family:var(--f-display);font-size:16px}
@@ -583,21 +584,21 @@ body:has(.promptbar.effpop.onboard) #board{padding-bottom:120px}
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611252140"></script>
-<script src="engine.js?v=202611252140"></script>
-<script src="zh_cards.js?v=202611252140"></script>
-<script src="i18n.js?v=202611252140"></script>
-<script src="effects.js?v=202611252140"></script>
-<script src="pilots.js?v=202611252140"></script>
-<script src="effects2.js?v=202611252140"></script>
-<script src="gfx.js?v=202611252140"></script>
-<script src="effects3.js?v=202611252140"></script>
-<script src="programs.js?v=202611252140"></script>
-<script src="meta_decks.js?v=202611252140"></script>
-<script src="deck.js?v=202611252140"></script>
-<script src="ai.js?v=202611252140"></script>
-<script src="sfx.js?v=202611252140"></script>
-<script src="ui.js?v=202611252140"></script>
+<script src="cards.js?v=202611252200"></script>
+<script src="engine.js?v=202611252200"></script>
+<script src="zh_cards.js?v=202611252200"></script>
+<script src="i18n.js?v=202611252200"></script>
+<script src="effects.js?v=202611252200"></script>
+<script src="pilots.js?v=202611252200"></script>
+<script src="effects2.js?v=202611252200"></script>
+<script src="gfx.js?v=202611252200"></script>
+<script src="effects3.js?v=202611252200"></script>
+<script src="programs.js?v=202611252200"></script>
+<script src="meta_decks.js?v=202611252200"></script>
+<script src="deck.js?v=202611252200"></script>
+<script src="ai.js?v=202611252200"></script>
+<script src="sfx.js?v=202611252200"></script>
+<script src="ui.js?v=202611252200"></script>
 <script>SWU.boot();</script>
 </body>
 </html>

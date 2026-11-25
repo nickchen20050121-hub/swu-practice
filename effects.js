@@ -182,10 +182,9 @@
     },
   });
   async function leiaVfd(g, attacker, src) {
-    if (g.remaining(attacker) <= 1 && !attacker.upgrades.some((x) => x.card.n === 'Shield')) {
-      // 會自殺時仍讓玩家決定
-    }
-    if (!g.P(attacker.ctrl).base.damage) return;
+    // 基地滿血也可以選擇發動（玩家自己決定）；電腦在基地沒受傷或會自殺時不發動
+    const io = g.io && g.io[attacker.ctrl];
+    if (io && !io.isHuman && (!g.P(attacker.ctrl).base.damage || (g.remaining(attacker) <= 1 && !attacker.upgrades.some((x) => x.card.n === 'Shield')))) return;
     if (await g.yesno(attacker.ctrl, T('promptLeiaVfd', attacker.card.n), { uid: attacker.uid })) {
       await g.damageUnit(attacker, 1);
       g.healBase(attacker.ctrl, 2);

@@ -478,17 +478,17 @@
   window.__swuS = () => S; // 測試用
   window.__swuRender = () => renderBoard(); // 測試用
   const isTouch = () => window.matchMedia && matchMedia('(max-width:720px), (pointer:coarse)').matches;
-  function setPreview(card, side, acts) {
+  function setPreview(card, side, acts, popt = {}) {
     S.preview = { card, side };
     renderPreview();
     if (isTouch() && S.tab === 'play' && S.game) {
       // 稍等一下再跳說明，讓「連點兩下」的第二下能點到卡片本身
       clearTimeout(peekTimer);
-      peekTimer = setTimeout(() => showPeek(card, side, acts || []), 330);
+      peekTimer = setTimeout(() => showPeek(card, side, acts || [], popt), 330);
     }
   }
   // 手機：點卡片時從下方滑出的小卡片說明（可直接按按鈕打出）
-  function showPeek(card, side, acts) {
+  function showPeek(card, side, acts, popt = {}) {
     let el = $('#peek');
     if (!el) {
       el = h('div', { id: 'peek', class: 'peek', role: 'dialog' });
@@ -505,6 +505,8 @@
         acts.length ? h('div', { class: 'peek-acts' }, ...acts.map((a) => h('button', { class: 'primary', onclick: () => (hidePeek(), settle(a)) }, a.label))) : null
       )
     );
+    // 手牌：說明改在上方，下方的手牌還點得到（再點一次同一張就打出）
+    el.classList.toggle('top', !!popt.top);
     el.hidden = false;
     clearTimeout(S.peekTimer);
     if (!acts.length) S.peekTimer = setTimeout(hidePeek, 7000);
@@ -2060,16 +2062,20 @@
           {
             class: 'handcard' + (acts.length ? ' act' : '') + (S.actMode === 'play' && acts.length ? ' hl' : '') + (S.selUid === c.uid ? ' sel' : ''),
             tabindex: acts.length ? '0' : null,
-            onmouseenter: () => setPreview(c.card, 'card'),
+            onmouseenter: () => !isTouch() && setPreview(c.card, 'card'),
             onclick: () => {
               if (S.actMode === 'play' && acts.length) {
                 S.actMode = null;
                 doPrimary(acts);
                 return;
               }
-              if (tapTwice('h' + c.uid) && doPrimary(acts)) return;
+              // 點一下選起來，再點同一張就打出（不用快速連點）
+              if (S.selUid === c.uid && acts.length) {
+                S.selUid = null;
+                if (doPrimary(acts)) return;
+              }
               S.selUid = c.uid;
-              setPreview(c.card, 'card', acts);
+              setPreview(c.card, 'card', acts, { top: true });
               renderBoard();
             },
             onkeydown: (e) => e.key === 'Enter' && acts.length && settle(acts[0]),
