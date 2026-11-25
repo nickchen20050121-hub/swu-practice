@@ -20,7 +20,7 @@
     AI.settings.level = o >= 8 ? 7 : Math.max(1, o - 3);
     AI.settings.lvVer = 2;
   }
-  AI.levelNum = () => Math.min(7, Math.max(1, +AI.settings.level || 7));
+  AI.levelNum = () => Math.min(8, Math.max(1, +AI.settings.level || 7));
   AI.save = () => {
     try {
       localStorage.setItem(SKEY, JSON.stringify(AI.settings));
@@ -295,7 +295,7 @@
         const guess = H.sampleHand(pool, Q.hand.length, Q.resources.length);
         if (guess.length === Q.hand.length) Q.hand = guess.map((card) => g2.inst(card, 1 - p));
       };
-      const g2 = new SWU.Game(g.decks, [mk(0), mk(1)], { ...g.opts, seed: g.seed, uid0: g.uid0, onReplayEnd: hide, replay: [...g.rec, { p, k: 'a', v: JSON.parse(JSON.stringify(c.a)) }] });
+      const g2 = new SWU.Game(g.decks, [mk(0), mk(1)], { ...g.opts, seed: g.seed, uid0: g.uid0, onReplayEnd: opt.cheat ? undefined : hide, replay: [...g.rec, { p, k: 'a', v: JSON.parse(JSON.stringify(c.a)) }] });
       const ce = console.error;
       console.error = () => {};
       try {
@@ -383,6 +383,8 @@
     5: { smart: { initFix: true, attackFirst: 0.5, rollout: 14, top: 12, risk: 0.3 } },
     6: { smart: { initFix: true, attackFirst: 0.5, rollout: 20, top: 14, risk: 0.3, samples: 2, h2: true, tA: 5000, tB: 10000 } },
     7: { smart: { initFix: true, attackFirst: 0.5, rollout: 28, top: 16, risk: 0.3, samples: 2, h2: true, tA: 6000, tB: 14000 } },
+    // 8（2026-11-25 柏偉要求）：作弊，推演時直接用真實的對手手牌和雙方牌庫順序（不重洗、不猜）
+    8: { smart: { initFix: true, attackFirst: 0.5, rollout: 28, top: 16, risk: 0.3, h2: true, tA: 6000, tB: 14000, cheat: true } },
   };
   H.randomAct = function (g, p, acts) {
     const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');
