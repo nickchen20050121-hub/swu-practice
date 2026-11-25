@@ -475,6 +475,8 @@
     return true;
   }
   window.__swuGame = () => S.game; // 測試用
+  window.__swuS = () => S; // 測試用
+  window.__swuRender = () => renderBoard(); // 測試用
   const isTouch = () => window.matchMedia && matchMedia('(max-width:720px), (pointer:coarse)').matches;
   function setPreview(card, side, acts) {
     S.preview = { card, side };
@@ -538,6 +540,13 @@
       });
     },
     choose(g, p, req) {
+      // 手機：先點自己的單位、再點發光的目標 → 這次攻擊的目標已經選好了
+      const ft = S.forceTarget;
+      if (ft && req.kind === 'target' && req.ctx && req.ctx.uid === ft.uid && req.options.some((o) => o.id === ft.target)) {
+        S.forceTarget = null;
+        return Promise.resolve([ft.target]);
+      }
+      S.forceTarget = null;
       return new Promise((resolve) => {
         S.pending = { type: 'choose', req, sel: [], resolve };
         renderBoard();
@@ -573,6 +582,7 @@
     if (!pd) return;
     S.pending = null;
     S.selUid = null;
+    S.atkSel = null;
     closeModal();
     hidePeek();
     pd.resolve(val);
@@ -1470,6 +1480,29 @@
       )
     );
   }
+  // 手機／電腦：選了一個能攻擊的友方單位 → 它能打的目標發光，點目標就直接攻擊
+  function atkTargetIds() {
+    const A = S.atkSel;
+    if (!A || !S.pending || S.pending.type !== 'action') return null;
+    const g = S.game;
+    const u = g.findUnit(A.uid);
+    if (!u) return null;
+    const tg = g.attackTargets(u);
+    const ids = new Set(tg.units.map((x) => x.uid));
+    if (tg.base) ids.add('base' + (1 - u.ctrl));
+    return ids;
+  }
+  function atkTargetClick(id) {
+    const A = S.atkSel;
+    const ids = atkTargetIds();
+    if (!A || !ids || !ids.has(id)) return false;
+    S.atkSel = null;
+    S.forceTarget = { uid: A.uid, target: id };
+    clearTimeout(peekTimer);
+    hidePeek();
+    settle(A.act);
+    return true;
+  }
   function optionFor(uid) {
     const pd = S.pending;
     if (!pd || (pd.type !== 'choose' && pd.type !== 'distribute')) return null;
@@ -1493,7 +1526,7 @@
       'div',
       {
         style: (animClass(u.uid) || {}).style || null,
-        class: 'unit' + ((animClass(u.uid) || {}).cls || '') + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (S.actMode === 'attack' && acts.some((x) => x.type === 'attack') ? ' hl' : '') + (selected || toolSel || S.selUid === u.uid ? ' sel' : '') + (u.isLeader ? ' leaderunit' : ''),
+        class: 'unit' + ((animClass(u.uid) || {}).cls || '') + (u.exhausted ? ' exhausted' : '') + (opt ? ' can' : '') + (acts.length ? ' act' : '') + (S.actMode === 'attack' && acts.some((x) => x.type === 'attack') ? ' hl' : '') + (selected || toolSel || S.selUid === u.uid ? ' sel' : '') + (u.isLeader ? ' leaderunit' : '') + ((atkTargetIds() || new Set()).has(u.uid) ? ' can atktg' : ''),
         tabindex: opt || acts.length ? '0' : null,
         onmouseenter: () => setPreview(card, side),
         onclick: () => clickUnit(u, opt, acts),
@@ -1536,6 +1569,7 @@
   }
   function upgradeBar(u) {
     const en = SWU.lang === 'en';
+    const openUps = () => openViewPop((en ? 'Upgrades on ' : '升級：') + SWU.cardName(u.card) + '（' + u.upgrades.length + '）', u.upgrades.map((x) => x.card), u.upgrades.map(upMod));
     const n = (name) => u.upgrades.filter((x) => x.card.n === name).length;
     const sh = n('Shield'), xp = n('Experience'), wk = n('Weakness');
     const pil = u.upgrades.filter((x) => x.leaderPilot).length;
@@ -1550,11 +1584,23 @@
       'div',
       {
         class: 'upbar',
-        title: en ? 'Click to see all upgrades' : '點一下看所有升級',
+        title: en ? (isTouch() ? 'Long-press to see all upgrades' : 'Click to see all upgrades') : isTouch() ? '長按看所有升級' : '點一下看所有升級',
         onclick: (e) => {
+          // 手機：點一下當成點單位本身（不跳面板），長按才打開升級清單
+          if (isTouch()) return;
           e.stopPropagation();
-          openViewPop((en ? 'Upgrades on ' : '升級：') + SWU.cardName(u.card) + '（' + u.upgrades.length + '）', u.upgrades.map((x) => x.card), u.upgrades.map(upMod));
+          openUps();
         },
+        ontouchstart: (e) => {
+          e.stopPropagation();
+          clearTimeout(S.upTimer);
+          S.upTimer = setTimeout(() => {
+            S.upLong = true;
+            openUps();
+          }, 500);
+        },
+        ontouchend: () => clearTimeout(S.upTimer),
+        ontouchmove: () => clearTimeout(S.upTimer),
       },
       bits.join('·')
     );
@@ -1572,6 +1618,11 @@
       return;
     }
     if (opt) return pickOption(opt.id);
+    if (S.upLong) {
+      S.upLong = false;
+      return;
+    }
+    if (atkTargetClick(u.uid)) return;
     if (S.actMode === 'attack') {
       const a = (acts || []).find((x) => x.type === 'attack');
       if (a) {
@@ -1581,9 +1632,35 @@
         return settle(a);
       }
     }
+    const atk = (acts || []).find((x) => x.type === 'attack');
+    if (atk && !(S.atkSel && S.atkSel.uid === u.uid)) {
+      // 第一下：選這個單位攻擊，能打的目標發光（不跳面板）
+      S.atkSel = { uid: u.uid, act: atk };
+      S.selUid = u.uid;
+      clearTimeout(peekTimer);
+      hidePeek();
+      S.preview = { card: u.card, side: u.isLeader ? 'unit' : 'card' };
+      renderPreview();
+      renderBoard();
+      return;
+    }
+    if (atk) {
+      // 再點一下同一個單位：取消選取，有其他行動才跳出說明
+      S.atkSel = null;
+      S.selUid = null;
+      if (acts.length > 1) setPreview(u.card, u.isLeader ? 'unit' : 'card', acts.filter((x) => x.type !== 'attack'));
+      renderBoard();
+      return;
+    }
+    S.atkSel = null;
     if (tapTwice('u' + u.uid) && doPrimary(acts)) return;
     S.selUid = u.uid;
-    setPreview(u.card, u.isLeader ? 'unit' : 'card', acts);
+    // 手機：沒有可以做的行動就不跳說明面板（長按可以看大圖）
+    if (acts.length || !isTouch()) setPreview(u.card, u.isLeader ? 'unit' : 'card', acts);
+    else {
+      S.preview = { card: u.card, side: u.isLeader ? 'unit' : 'card' };
+      renderPreview();
+    }
     renderBoard();
   }
   function distSum(pd) {
@@ -1645,7 +1722,7 @@
       'div',
       {
         style: (animClass(null, pIdx) || {}).style || null,
-        class: 'basecard' + ((animClass(null, pIdx) || {}).cls || '') + (baseOpt ? ' can' : '') + (toolSel ? ' sel' : ''),
+        class: 'basecard' + ((animClass(null, pIdx) || {}).cls || '') + (baseOpt || (atkTargetIds() || new Set()).has('base' + pIdx) ? ' can' : '') + (toolSel ? ' sel' : ''),
         onmouseenter: () => setPreview(P.base.card, 'card'),
         onclick: () => {
           if (S.pending && S.pending.type === 'manual') {
@@ -1653,6 +1730,7 @@
             openManualModal();
             renderBoard();
           } else if (baseOpt) pickOption(baseOpt.id);
+          else atkTargetClick('base' + pIdx);
         },
       },
       cardFace(P.base.card, 'card'),
