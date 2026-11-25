@@ -337,6 +337,13 @@
         }
         if (bc) best = bc;
       }
+      // 高手打法：能攻擊時先攻擊再出牌（出牌之後對手可能先把攻擊者解掉）；分數差不多就先打
+      if (opt.attackFirst && best && best.a.type === 'play') {
+        const bs = (scored.find((x) => x.c === best) || {}).sc;
+        let alt = null;
+        for (const x of scored) if (x.c.a.type === 'attack' && bs != null && x.sc >= bs - opt.attackFirst && (!alt || x.sc > alt.sc)) alt = x;
+        if (alt) best = alt.c;
+      }
       if (opt.deep && scored.length > 1) {
         scored.sort((x, y) => y.sc - x.sc);
         const top = scored.slice(0, 5);
@@ -365,12 +372,12 @@
   // 6～7：推演看到下一回合（h2）、每個候選多抽幾種對手手牌、想更久
   H.LEVELS = {
     1: {},
-    2: { smart: {} },
-    3: { smart: { rollout: 2, top: 4 } },
-    4: { smart: { rollout: 4, top: 6 } },
-    5: { smart: { rollout: 14, top: 12, risk: 0.3 } },
-    6: { smart: { rollout: 20, top: 14, risk: 0.3, samples: 2, h2: true, tA: 5000, tB: 10000 } },
-    7: { smart: { rollout: 28, top: 16, risk: 0.3, samples: 2, h2: true, tA: 6000, tB: 14000 } },
+    2: { smart: { initFix: true, attackFirst: 0.5 } },
+    3: { smart: { initFix: true, attackFirst: 0.5, rollout: 2, top: 4 } },
+    4: { smart: { initFix: true, attackFirst: 0.5, rollout: 4, top: 6 } },
+    5: { smart: { initFix: true, attackFirst: 0.5, rollout: 14, top: 12, risk: 0.3 } },
+    6: { smart: { initFix: true, attackFirst: 0.5, rollout: 20, top: 14, risk: 0.3, samples: 2, h2: true, tA: 5000, tB: 10000 } },
+    7: { smart: { initFix: true, attackFirst: 0.5, rollout: 28, top: 16, risk: 0.3, samples: 2, h2: true, tA: 6000, tB: 14000 } },
   };
   H.randomAct = function (g, p, acts) {
     const real = acts.filter((a) => !a.manual && a.type !== 'manualAbility' && a.type !== 'manualLeader');
