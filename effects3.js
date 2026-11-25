@@ -28,7 +28,13 @@
     return ctx.ok !== false;
   }
   SWU.RUN = RUN;
-  const pre = (...ts) => ts.forEach(steps); // 載入時就檢查句型
+  // 句型清單：卡表載入後才能解析（特徵名稱等要等卡表），測試時呼叫 SWU.FX3_CHECK()
+  const PRE = [];
+  const pre = (...ts) => PRE.push(...ts);
+  SWU.FX3_CHECK = () => {
+    PRE.forEach(steps);
+    return SWU.FX3_FAIL;
+  };
   const phaseNow = (g) => g.G.phaseId;
   const otherAttackedThisPhase = (g, u) => (g.G.attackers || []).some((a) => a.phaseId === g.G.phaseId && a.uid !== u.uid);
   const enemyAbility = (g, u, src = {}) => !src.combat && g.dealerOf(src) !== u.ctrl;
