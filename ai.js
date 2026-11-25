@@ -87,7 +87,13 @@
   // ---------- 規則型 AI ----------
   const H = (AI.heur = {});
   H.unitValue = (g, u) => g.power(u) + g.remaining(u) + (u.card.c || 0) + (u.isLeader ? 6 : 0);
+  // 規則型打法的參數（可由自我對戰調整：tools/tune_rule.js）
+  H.RP0 = { kill: 1.2, chip: 0.4, safeKill: 4, play0: 3, playC: 1.2, overpay: 0.8, evPen: 1, upPen: 1.5, atk0: 2, atkM: 0.6, deploy: 6, abil: 2.5, passS: 0.5 };
+  // 2026-11-26 夜間自我對戰調出來的參數（367 輪爬山；1008 局驗證對原本 655:353）
+  H.RP = {kill: 0.152, chip: 0.133, safeKill: 0.451, play0: 2.847, playC: 0.219, overpay: 1.262, evPen: 0.816, upPen: 0.889, atk0: 1.836, atkM: 0.593, deploy: 4.154, abil: 2.897, passS: 0.733};
+  const rp = () => (H.cfg && H.cfg.rp) || H.RP;
   H.bestAttack = function (g, u) {
+    const R = rp();
     const t = g.attackTargets(u);
     const ap = g.power(u, true);
     let best = null;
@@ -95,10 +101,10 @@
       const kills = ap >= g.remaining(d) && !d.upgrades.some((x) => x.card.n === 'Shield');
       const dies = g.power(d) >= g.remaining(u) && !u.upgrades.some((x) => x.card.n === 'Shield');
       let s = 0;
-      if (kills) s += H.unitValue(g, d) * 1.2;
-      else s += Math.min(ap, g.remaining(d)) * 0.4;
+      if (kills) s += H.unitValue(g, d) * R.kill;
+      else s += Math.min(ap, g.remaining(d)) * R.chip;
       if (dies) s -= H.unitValue(g, u);
-      if (kills && !dies) s += 4;
+      if (kills && !dies) s += R.safeKill;
       if (!best || s > best.s) best = { s, target: d };
     }
     if (t.base) {
@@ -111,29 +117,30 @@
   };
   H.chooseAction = function (g, p, acts) {
     const P = g.P(p);
+    const R = rp();
     let best = acts.find((a) => a.type === 'pass');
-    let bestS = 0.5;
+    let bestS = R.passS;
     for (const a of acts) {
       let s = 0;
       if (a.type === 'play') {
         const c = g.findAny(a.uid);
         if (!c) continue;
         const card = c.card;
-        s = 3 + (card.c || 0) * 1.2 - (a.cost - (card.c || 0)) * 0.8;
+        s = R.play0 + (card.c || 0) * R.playC - (a.cost - (card.c || 0)) * R.overpay;
         if (card.t === 'Event') {
           const tx = card.tx || '';
           if (/Defeat/i.test(tx) && !g.opp(p).units.length) s = -5;
           else if (/damage/i.test(tx) && !g.opp(p).units.length) s = -5;
-          else s -= 1;
+          else s -= R.evPen;
         }
-        if (card.t === 'Upgrade') s -= 1.5;
+        if (card.t === 'Upgrade') s -= R.upPen;
       } else if (a.type === 'attack') {
         const u = g.findUnit(a.uid);
         const b = H.bestAttack(g, u);
-        s = b ? 2 + b.s * 0.6 : -1;
-      } else if (a.type === 'deploy') s = 6;
+        s = b ? R.atk0 + b.s * R.atkM : -1;
+      } else if (a.type === 'deploy') s = R.deploy;
       else if (a.type === 'initiative') s = P.units.length && !acts.some((x) => x.type === 'attack' || x.type === 'play') ? 1 : 0.2;
-      else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : 2.5;
+      else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : R.abil;
       else if (a.type === 'manualAbility' || a.type === 'manualLeader') s = AI.hasClaude() ? 1.5 : -1;
       if (s > bestS) {
         bestS = s;
