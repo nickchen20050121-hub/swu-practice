@@ -197,6 +197,13 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .unit{position:relative;border-radius:7px;transition:transform .15s,box-shadow .15s}
 .unit.exhausted .face,.leadercard.exhausted .face{transform:rotate(8deg);filter:grayscale(.55) brightness(.85)}
 .unit.leaderunit .face{box-shadow:0 0 0 2px var(--cun)}
+.unit .face.wide{aspect-ratio:5/7;width:var(--cw)}
+.unit .face.wide img{object-position:50% 40%}
+.mulldlg{max-width:min(960px,96vw)!important;width:auto!important}
+.mullhand{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:6px 0 14px}
+.mullhand .face{--cw:clamp(92px,13vw,138px);box-shadow:0 4px 14px rgba(0,0,0,.35);filter:none}
+.mullbtns{display:flex;gap:10px;justify-content:center}
+.mullbtns button{min-width:140px}
 .can,.act{cursor:pointer}
 .can .face,.can.basecard .face{box-shadow:0 0 0 2px var(--warn),0 0 14px var(--warn)}
 .act .face{box-shadow:0 0 0 2px var(--accent),0 0 12px var(--glow)}
@@ -568,19 +575,19 @@ button.inittok.take{border:2px dashed var(--warn);animation:initpulse 1.6s ease-
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611251300"></script>
-<script src="engine.js?v=202611251300"></script>
-<script src="zh_cards.js?v=202611251300"></script>
-<script src="i18n.js?v=202611251300"></script>
-<script src="effects.js?v=202611251300"></script>
-<script src="effects2.js?v=202611251300"></script>
-<script src="gfx.js?v=202611251300"></script>
-<script src="programs.js?v=202611251300"></script>
-<script src="meta_decks.js?v=202611251300"></script>
-<script src="deck.js?v=202611251300"></script>
-<script src="ai.js?v=202611251300"></script>
-<script src="sfx.js?v=202611251300"></script>
-<script src="ui.js?v=202611251300"></script>
+<script src="cards.js?v=202611251315"></script>
+<script src="engine.js?v=202611251315"></script>
+<script src="zh_cards.js?v=202611251315"></script>
+<script src="i18n.js?v=202611251315"></script>
+<script src="effects.js?v=202611251315"></script>
+<script src="effects2.js?v=202611251315"></script>
+<script src="gfx.js?v=202611251315"></script>
+<script src="programs.js?v=202611251315"></script>
+<script src="meta_decks.js?v=202611251315"></script>
+<script src="deck.js?v=202611251315"></script>
+<script src="ai.js?v=202611251315"></script>
+<script src="sfx.js?v=202611251315"></script>
+<script src="ui.js?v=202611251315"></script>
 <script>SWU.boot();</script>
 </body>
 </html>

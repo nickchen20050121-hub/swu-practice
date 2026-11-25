@@ -2006,6 +2006,20 @@
     const m = $('#modal');
     m.hidden = false;
     m.innerHTML = '';
+    if (req.ctx && req.ctx.mulligan && S.game) {
+      // 重抽起手：把手牌放大、亮亮的擺在視窗裡，看清楚再決定
+      const hand = S.game.P(0).hand;
+      m.append(
+        h(
+          'div',
+          { class: 'dialog mulldlg' },
+          h('h3', {}, req.prompt),
+          h('div', { class: 'mullhand' }, ...hand.map((c) => cardFace(c.card, 'card'))),
+          h('div', { class: 'mullbtns' }, ...req.options.map((o, i) => h('button', { class: i === 0 ? 'primary' : '', onclick: () => settle([o.id]) }, o.label)))
+        )
+      );
+      return;
+    }
     m.append(
       h(
         'div',
