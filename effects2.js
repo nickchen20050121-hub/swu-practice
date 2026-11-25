@@ -804,4 +804,5 @@
       },
     },
   });
+  SWU.FX2 = { nameCard, chooseAspect, lookHand, discardFrom, takeControl, dealTo };
 })();

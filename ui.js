@@ -1711,7 +1711,7 @@
         { class: 'pilepair' },
       (() => {
         // Intelligence Agency：可以隨時看自己牌庫頂
-        const peek = pIdx === 0 && P.deck.length && P.base.upgrades.some((x) => x.card.n === 'Intelligence Agency') ? P.deck[0].card : null;
+        const peek = pIdx === 0 && P.deck.length && (P.base.upgrades.some((x) => x.card.n === 'Intelligence Agency') || P.units.some((u) => u.card.key === 'Hondo Ohnaka | Plays By His Own Rules')) ? P.deck[0].card : null;
         return h('div', { class: 'pile deckpile', title: t('deck') + ' ' + P.deck.length, onmouseenter: peek ? () => setPreview(peek, 'card') : null }, peek ? cardFace(peek, 'card', { small: true }) : back('big'), h('span', { class: 'pilecount' }, P.deck.length), h('span', { class: 'pilelabel' }, t('deck')));
       })(),
       h(

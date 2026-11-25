@@ -760,6 +760,8 @@
       return out;
     }
     const lines = SWU.abilityLines(card, side).map(norm).filter((l) => !/^(Attach to|Smuggle|Plot|Piloting|Attached unit is a leader unit)/i.test(l));
+    // 「Bounty - …」寫在關鍵字行的賞金
+    if (side === 'card') for (const b of (card.kwp && card.kwp.Bounty) || []) if (typeof b === 'string' && !lines.some((l) => /^Bounty/i.test(l))) lines.push(norm(b.replace(/\s*\([^)]*\)\s*$/, '')));
     for (const line of lines) {
       const ab = compileLine(line, isLeaderFront, card);
       if (ab && !ab.manual) out.abilities.push(ab);
