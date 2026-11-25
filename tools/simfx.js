@@ -1,11 +1,14 @@
-// 用「手寫效果」卡組牌互打，抓效果錯誤：node tools/simfx.js 40 [filter]
+// 用「手寫效果」卡組牌互打，抓效果錯誤：node tools/simfx.js 40 [filter | @清單檔(每行一個卡名)]
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const dir = path.join(__dirname, '..');
 global.window = global; global.localStorage = { getItem: () => null, setItem: () => {} };
 for (const f of ['cards.js', 'engine.js', 'i18n.js', 'effects.js', 'pilots.js', 'effects2.js', 'gfx.js', 'effects3.js', 'programs.js', 'meta_decks.js', 'deck.js', 'ai.js']) vm.runInThisContext(fs.readFileSync(path.join(dir, f), 'utf8'), { filename: f });
 SWU.initDB(window.SWU_CARDS); SWU.markVanillaKeywordCards();
-const keys = SWU.EFFECTS.list().filter((k) => !process.argv[3] || k.includes(process.argv[3].toLowerCase()));
+const F = process.argv[3] || '';
+const LIST = F.startsWith('@') ? new Set(fs.readFileSync(F.slice(1), 'utf8').split('\n').map((x) => x.trim().toLowerCase()).filter(Boolean)) : null;
+const keys = SWU.EFFECTS.list().filter((k) => (LIST ? LIST.has(k.split('#')[0]) : !F || k.includes(F.toLowerCase())));
 const pool = [...new Set(keys.map((k) => k.split('#')[0]))].map((k) => SWU.DB.byKey.get(k)).filter(Boolean);
+if (process.env.DBG) console.log('pool', pool.length);
 const mains = pool.filter((c) => ['Unit', 'Event', 'Upgrade'].includes(c.t));
 const leaders = pool.filter((c) => c.t === 'Leader');
 const allLeaders = SWU.DB.list.filter((c) => c.t === 'Leader');

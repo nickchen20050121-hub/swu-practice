@@ -1726,7 +1726,7 @@
 
   // 合併兩組觸發函式（單位本身＋升級卡給的能力）
   const STATIC_HOOKS = ['static', 'aura', 'attachedStatic'];
-  const OR_HOOKS = ['cantBeDefeatedBy', 'strikeFirst', 'noLethal', 'cantAttack', 'cantBeAttackedBy', 'protectFriendly', 'cantAttackBase', 'doubleSearch', 'cantReady', 'ignorePenalty', 'discardIgnorePenalty', 'cantBeBounced'];
+  const OR_HOOKS = ['cantBeCapturedBy', 'cantBeDefeatedBy', 'strikeFirst', 'noLethal', 'cantAttack', 'cantBeAttackedBy', 'protectFriendly', 'cantAttackBase', 'doubleSearch', 'cantReady', 'ignorePenalty', 'discardIgnorePenalty', 'cantBeBounced'];
   const SUM_HOOKS = ['costFor', 'costMod'];
   const CHAIN_HOOKS = ['modDamage', 'modBaseDamage', 'modFriendlyDamage'];
   function mergeHooks(a, b) {

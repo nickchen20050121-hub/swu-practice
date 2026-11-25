@@ -50,6 +50,7 @@
   SWU.parseKeywords = parseKeywords;
   SWU.AURA_LOSEKW = new Set(['Domesticated Loth-Cat']);
   SWU.AURA_GRANT = new Set();
+  SWU.GLOBAL_GRANT = new Set();
   SWU.TRAIT_GRANT = new Set();
   SWU.DRAW_TRIG = new Set();
 
@@ -228,7 +229,7 @@
     sources(p) {
       const P = this.P(p);
       const out = P.units.map((u) => ({ src: u, e: this.eff(u) }));
-      if (!P.leader.deployed) out.push({ src: P.leader, e: SWU.EFFECTS.get(P.leader.card, 'leader') });
+      if (!P.leader.deployed && !this.brainInv()) out.push({ src: P.leader, e: SWU.EFFECTS.get(P.leader.card, 'leader') });
       out.push({ src: P.base, e: SWU.EFFECTS.get(P.base.card, 'card') });
       // 基地上的升級：「Attached base gains: …」
       for (const up of P.base.upgrades) {
@@ -272,6 +273,13 @@
             if (gr) base = SWU.GFX.mergeHooks(base, gr);
           }
         }
+      // 所有單位（含敵方）獲得的能力（Satine Kryze）
+      if (SWU.GFX && SWU.GLOBAL_GRANT && SWU.GLOBAL_GRANT.size)
+        for (const GP of this.G.players) for (const o of GP.units) {
+          if (!SWU.GLOBAL_GRANT.has(o.card.key) || this.isBlank(o)) continue;
+          const oe = SWU.EFFECTS.get(o.card, o.isLeader ? 'unit' : 'card');
+          if (oe && oe.globalGrant) { const gr = oe.globalGrant(this, o, u); if (gr) base = SWU.GFX.mergeHooks(base, gr); }
+        }
       if (!u.upgrades || !u.upgrades.length || !SWU.GFX) return base;
       let out = base;
       for (const up of u.upgrades) {
@@ -295,7 +303,14 @@
       if (u.upgrades && u.upgrades.some((x) => x.card.n === 'Exiled from the Force')) return true;
       if (G.attack && G.attack.attacker === u && u.upgrades.some((x) => x.card.n === 'Condemn')) return true;
       if (!u.isLeader && this.cardBlank(u.owner, u.card)) return true;
+      if (u.upgrades && u.upgrades.some((x) => x.card.n === 'Imprisoned')) return true;
+      if (u.isLeader && this.brainInv()) return true;
       return false;
+    }
+    // Brain Invaders：所有領袖失去能力（史詩行動除外）
+    brainInv() {
+      if (!this.G.players.some((P) => P.units.some((x) => x.card.n === 'Brain Invaders'))) return false;
+      return this.allUnits().some((x) => x.card.n === 'Brain Invaders' && !x.isLeader && !(x.blankPhase != null && x.blankPhase === this.G.phaseId) && !this.cardBlank(x.owner, x.card));
     }
     cardBlank(owner, card) {
       for (const nm of this.G.named || []) {
@@ -492,6 +507,19 @@
         else missing++;
       }
       return missing * 2;
+    }
+    // Smuggle 費用（Tech｜Source of Insight：沒有 Smuggle 的資源 = 費用 +2）
+    smuggleCost(p, card) {
+      const k = card.kwp || {};
+      if (k.Smuggle != null) return k.Smuggle;
+      if (this.P(p).units.some((u) => { const ue = this.eff(u); return ue && ue.techSmuggle; })) return (card.c || 0) + 2;
+      return null;
+    }
+    // Exploit 數量（含「下一張…獲得 Exploit」）
+    exploitOf(p, card, opts = {}) {
+      let n = (card.kwp && card.kwp.Exploit) || 0;
+      for (const m of this.nextMods(p, card, opts)) if (m.kw && m.kw.Exploit) n += m.kw.Exploit;
+      return n;
     }
     readyResources(p) {
       return this.P(p).resources.filter((r) => !r.exhausted).length;
@@ -802,6 +830,7 @@
       B.damage -= h;
       if (h) {
         this.log('logBaseHeal', this.P(p).name, h);
+        (this.G.baseHealed = this.G.baseHealed || []).push({ p, phaseId: this.G.phaseId });
         this.queueEv({ type: 'heal', base: p, n: h });
       }
       return h;
@@ -855,7 +884,7 @@
     noteDamage(u, n, src = {}) {
       this.pendingDamaged = this.pendingDamaged || [];
       this.pendingDamaged.push(u);
-      this.queueEv({ type: 'damage', u, uid: u.uid, ctrl: u.ctrl, card: u.card, n, combat: !!src.combat, indirect: !!src.indirect, by: this.dealerOf(src) });
+      this.queueEv({ type: 'damage', u, uid: u.uid, ctrl: u.ctrl, card: u.card, n, combat: !!src.combat, indirect: !!src.indirect, by: this.dealerOf(src), dealer: src.attacker || src.defender || src.self || null });
       (this.pendingDmgEv = this.pendingDmgEv || []).push({ u, n, ctrl: u.ctrl, card: u.card, combat: !!src.combat });
     }
     // ---------- 分配傷害（間接傷害／自行分配） ----------
@@ -1028,7 +1057,7 @@
       if (e && e.cantReady && e.cantReady(this, u)) return;
       const was = u.exhausted;
       u.exhausted = false;
-      if (was && e && e.whenReadied) (this.pendingReadied = this.pendingReadied || []).push(u);
+      if (was) (this.pendingReadied = this.pendingReadied || []).push(u);
     }
     // 升級卡離場：回棄牌堆／代幣消失／領袖駕駛員回領袖區
     dropUpgrade(up, host) {
@@ -1078,7 +1107,7 @@
         L.exhausted = true;
         L.epicUsed = true;
       } else if (!/Token/.test(u.card.t)) {
-        this.P(u.owner).discard.push({ uid: u.uid, card: u.card, owner: u.owner });
+        this.P(u.owner).discard.push({ uid: u.uid, card: u.origCard || u.card, owner: u.owner });
       }
       this.emit({ type: 'defeat', u });
       // When Defeated
@@ -1090,10 +1119,15 @@
         await this.safe(() => e.whenDefeated(this, snapshot, why));
         await this.fire(ctrl, 'onUsedWhenDefeated', snapshot, () => this.safe(() => e.whenDefeated(this, snapshot, why)));
       } else if (!e || !e.implemented) await this.unimplemented(u, 'When Defeated', ctrl);
-      if (e && e.bounty) await this.safe(() => e.bounty(this, snapshot, 1 - ctrl));
-      else for (const k of u.card.kwp?.Bounty || []) await this.unimplementedText(u, k, 1 - ctrl);
+      await this.collectBounty(snapshot, e, 1 - ctrl);
       // 其他卡的「當敵方單位被擊敗」
       for (const q of [ctrl, 1 - ctrl]) await this.fire(q, 'onAnyDefeated', snapshot);
+    }
+    async collectBounty(snapshot, e, collector) {
+      if (e && e.bounty) {
+        await this.safe(() => e.bounty(this, snapshot, collector));
+        await this.fire(collector, 'onBountyCollected', snapshot, () => this.safe(() => e.bounty(this, snapshot, collector)));
+      } else for (const k of snapshot.card.kwp?.Bounty || []) await this.unimplementedText(snapshot, k, collector);
     }
     async checkState() {
       let again = true;
@@ -1163,6 +1197,7 @@
       for (const u of rd) {
         const e = this.findUnit(u.uid) && this.eff(u);
         if (e && e.whenReadied) await this.safe(() => e.whenReadied(this, u));
+        if (this.findUnit(u.uid)) for (const q of [0, 1]) await this.fire(q, 'onAnyReadied', u);
       }
       // 升級卡被擊敗時（upWhenDefeated）
       const ud = this.pendingUpDefeat || [];
@@ -1172,12 +1207,18 @@
         const ue = SWU.EFFECTS.get(up.card, this.upSide(up));
         if (ue && ue.upWhenDefeated) await this.safe(() => ue.upWhenDefeated(this, up, host));
       }
+      const prc = this.pendingRC || [];
+      this.pendingRC = [];
+      for (const r of prc) if (this.findUnit(r.t.uid)) await this.safe(() => r.e.replaceCapture(this, r.t));
+      const pbn = this.pendingBounty || [];
+      this.pendingBounty = [];
+      for (const b of pbn) await this.collectBounty(b.snap, b.e, b.collector);
       const eq = this.evq || [];
       this.evq = [];
       const batch = (this._evBatch = (this._evBatch || 0) + 1);
       for (const ev of eq) ev.batch = batch;
       for (const ev of eq) for (const q of [this.G.active == null ? 0 : this.G.active, this.G.active == null ? 1 : 1 - this.G.active]) await this.fire(q, 'onEvent', ev);
-      if (dev.length || hl.length || eq.length || ud.length || pdc.length || pdr.length) {
+      if (dev.length || hl.length || eq.length || ud.length || pdc.length || pdr.length || pbn.length) {
         if ((this._csDepth || 0) < 4) {
           this._csDepth = (this._csDepth || 0) + 1;
           try { await this.checkState(); } finally { this._csDepth--; }
@@ -1198,7 +1239,7 @@
       if (!t) return [];
       const out = [];
       for (let i = 0; i < n; i++) {
-        const u = this.makeUnit(this.inst(t, p), p, { exhausted: true });
+        const u = this.makeUnit(this.inst(t, p), p, { exhausted: !this.P(p).units.some((x) => { const xe = this.eff(x); return xe && xe.tokensReady; }) });
         this.P(p).units.push(u);
         this.queueEv({ type: 'enter', u });
         out.push(u);
@@ -1226,13 +1267,15 @@
     }
     capture(captor, t) {
       if (!this.findUnit(t.uid)) return;
+      { const ce = this.eff(t); if (ce && ce.cantBeCapturedBy && ce.cantBeCapturedBy(this, t, captor)) return; if (ce && ce.replaceCapture) { (this.pendingRC = this.pendingRC || []).push({ t, e: ce }); return; } }
       const P = this.P(t.ctrl);
+      { const be = this.eff(t); if (be && (be.bounty || (t.card.kwp?.Bounty || []).length)) (this.pendingBounty = this.pendingBounty || []).push({ snap: { ...t, upgrades: [...t.upgrades] }, e: be, collector: 1 - t.ctrl }); }
       P.units = P.units.filter((x) => x !== t);
       for (const up of t.upgrades) this.dropUpgrade(up, t);
       (this.G.left = this.G.left || []).push({ uid: t.uid, ctrl: t.ctrl, phaseId: this.G.phaseId });
       { const te = this.eff(t); if (te && te.whenLeavesPlay) this.safe(() => te.whenLeavesPlay(this, t)); }
       captor.captured = captor.captured || [];
-      captor.captured.push({ uid: t.uid, card: t.card, owner: t.owner });
+      captor.captured.push({ uid: t.uid, card: t.origCard || t.card, owner: t.owner });
       this.log('logCapture', captor.card.n, t.card.n);
     }
     rescue(captor) {
@@ -1254,7 +1297,7 @@
       for (const up of u.upgrades) this.dropUpgrade(up, u);
       (this.G.left = this.G.left || []).push({ uid: u.uid, ctrl: u.ctrl, phaseId: this.G.phaseId });
       if (be && be.whenLeavesPlay) this.safe(() => be.whenLeavesPlay(this, u));
-      if (!/Token/.test(u.card.t)) this.P(u.owner).hand.push({ uid: u.uid, card: u.card, owner: u.owner });
+      if (!/Token/.test(u.card.t)) this.P(u.owner).hand.push({ uid: u.uid, card: u.origCard || u.card, owner: u.owner });
       this.log('logBounce', u.card.n);
     }
     resourceTop(p) {
@@ -1317,9 +1360,16 @@
         if (pa) acts.push(pa);
       }
       for (const r of P.resources) {
-        const k = r.card.kwp || {};
-        if (k.Smuggle != null) {
+        if (this.smuggleCost(p, r.card) != null) {
           const a = this.playOption(p, r, 'smuggle');
+          if (a) acts.push(a);
+        }
+      }
+      for (const c of P.discard) {
+        if ((P.discardPlays || []).some((d) => d.uid === c.uid && d.phaseId === G.phaseId)) continue;
+        const de = SWU.EFFECTS.get(c.card, 'card');
+        if (de && de.fromDiscard && de.fromDiscard(this, p, c)) {
+          const a = this.playOption(p, c, 'discard');
           if (a) acts.push(a);
         }
       }
@@ -1378,12 +1428,12 @@
       const L = P.leader;
       if (!L.deployed) {
         const le0 = SWU.EFFECTS.get(L.card, 'leader');
-        const line = !(le0 && le0.actions) && SWU.actionLine(L.card, 'leader');
+        const line = !(le0 && le0.actions) && !this.brainInv() && SWU.actionLine(L.card, 'leader');
         if (line && SWU.actionAffordable(this, p, line, L)) acts.push({ type: 'manualLeader', line, label: SWU.t('actLeaderAbility', L.card.n, SWU.t('manualTag')) });
       }
       if (!L.deployed) {
         const le = SWU.EFFECTS.get(L.card, 'leader');
-        if (le && le.actions)
+        if (le && le.actions && !this.brainInv())
           le.actions.forEach((ab, i) => {
             if (ab.can(this, L)) acts.push({ type: 'leaderAbility', manual: !!ab.manual, i, label: SWU.t('actLeaderAbility', L.card.n, ab.label ? SWU.t(ab.label) : ab.text || '') });
           });
@@ -1420,10 +1470,10 @@
       const card = c.card;
       if (!['Unit', 'Event', 'Upgrade'].includes(card.t)) return null;
       let cost;
-      if (from === 'smuggle') cost = this.costOf(p, card, { baseCost: card.kwp.Smuggle });
+      if (from === 'smuggle') cost = this.costOf(p, card, { baseCost: this.smuggleCost(p, card), from });
       else cost = this.costOf(p, card);
       const e = SWU.EFFECTS.get(card, 'card');
-      let exploitMax = card.kwp.Exploit || 0;
+      let exploitMax = this.exploitOf(p, card, { from });
       const reduce = Math.min(exploitMax, this.P(p).units.length) * 2;
       if (!this.canPay(p, Math.max(0, cost - reduce)) && !(e && e.affordable && e.affordable(this, p, cost))) return null;
       if (card.t === 'Upgrade' && !/^Fortify/m.test(card.tx || '') && !this.upgradeTargets(p, card).length) return null;
@@ -1538,10 +1588,11 @@
       } else c = P.hand.find((x) => x.uid === uid);
       if (!c) return;
       const card = c.card;
-      let cost = opts.free ? 0 : opts.asPilot ? Math.max(0, this.pilotCost(p, card) - (opts.pilotDiscount || 0)) : from === 'smuggle' ? this.costOf(p, card, { baseCost: card.kwp.Smuggle }) : this.costOf(p, card, { discount: opts.discount || 0, ignoreAspect: opts.ignoreAspect, ignoreAsp: opts.ignoreAsp, from });
+      let cost = opts.free ? 0 : opts.asPilot ? Math.max(0, this.pilotCost(p, card) - (opts.pilotDiscount || 0)) : from === 'smuggle' ? this.costOf(p, card, { baseCost: this.smuggleCost(p, card), discount: opts.discount || 0, from }) : this.costOf(p, card, { discount: opts.discount || 0, ignoreAspect: opts.ignoreAspect, ignoreAsp: opts.ignoreAsp, from });
       // Exploit
-      if (!opts.free && card.kwp.Exploit && P.units.length) {
-        const max = Math.min(card.kwp.Exploit, P.units.length);
+      const exN = opts.free ? 0 : this.exploitOf(p, card, { from, ...opts });
+      if (!opts.free && exN && P.units.length) {
+        const max = Math.min(exN, P.units.length);
         const need = Math.max(0, cost - this.readyResources(p) - P.credits);
         const choices = await this.pickCards(
           p,
@@ -1552,7 +1603,7 @@
         );
         for (const ch of choices) {
           const u = this.findUnit(ch.uid);
-          if (u) await this.defeat(u, { exploit: true });
+          if (u) { (this.G.lastExploit = this.G.lastExploit && this.G.lastExploit.uid === c.uid ? this.G.lastExploit : { uid: c.uid, powers: [] }).powers.push(this.power(u)); await this.defeat(u, { exploit: true }); }
           cost = Math.max(0, cost - 2);
         }
       }
@@ -1596,7 +1647,9 @@
       for (const q of [p, 1 - p]) await this.fire(q, 'onCardPlayed', { p, card, from, uid: c.uid });
       await this.fire(1 - p, 'onEnemyPlay', card);
       const inst = { uid: c.uid, card, owner: c.owner };
-      const e = this.cardBlank(c.owner, card) ? { implemented: true } : SWU.EFFECTS.get(card, 'card');
+      const relentless = card.t === 'Event' && this.opp(p).units.some((x) => { const xe = this.eff(x); return xe && xe.blankFirstEvent; }) && (this.G.playLog || []).filter((x) => x.p === p && x.round === this.G.round && x.card.t === 'Event').length === 1;
+      if (relentless) this.log('logNote', 'Relentless: ' + card.n);
+      const e = this.cardBlank(c.owner, card) || relentless ? { implemented: true, event() {} } : SWU.EFFECTS.get(card, 'card');
       if (card.t === 'Unit' && opts.asPilot) {
         // Piloting：當成升級裝在友方沒有駕駛員的載具上
         const hosts = this.pilotHosts(p, card);
@@ -1615,7 +1668,7 @@
         if (pe && pe.whenPlayed) await this.safe(() => pe.whenPlayed(this, up, t));
         await this.fire(p, 'onFriendlyUpgradePlayed', up, t);
       } else if (card.t === 'Unit') {
-        const rdy = (e && e.entersReady && (typeof e.entersReady !== 'function' || e.entersReady(this, inst, p))) || this.sources(p).some(({ src, e: se }) => se.friendlyEntersReady && se.friendlyEntersReady(this, src, inst));
+        const rdy = opts.ready || usedNext.some((m) => m.ready) || (e && e.entersReady && (typeof e.entersReady !== 'function' || e.entersReady(this, inst, p))) || this.sources(p).some(({ src, e: se }) => se.friendlyEntersReady && se.friendlyEntersReady(this, src, inst));
         const u = this.makeUnit(inst, p, { exhausted: !rdy });
         for (const m of usedNext) if (m.kw) this.buff(u, 0, 0, 'phase', m.kw);
         P.units.push(u);
@@ -1771,6 +1824,7 @@
         if (!target) return;
         atk.defender = target.unit || null;
         atk.base = target.base != null;
+        { const e2 = this.eff(attacker); if (atk.defender && e2 && e2.attackTwo && !this.isBlank(attacker)) { const rest = tg.units.filter((x) => x !== atk.defender); if (rest.length) { const t2 = await this.pickTarget(p, SWU.lang === 'en' ? 'Choose a second defender (optional)' : '可以再選第二個防守單位', { units: rest, optional: true, ctx: { uid: attacker.uid } }); if (t2 && t2.unit) atk.defender2 = t2.unit; } } }
         if (opts.power || opts.hp) this.buff(attacker, opts.power || 0, opts.hp || 0, 'attack');
         if (opts.kw) attacker.mods.push({ p: 0, h: 0, kw: opts.kw, until: 'attack', attackId: atk.id });
         (G.attackers = G.attackers || []).push({ uid: attacker.uid, ctrl: p, u: attacker, phaseId: G.phaseId });
@@ -1892,6 +1946,12 @@
       }
       const dealtToD = yA || yD ? 0 : await this.damageUnit(d, ap, { combat: true, attacker: a, p: a.ctrl });
       atk.dealtToD = dealtToD;
+      const d2 = atk.defender2 && this.findUnit(atk.defender2.uid) ? atk.defender2 : null;
+      if (d2) {
+        const d2p = this.power(d2, false);
+        await this.damageUnit(d2, ap, { combat: true, attacker: a, p: a.ctrl });
+        await this.damageUnit(a, d2p, { combat: true, p: d2.ctrl, defender: d2 });
+      }
       // 「先造成戰鬥傷害」：防守單位因此被擊敗就不會反擊
       if (!(yA || yD) && !(first && this.remaining(d) <= 0)) await this.damageUnit(a, dp, { combat: true, p: d.ctrl, defender: d });
       delete a.gritDamage;
@@ -1909,7 +1969,7 @@
         if (e && e.onAttackDefeat) atk.afterDefeat = () => e.onAttackDefeat(this, a, atk);
       }
       // 戰鬥傷害後一起判定擊敗
-      for (const u of [d, a]) if (this.findUnit(u.uid) && this.remaining(u) <= 0) await this.defeat(u, { combat: true, by: u === d ? a : d });
+      for (const u of d2 ? [d, d2, a] : [d, a]) if (this.findUnit(u.uid) && this.remaining(u) <= 0) await this.defeat(u, { combat: true, by: u === a ? d : a });
       if (atk.afterDefeat && this.findUnit(a.uid)) await this.safe(atk.afterDefeat);
       await this.checkState();
     }
@@ -2061,6 +2121,7 @@
         for (const u of toReady) this.ready(u);
         P.leader.exhausted = false;
       }
+      for (const q of [this.G.initiative, 1 - this.G.initiative]) await this.fire(q, 'onRegroupReady');
       this.emit({ type: 'update' });
     }
 

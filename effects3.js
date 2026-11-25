@@ -1290,6 +1290,9 @@
 
   def('Stolen Landspeeder', 'card', {
     extend: true,
+    whenPlayed(g, u) {
+      if ((g.G.playLog || []).some((x) => x.uid === u.uid && x.from === 'hand' && x.phaseId === g.G.phaseId)) SWU.FX2.takeControl(g, u, 1 - u.ctrl);
+    },
     async bounty(g, snap, collector) {
       if (collector !== snap.owner) return;
       const P = g.P(snap.owner);
@@ -3149,6 +3152,1450 @@
     bounty(g, snap, collector) {
       let n = 12;
       for (const r of g.P(collector).resources) if (n > 0 && r.exhausted) ((r.exhausted = false), n--);
+    },
+  });
+  // ===================== 第 5 批（輪替系列／TS26）上 =====================
+  const smug = (g, uid) => (g.G.playLog || []).some((x) => x.uid === uid && x.from === 'smuggle' && x.round === g.G.round);
+  const playedFromHand = (g, uid) => (g.G.playLog || []).some((x) => x.uid === uid && x.from === 'hand' && x.phaseId === g.G.phaseId);
+  const hasBounty = (g, u) => {
+    const e = g.eff(u);
+    return !!((e && e.bounty) || (u.card.kwp && u.card.kwp.Bounty && u.card.kwp.Bounty.length));
+  };
+  const enemyBounty = (g, p) => g.P(1 - p).units.some((u) => hasBounty(g, u));
+  const defeatedNow = (g, pred) => (g.G.defeated || []).some((x) => x.phaseId === g.G.phaseId && pred(x));
+  function discardHand(g, p) {
+    const P = g.P(p);
+    for (const c of [...P.hand]) {
+      P.hand = P.hand.filter((x) => x !== c);
+      P.discard.push(c);
+      g.noteHandDiscard(p, c);
+    }
+  }
+  async function defeatResource(g, p, prompt, optional, filter = () => true) {
+    const P = g.P(p);
+    const rs = P.resources.filter(filter);
+    if (!rs.length) return null;
+    const pk = await g.pickCards(p, prompt, rs, optional ? 0 : 1, 1);
+    if (!pk.length) return null;
+    const r = pk[0];
+    P.resources = P.resources.filter((x) => x !== r);
+    g.P(r.owner != null ? r.owner : p).discard.push({ uid: r.uid, card: r.card, owner: r.owner != null ? r.owner : p });
+    g.log('logDefeat', r.card.n);
+    return r;
+  }
+  const expTo = async (g, p, prompt, filter = () => true, optional = false) => {
+    const t = await g.pickUnit(p, prompt, filter, { optional });
+    if (t) g.giveExp(t);
+    return t;
+  };
+  const phaseGrant = (g, match, hooks) => (g.G.phaseGrants = g.G.phaseGrants || []).push({ phaseId: g.G.phaseId, match, hooks });
+
+  def('Aggrieved Parliamentarian', 'card', {
+    whenPlayed(g, u) {
+      const o = 1 - u.ctrl;
+      const P = g.P(o);
+      const d = P.discard.splice(0);
+      bottomRandom(g, o, d);
+      g.log('logNote', `${P.name}: discard → deck bottom (${d.length})`);
+    },
+  });
+  def('Altering the Deal', 'card', {
+    async event(g, p) {
+      const cs = [];
+      for (const u of g.P(p).units) for (const c of u.captured || []) cs.push({ uid: c.uid, card: c.card, c, captor: u });
+      if (!cs.length) return;
+      const pk = await g.pickCards(p, L('棄掉一張友方單位看守的被俘虜卡', 'Discard a captured card guarded by a friendly unit'), cs, 1, 1);
+      if (!pk.length) return;
+      const { c, captor } = pk[0];
+      captor.captured = captor.captured.filter((x) => x !== c);
+      g.P(c.owner).discard.push({ uid: c.uid, card: c.card, owner: c.owner });
+      g.log('logDefeat', c.card.n);
+    },
+  });
+  def('Barriss Offee | It\'s Only a Matter of Time', 'card', {
+    async onEnemyAttack(g, self, atk) {
+      if (atk.attacker && g.findUnit(atk.attacker.uid) && (await may(g, self.ctrl, self, L(`要給 ${N(atk.attacker)} 1 個經驗代幣嗎？`, `Give an Experience token to ${atk.attacker.card.n}?`)))) g.giveExp(atk.attacker);
+    },
+  });
+  def('Bendu | The One in the Middle', 'card', {
+    onAttack: (g, u) => g.addNext(u.ctrl, { f: (c) => !(c.a || []).includes('Heroism') && !(c.a || []).includes('Villainy'), n: 2, phaseId: g.G.phaseId }),
+  });
+  const blackOne = async (g, u) => {
+    if (!(await may(g, u.ctrl, u, L('要棄掉所有手牌，然後抽 3 張嗎？', 'Discard your hand, then draw 3 cards?')))) return;
+    discardHand(g, u.ctrl);
+    g.draw(u.ctrl, 3);
+  };
+  def('Black One | Scourge of Starkiller Base', 'card', { whenPlayed: blackOne, whenDefeated: blackOne });
+  def('Boba Fett | Daimyo', 'unit', {
+    aura(g, src, u) {
+      if (u === src || u.ctrl !== src.ctrl || g._bobaK) return null;
+      g._bobaK = true;
+      try {
+        return Object.keys(g.kw(u)).some((k) => !['SmuggleRaw', 'Bounty'].includes(k) || (k === 'Bounty' && (u.card.kwp.Bounty || []).length)) ? { p: 1 } : null;
+      } finally {
+        g._bobaK = false;
+      }
+    },
+  });
+  def('Boba Fett\'s Armor', 'card', { grantFor: (g, up, host) => (host.card.n === 'Boba Fett' ? { modDamage: (g, u, n) => Math.max(0, n - 2) } : null) });
+  def('Bossk | Hunting His Prey', 'unit', {
+    async onBountyCollected(g, self, snap, again) {
+      if (self.bosskRound === g.G.round) return;
+      if (!(await may(g, self.ctrl, self, L('要再領一次這個賞金嗎？', 'Collect that Bounty again?')))) return;
+      self.bosskRound = g.G.round;
+      await again();
+    },
+  });
+  passive('Brain Invaders');
+  def('Brutal Traditions', 'card', { fromDiscard: (g, p) => defeatedNow(g, (x) => x.ctrl !== p) });
+  def('C-3P0 | Die, Jedi Dogs!', 'card', {
+    whenPlayed(g, u) {
+      SWU.FX2.takeControl(g, u, 1 - u.ctrl);
+    },
+    anyActions: [
+      {
+        text: L('橫置：對另一個地面單位造成等同這個單位攻擊力的傷害', 'Exhaust: deal damage equal to this unit\'s power to another ground unit'),
+        can: (g, u, p) => p !== u.ctrl && !u.exhausted,
+        async run(g, u, p) {
+          g.exhaust(u);
+          const n = g.power(u);
+          const t = await g.pickUnit(p, L(`造成 ${n} 點傷害`, `Deal ${n} damage`), (x) => x !== u && x.arena === 'Ground', { ctx: { harm: true, op: 'damage', n } });
+          if (t) await g.damageUnit(t, n, { p, self: u });
+        },
+      },
+    ],
+  });
+  def('Cassian Andor | Rebellions Are Built On Hope', 'card', { whenPlayed: (g, u) => smug(g, u.uid) && g.ready(u) });
+  def('Caught in the Crossfire', 'card', {
+    async event(g, p) {
+      const en = g.P(1 - p).units;
+      const a = await g.pickUnit(p, L('選第一個敵方單位', 'Choose the first enemy unit'), (x) => x.ctrl !== p && en.some((y) => y !== x && y.arena === x.arena), { ctx: { harm: true } });
+      if (!a) return;
+      const b = await g.pickUnit(p, L('選同一區域的第二個敵方單位', 'Choose a second enemy unit in the same arena'), (x) => x.ctrl !== p && x !== a && x.arena === a.arena, { ctx: { harm: true } });
+      if (!b) return;
+      const pa = g.power(a), pb = g.power(b);
+      await g.damageUnit(b, pa, { p, self: a });
+      await g.damageUnit(a, pb, { p, self: b });
+    },
+  });
+  def('Chain Code Collector', 'card', { onAttack: (g, u, atk) => atk.defender && hasBounty(g, atk.defender) && g.buff(atk.defender, -4, 0, 'attack') });
+  def('Chancellor Palpatine | Wartime Chancellor', 'card', {
+    tokensReady: true,
+    onAttack(g, u) {
+      if ((g.G.left || []).some((x) => x.phaseId === g.G.phaseId) || defeatedNow(g, () => true)) g.createToken(u.ctrl, 'Clone Trooper');
+    },
+  });
+  def('Chancellor Palpatine // Darth Sidious | Playing Both Sides', 'leader', {
+    actions: [
+      {
+        text: L('橫置：抽 1、基地回 2、翻面', 'Exhaust: draw a card, heal 2 from your base, flip'),
+        can: (g, Ld) => !Ld.exhausted && !Ld.flipped && defeatedNow(g, (x) => x.ctrl === Ld.ctrl && (x.card.a || []).includes('Heroism')),
+        run(g, Ld) {
+          Ld.exhausted = true;
+          g.draw(Ld.ctrl, 1);
+          g.healBase(Ld.ctrl, 2);
+          Ld.flipped = true;
+          g.log('logNote', 'Darth Sidious');
+        },
+      },
+      {
+        text: L('橫置：建立複製人士兵、對敵方基地 2 傷、翻面', 'Exhaust: create a Clone Trooper, 2 damage to each enemy base, flip'),
+        can: (g, Ld) => !Ld.exhausted && Ld.flipped && g.G.playedThisPhase[Ld.ctrl].some((c) => (c.a || []).includes('Villainy')),
+        run(g, Ld) {
+          Ld.exhausted = true;
+          g.createToken(Ld.ctrl, 'Clone Trooper');
+          g.damageBase(1 - Ld.ctrl, 2, { p: Ld.ctrl });
+          Ld.flipped = false;
+          g.log('logNote', 'Chancellor Palpatine');
+        },
+      },
+    ],
+  });
+  def('Chirrut Îmwe | One With the Force', 'unit', { noLethal: (g) => g.G.phase === 'action' });
+  def('Clone', 'card', {
+    async whenPlayed(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以複製一個非領袖、非載具單位', 'You may copy a non-leader, non-Vehicle unit'), (x) => x !== u && !g.isLeaderUnit(x) && !g.hasTrait(x, 'VEHICLE') && !isTok(x), { optional: true });
+      if (!t) return;
+      u.origCard = u.origCard || u.card;
+      const c = t.origCard || t.card;
+      u.card = { ...c, tr: [...new Set([...(c.tr || []), 'CLONE'])], u: false };
+      u.arena = c.ar && c.ar.includes('Space') ? 'Space' : 'Ground';
+      g.log('logNote', `Clone → ${c.n}`);
+      if (g.has(u, 'Shielded')) g.giveShield(u);
+      const e = SWU.EFFECTS.get(c, 'card');
+      if (e && e.whenPlayed) await e.whenPlayed(g, u);
+    },
+  });
+  def('Confederate Tri-Fighter', 'card', { noBaseHeal: true });
+  def('Consolidation of Power', 'card', {
+    async event(g, p) {
+      const P = g.P(p);
+      const us = P.units.map((u) => ({ uid: u.uid, card: u.card }));
+      const pk = us.length ? await g.pickCards(p, L('選擇任意數量的友方單位', 'Choose any number of friendly units'), us, 0, us.length) : [];
+      const chosen = pk.map((x) => g.findUnit(x.uid)).filter(Boolean);
+      const sum = chosen.reduce((a, u) => a + g.power(u), 0);
+      const cands = P.hand.filter((c) => c.card.t === 'Unit' && (c.card.c || 0) <= sum);
+      if (cands.length) {
+        const c = await g.pickCards(p, L(`可以免費打出一個費用 ≤${sum} 的單位`, `You may play a unit costing ${sum} or less for free`), cands, 0, 1);
+        if (c.length) await g.playCard(p, c[0].uid, 'hand', { free: true });
+      }
+      for (const u of chosen) if (g.findUnit(u.uid)) await g.defeat(u, {});
+    },
+  });
+  def('Count Dooku | Face of the Confederacy', 'unit', {
+    onAttack: (g, u) => g.addNext(u.ctrl, { f: (c) => g.hasTrait(c, 'SEPARATIST'), kw: { Exploit: 3 }, phaseId: g.G.phaseId }),
+  });
+  def('Count Dooku | Fallen Jedi', 'card', {
+    async whenPlayed(g, u) {
+      const ex = g.G.lastExploit && g.G.lastExploit.uid === u.uid ? g.G.lastExploit.powers : [];
+      for (const n of ex) {
+        if (!n) continue;
+        const t = await g.pickUnit(u.ctrl, L(`可以對一個敵方單位造成 ${n} 點傷害`, `You may deal ${n} damage to an enemy unit`), (x) => x.ctrl !== u.ctrl, { optional: true, ctx: { harm: true, op: 'damage', n } });
+        if (t) await g.damageUnit(t, n, { p: u.ctrl, self: u });
+      }
+    },
+  });
+  def('DJ | Blatant Thief', 'card', {
+    async whenPlayed(g, u) {
+      if (!smug(g, u.uid)) return;
+      const O = g.P(1 - u.ctrl);
+      if (!O.resources.length) return;
+      const pk = await g.pickCards(u.ctrl, L('取得一個敵方資源的控制權', 'Take control of an enemy resource'), O.resources, 1, 1);
+      if (!pk.length) return;
+      const r = pk[0];
+      if (r.owner == null) r.owner = 1 - u.ctrl;
+      O.resources = O.resources.filter((x) => x !== r);
+      g.P(u.ctrl).resources.push(r);
+      u.djRes = r.uid;
+      g.log('logTakeControl', g.P(u.ctrl).name, r.card.n);
+    },
+    whenLeavesPlay(g, u) {
+      if (!u.djRes) return;
+      for (const P of g.G.players) {
+        const r = P.resources.find((x) => x.uid === u.djRes);
+        if (r && P.idx !== r.owner) {
+          P.resources = P.resources.filter((x) => x !== r);
+          g.P(r.owner).resources.push(r);
+        }
+      }
+    },
+  });
+  def('Darth Maul | Revenge At Last', 'card', { attackTwo: true });
+  def('Del Meeko | Providing Overwatch', 'card', { oppCostAdd: (g, u, card) => (card.t === 'Event' ? 1 : 0) });
+  def('Dengar | The Demolisher', 'card', {
+    async onFriendlyUpgradePlayed(g, self, up, t) {
+      if (t && g.findUnit(t.uid) && (await may(g, self.ctrl, self, L(`要對 ${N(t)} 造成 1 點傷害嗎？`, `Deal 1 damage to ${t.card.n}?`)))) await g.damageUnit(t, 1, { p: self.ctrl, self });
+    },
+  });
+  def('Doctor Aphra | Rapacious Archaeologist', 'unit', {
+    static: (g, u) => (new Set(g.P(u.ctrl).discard.map((c) => c.card.c || 0)).size >= 5 ? { p: 3 } : null),
+    async whenDeployed(g, u) {
+      const P = g.P(u.ctrl);
+      const pick = [];
+      for (let i = 0; i < 3; i++) {
+        const cs = P.discard.filter((c) => !pick.includes(c) && !pick.some((x) => x.card.n === c.card.n));
+        if (!cs.length) break;
+        const pk = await g.pickCards(u.ctrl, L(`選第 ${i + 1} 張不同名稱的卡`, `Choose card ${i + 1} with a different name`), cs, 1, 1);
+        if (!pk.length) break;
+        pick.push(pk[0]);
+      }
+      if (pick.length < 3) return;
+      const c = pick[g.rnd(3)];
+      moveDiscardToHand(g, u.ctrl, c.uid);
+    },
+  });
+  const sailer = async (g, u) => {
+    if (!(g.G.baseHealed || []).some((x) => x.phaseId === g.G.phaseId)) return;
+    await expTo(g, u.ctrl, L('給另一個分離主義單位 1 個經驗代幣', 'Give an Experience token to another Separatist unit'), (x) => x !== u && g.hasTrait(x, 'SEPARATIST'));
+  };
+  def('Dooku\'s Solar Sailer | Beautiful and Expensive', 'card', { whenPlayed: sailer, onAttack: sailer });
+  def('Droid Manufactory | Geonosis', 'card', { onLeaderDeployed: (g, src) => g.createToken(src.ctrl != null ? src.ctrl : src.idx, 'Battle Droid', 2) });
+  def('Dryden Vos | Offering No Escape', 'card', {
+    async whenPlayed(g, u) {
+      const cs = [];
+      for (const x of g.P(u.ctrl).units) for (const c of x.captured || []) cs.push({ uid: c.uid, card: c.card, c, captor: x });
+      if (!cs.length) return;
+      const pk = await g.pickCards(u.ctrl, L('可以免費打出一張你看守的被俘虜卡', 'You may play a captured card you guard for free'), cs, 0, 1);
+      if (!pk.length) return;
+      const { c, captor } = pk[0];
+      captor.captured = captor.captured.filter((x) => x !== c);
+      await g.playCard(u.ctrl, c.uid, 'deck', { inst: c, free: true });
+    },
+  });
+  def('Electrostaff', 'card', { grantFor: () => ({ aura: (g, src, u) => (g.G.attack && g.G.attack.defender === src && g.G.attack.attacker === u ? { p: -1 } : null) }) });
+  def('Endless Legions', 'card', {
+    async event(g, p) {
+      const P = g.P(p);
+      const us = P.resources.filter((r) => r.card.t === 'Unit');
+      const pk = us.length ? await g.pickCards(p, L('展示任意數量的單位資源，依序免費打出', 'Reveal any number of unit resources to play for free'), us, 0, us.length) : [];
+      if (pk.length) g.revealCards(p, pk, 'reveal');
+      for (const r of pk) if (P.resources.includes(r)) await g.playCard(p, r.uid, 'resource', { free: true });
+    },
+  });
+  def('Enfys Nest | Marauder', 'card', {
+    aura: (g, src, u) => {
+      const A = g.G.attack;
+      return A && A.defender === u && A.attacker && A.attacker.ctrl === src.ctrl && A.opts && A.opts.ambush ? { p: -3 } : null;
+    },
+  });
+  def('Enterprising Lackeys', 'card', {
+    async whenDefeated(g, snap) {
+      const p = snap.ctrl;
+      const r = await defeatResource(g, p, L('可以擊敗一個友方資源，把這個單位放成資源', 'You may defeat a friendly resource to put this unit into play as a resource'), true);
+      if (!r) return;
+      const O = g.P(snap.owner);
+      const c = O.discard.find((x) => x.uid === snap.uid);
+      if (!c) return;
+      O.discard = O.discard.filter((x) => x !== c);
+      g.P(p).resources.push({ ...c, exhausted: true });
+      g.log('logNote', `${c.card.n} → resource`);
+    },
+  });
+  def('Entrenched', 'card', { grantFor: () => ({ cantAttackBase: () => true }) });
+  def('Evidence of the Crime', 'card', {
+    async event(g, p) {
+      const ups = [];
+      for (const u of g.allUnits()) for (const up of u.upgrades) if (!up.leaderPilot && (up.card.c || 0) <= 3 && !/Token/.test(up.card.t)) ups.push({ uid: up.uid, card: up.card, host: u, up });
+      if (!ups.length) return;
+      const pk = await g.pickCards(p, L('取得一張費用 ≤3 的升級的控制權', 'Take control of an upgrade that costs 3 or less'), ups, 1, 1);
+      if (!pk.length) return;
+      const { host, up } = pk[0];
+      const ts = g.allUnits().filter((x) => x !== host && (g.upgradeTargets(p, up.card) || []).includes(x));
+      const t = ts.length ? await g.pickUnit(p, L('裝到哪個單位', 'Attach it to which unit'), (x) => ts.includes(x), {}) : null;
+      if (!t) return;
+      host.upgrades = host.upgrades.filter((x) => x !== up);
+      up.ctrl = p;
+      t.upgrades.push(up);
+      g.log('logAttach', up.card.n, t.card.n);
+    },
+  });
+  def('Fenn Rau | Protector of Concord Dawn', 'card', {
+    async whenPlayed(g, u) {
+      await playUpgradeOn(g, u.ctrl, 'hand', g.P(u.ctrl).hand.filter((c) => c.card.t === 'Upgrade'), () => true, 2, u.card);
+    },
+    async onFriendlyUpgradePlayed(g, self, up, t) {
+      if (t !== self) return;
+      const x = await g.pickUnit(self.ctrl, L('給一個敵方單位本階段 -2/-2', 'Give an enemy unit -2/-2 for this phase'), (y) => y.ctrl !== self.ctrl, { ctx: { harm: true } });
+      if (x) g.buff(x, -2, -2);
+    },
+  });
+  def('Final Showdown', 'card', {
+    event(g, p) {
+      for (const u of g.P(p).units) g.ready(u);
+      g.delay({ at: 'regroupStart', round: g.G.round, run: (g) => g.winGame(1 - p) });
+    },
+  });
+  def('Finn | On the Run', 'card', {
+    async onFriendlyAttackEnd(g, self, atk) {
+      if (atk.attacker !== self) return;
+      const t = await g.pickUnit(self.ctrl, L('選一個獨特單位：本階段受到的傷害 -1', 'Choose a unique unit: prevent 1 damage dealt to it this phase'), (x) => !!x.card.u, { ctx: { aiFriendly: true } });
+      if (t) phaseGrant(g, (g, u) => u.uid === t.uid, { modDamage: (g, u, n) => Math.max(0, n - 1) });
+    },
+  });
+  def('First Legion Snowtrooper', 'card', { static: (g, u) => (g.G.attack && g.G.attack.attacker === u && g.G.attack.defender && g.G.attack.defender.damage > 0 ? { p: 2, kw: { Overwhelm: true } } : null) });
+  def('Fives | I Have Proof!', 'card', {
+    async whenPlayed(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以借用另一個單位的「進場時」能力', 'You may use the When Played abilities of another unit'), (x) => x !== u && /When Played/i.test(SWU.sideText(x.card, 'card')), { optional: true });
+      if (!t) return;
+      const e = SWU.EFFECTS.get(t.card, 'card');
+      if (e && e.whenPlayed) await e.whenPlayed(g, u);
+    },
+  });
+  def('Foresight', 'card', {
+    grantFor: () => ({
+      async onRegroupStart(g, self) {
+        const p = self.ctrl;
+        const P = g.P(p);
+        if (!P.deck.length) return;
+        const name = await SWU.FX2.nameCard(g, p, p, self.card);
+        const top = P.deck[0];
+        if (g.io[p] && g.io[p].isHuman) await g.showCards(p, [top], L('牌庫頂', 'Top of your deck'));
+        if (top.card.n === name && (await may(g, p, self, L('猜中了！要展示並抽這張嗎？', 'It matches! Reveal and draw it?')))) {
+          g.revealCards(p, [top], 'reveal');
+          g.draw(p, 1);
+        }
+      },
+    }),
+  });
+  def('Foundling', 'card', { grantTrait: () => ['MANDALORIAN'] });
+  def('General Grievous | Trophy Collector', 'card', {
+    upgradeCostOn: (g, u, card, t) => (t === u && g.hasTrait(card, 'LIGHTSABER') ? g.aspectPenalty(u.ctrl, card) : 0),
+    async onAttack(g, u) {
+      if (u.upgrades.filter((x) => g.hasTrait(x.card, 'LIGHTSABER')).length < 4) return;
+      for (let i = 0; i < 4; i++) {
+        const t = await g.pickUnit(u.ctrl, L(`擊敗敵方單位（${i + 1}/4）`, `Defeat an enemy unit (${i + 1}/4)`), (x) => x.ctrl !== u.ctrl, { ctx: { harm: true, op: 'defeat' } });
+        if (!t) break;
+        await g.defeat(t, {});
+      }
+    },
+  });
+  auraGrant('General Krell | Heartless Tactician', 'card', {
+    auraGrant: (g, src, u) => ({
+      async whenDefeated(g, snap) {
+        if (await may(g, snap.ctrl, snap.card, L('要抽 1 張卡嗎？', 'Draw a card?'))) g.draw(snap.ctrl, 1);
+      },
+    }),
+  });
+  def('General\'s Blade', 'card', { grantFor: (g, up, host) => (g.hasTrait(host, 'JEDI') ? { onAttack: (g, u) => g.addNext(u.ctrl, { f: (c) => c.t === 'Unit', n: 2, phaseId: g.G.phaseId }) } : null) });
+  async function thrawnLook(g, src) {
+    const p = src.ctrl;
+    if (!(g.io[p] && g.io[p].isHuman)) return;
+    for (const q of [p, 1 - p]) if (g.P(q).deck.length) await g.showCards(p, [g.P(q).deck[0]], L(`${g.P(q).name} 的牌庫頂`, `Top of ${g.P(q).name}'s deck`));
+  }
+  async function thrawnReveal(g, p, card) {
+    const q = await pickPlayer(g, p, card, false);
+    const top = g.P(q).deck[0] || g.P(1 - q).deck[0];
+    if (!top) return;
+    g.revealCards(p, [top], 'reveal');
+    const n = top.card.c || 0;
+    const t = await g.pickUnit(p, L(`橫置一個費用 ≤${n} 的單位`, `Exhaust a unit that costs ${n} or less`), (x) => (x.card.c || 0) <= n && !x.exhausted, { ctx: { harm: true } });
+    if (t) g.exhaust(t);
+  }
+  def('Grand Admiral Thrawn | Patient and Insightful', 'leader', {
+    onActionPhaseStart: (g, src) => thrawnLook(g, src),
+    actions: [
+      {
+        text: L('支付 1、橫置：展示牌庫頂，橫置費用不高於它的單位', 'Pay 1, exhaust: reveal a top card and exhaust a unit that costs the same or less'),
+        can: (g, Ld) => !Ld.exhausted && g.canPay(Ld.ctrl, 1) && g.P(1 - Ld.ctrl).units.some((x) => !x.exhausted),
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          g.pay(Ld.ctrl, 1);
+          await thrawnReveal(g, Ld.ctrl, Ld.card);
+        },
+      },
+    ],
+  });
+  def('Grand Admiral Thrawn | Patient and Insightful', 'unit', {
+    onActionPhaseStart: (g, src) => thrawnLook(g, src),
+    async onAttack(g, u) {
+      if (await may(g, u.ctrl, u, L('要展示一個牌庫頂並橫置單位嗎？', 'Reveal a top card to exhaust a unit?'))) await thrawnReveal(g, u.ctrl, u.card);
+    },
+  });
+  def('Grievous\'s Wheel Bike', 'card', {
+    costOnTarget: (g, p, t) => (t.card.n === 'General Grievous' ? 2 : 0),
+    attachedStatic: () => ({ kw: { Overwhelm: true } }),
+  });
+  def('Han Solo | Audacious Smuggler', 'leader', {
+    actions: [
+      {
+        text: L('橫置：把一張手牌放成資源並重置它；下個行動階段開始時擊敗一個資源', 'Exhaust: resource a card from hand and ready it; defeat a resource at the start of the next action phase'),
+        can: (g, Ld) => !Ld.exhausted && g.P(Ld.ctrl).hand.length > 0,
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          const p = Ld.ctrl;
+          const P = g.P(p);
+          const pk = await g.pickCards(p, L('選一張手牌放成資源', 'Choose a card to resource'), P.hand, 1, 1);
+          if (!pk.length) return;
+          P.hand = P.hand.filter((x) => x !== pk[0]);
+          P.resources.push({ ...pk[0], exhausted: false });
+          g.log('logResourceThis', pk[0].card.n);
+          g.delay({ at: 'actionStart', round: g.G.round + 1, run: async (g) => { await defeatResource(g, p, L('韓索羅：擊敗一個你控制的資源', 'Han Solo: defeat a resource you control'), false); } });
+        },
+      },
+    ],
+  });
+  def('Han Solo | Reluctant Hero', 'card', { strikeFirst: () => true });
+  def('Hondo Ohnaka | That\'s Good Business', 'leader', {
+    async onCardPlayed(g, src, info) {
+      if (info.p !== src.ctrl || info.from !== 'smuggle' || !g.allUnits().length) return;
+      if (await exhaustLeaderMay(g, src, L('要橫置領袖，給一個單位 1 個經驗代幣嗎？', 'Exhaust this leader to give an Experience token to a unit?'))) await expTo(g, src.ctrl, L('給一個單位 1 個經驗代幣', 'Give an Experience token to a unit'));
+    },
+  });
+  def('Hondo Ohnaka | That\'s Good Business', 'unit', {
+    async onCardPlayed(g, src, info) {
+      if (info.p !== src.ctrl || info.from !== 'smuggle') return;
+      await expTo(g, src.ctrl, L('可以給一個單位 1 個經驗代幣', 'You may give an Experience token to a unit'), () => true, true);
+    },
+  });
+  def('Hotshot DL-44 Blaster', 'card', {
+    async whenPlayed(g, inst, t) {
+      if (t && smug(g, inst.uid) && g.findUnit(t.uid) && !t.exhausted) await g.attack(t);
+    },
+  });
+  async function hunterRes(g, p, card, optional) {
+    const P = g.P(p);
+    const uq = new Set(P.units.filter((u) => u.card.u).map((u) => u.card.n));
+    const rs = P.resources.filter((r) => uq.has(r.card.n));
+    if (!rs.length) return;
+    const pk = await g.pickCards(p, L('展示一個和友方獨特單位同名的資源', 'Reveal a resource that shares a name with a friendly unique unit'), rs, optional ? 0 : 1, 1);
+    if (!pk.length) return;
+    const r = pk[0];
+    g.revealCards(p, [r], 'reveal');
+    P.resources = P.resources.filter((x) => x !== r);
+    g.P(r.owner != null ? r.owner : p).hand.push({ uid: r.uid, card: r.card, owner: r.owner != null ? r.owner : p });
+    if (P.deck.length) P.resources.push({ ...P.deck.shift(), exhausted: true });
+    g.log('logReturnHand', r.card.n);
+  }
+  def('Hunter | Outcast Sergeant', 'leader', {
+    actions: [
+      {
+        text: L('支付 1、橫置：展示一個和友方獨特單位同名的資源，換成牌庫頂', 'Pay 1, exhaust: swap a resource sharing a name with a friendly unique unit for your top card'),
+        can: (g, Ld) => !Ld.exhausted && g.canPay(Ld.ctrl, 1) && g.P(Ld.ctrl).resources.some((r) => g.P(Ld.ctrl).units.some((u) => u.card.u && u.card.n === r.card.n)),
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          g.pay(Ld.ctrl, 1);
+          await hunterRes(g, Ld.ctrl, Ld.card, false);
+        },
+      },
+    ],
+  });
+  def('Hunter | Outcast Sergeant', 'unit', { onAttack: (g, u) => hunterRes(g, u.ctrl, u.card, true) });
+  def('Hunter of the Haxion Brood', 'card', { static: (g, u) => (enemyBounty(g, u.ctrl) ? { kw: { Shielded: true } } : null) });
+  def('IG-11 | I Cannot Be Captured', 'card', {
+    async replaceCapture(g, u) {
+      const p = u.ctrl;
+      await g.defeat(u, { self: true });
+      for (const x of g.P(1 - p).units.filter((y) => y.arena === 'Ground')) await g.damageUnit(x, 3, { p });
+    },
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以對一個受傷的地面單位造成 3 點傷害', 'You may deal 3 damage to a damaged ground unit'), (x) => x.arena === 'Ground' && x.damage > 0, { optional: true, ctx: { harm: true, op: 'damage', n: 3 } });
+      if (t) await g.damageUnit(t, 3, { p: u.ctrl, self: u });
+    },
+  });
+  passive('Imprisoned');
+  def('Incinerator Trooper', 'card', { strikeFirst: () => true });
+  const jabbaGrant = (g, p, n) => async (g, Ld) => {
+    const t = await g.pickUnit(Ld.ctrl, L(`選一個單位：本階段獲得「賞金：下一個單位少 ${n} 費」`, `Choose a unit: it gains "Bounty - The next unit you play this phase costs ${n} less" this phase`), () => true, {});
+    if (t) phaseGrant(g, (g, u) => u.uid === t.uid, { bounty: (g, snap, collector) => g.addNext(collector, { f: (c) => c.t === 'Unit', n, phaseId: g.G.phaseId }) });
+  };
+  def('Jabba the Hutt | His High Exaltdeness', 'leader', {
+    actions: [
+      {
+        text: L('橫置：讓一個單位本階段獲得賞金（下一個單位少 1 費）', 'Exhaust: a unit gains a Bounty this phase (next unit costs 1 less)'),
+        can: (g, Ld) => !Ld.exhausted && g.allUnits().length > 0,
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          await jabbaGrant(g, Ld.ctrl, 1)(g, Ld);
+        },
+      },
+    ],
+  });
+  def('Jabba the Hutt | His High Exaltdeness', 'unit', {
+    async whenDeployed(g, u) {
+      const c = await g.pickUnit(u.ctrl, L('選另一個友方單位來俘虜', 'Choose another friendly unit to capture'), (x) => x.ctrl === u.ctrl && x !== u, {});
+      if (!c) return;
+      const t = await g.pickUnit(u.ctrl, L('選一個敵方非領袖單位被俘虜', 'Choose an enemy non-leader unit to capture'), (x) => x.ctrl !== u.ctrl && !g.isLeaderUnit(x), { ctx: { harm: true } });
+      if (t) g.capture(c, t);
+    },
+    actions: [
+      {
+        text: L('橫置：讓一個單位本階段獲得賞金（下一個單位少 2 費）', 'Exhaust: a unit gains a Bounty this phase (next unit costs 2 less)'),
+        can: (g, u) => !u.exhausted,
+        async run(g, u) {
+          g.exhaust(u);
+          await jabbaGrant(g, u.ctrl, 2)(g, u);
+        },
+      },
+    ],
+  });
+  const jangoTrig = (g, src, ev) => ev.type === 'damage' && ev.u && ev.ctrl !== src.ctrl && ev.dealer && ev.dealer.ctrl === src.ctrl && g.findUnit(ev.u.uid) && !ev.u.exhausted;
+  def('Jango Fett | Concealing the Conspiracy', 'leader', {
+    async onEvent(g, src, ev) {
+      if (!jangoTrig(g, src, ev)) return;
+      if (await exhaustLeaderMay(g, src, L(`要橫置領袖，橫置 ${N(ev.u)} 嗎？`, `Exhaust this leader to exhaust ${ev.u.card.n}?`))) g.exhaust(ev.u);
+    },
+  });
+  def('Jango Fett | Concealing the Conspiracy', 'unit', {
+    async onEvent(g, src, ev) {
+      if (jangoTrig(g, src, ev) && (await may(g, src.ctrl, src, L(`要橫置 ${N(ev.u)} 嗎？`, `Exhaust ${ev.u.card.n}?`)))) g.exhaust(ev.u);
+    },
+  });
+  def('Jango Fett | Guarding the Count', 'card', {
+    static: (g, u) => ((g.G.attackedBase || [[], []])[u.ctrl].length ? { kw: { Ambush: true } } : null),
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('給一個敵方單位本階段 -3/-0', 'Give an enemy unit -3/-0 for this phase'), (x) => x.ctrl !== u.ctrl, { ctx: { harm: true } });
+      if (t) g.buff(t, -3, 0);
+    },
+  });
+  def('Jango Fett | Renowned Bounty Hunter', 'card', {
+    static: (g, u) => (g.G.attack && g.G.attack.attacker === u && g.G.attack.defender && hasBounty(g, g.G.attack.defender) ? { p: 3, kw: { Overwhelm: true } } : null),
+    onAttackDefeat: (g, u) => g.draw(u.ctrl, 1),
+  });
+  def('Jyn Erso | Resisting Oppression', 'unit', { aura: (g, src, u) => (g.G.attack && g.G.attack.defender === u && g.G.attack.attacker && g.G.attack.attacker.ctrl === src.ctrl ? { p: -1 } : null) });
+  def('Ki-Adi-Mundi | Composed and Confident', 'card', {
+    async onEnemyPlay(g, self) {
+      if (g.G.playedThisPhase[1 - self.ctrl].length !== 2 || g.P(self.ctrl).units.length < 3) return;
+      if (await may(g, self.ctrl, self, L('要抽 2 張卡嗎？', 'Draw 2 cards?'))) g.draw(self.ctrl, 2);
+    },
+  });
+  def('Kragan Gorr | Warbird Captain', 'card', {
+    async onEnemyAttack(g, self, atk) {
+      if (!atk.base || !atk.attacker) return;
+      const ar = atk.attacker.arena;
+      const t = await g.pickUnit(self.ctrl, L('給同區域的一個友方單位 1 個護盾', 'Give a Shield token to a friendly unit in the same arena'), (x) => x.ctrl === self.ctrl && x.arena === ar, {});
+      if (t) g.giveShield(t);
+    },
+  });
+  def('Krayt Dragon', 'card', {
+    async onEnemyPlay(g, self, card) {
+      const n = card.c || 0;
+      if (!n) return;
+      const o = 1 - self.ctrl;
+      const t = await g.pickTarget(self.ctrl, L(`可以對對手的基地或地面單位造成 ${n} 點傷害`, `You may deal ${n} damage to their base or a ground unit they control`), { units: g.P(o).units.filter((x) => x.arena === 'Ground'), bases: [o], optional: true, ctx: { harm: true, op: 'damage', n } });
+      if (!t) return;
+      if (t.base != null) g.damageBase(o, n, { p: self.ctrl });
+      else if (t.unit) await g.damageUnit(t.unit, n, { p: self.ctrl, self });
+    },
+  });
+  def('Krrsantan | Muscle for Hire', 'card', {
+    async whenPlayed(g, u) {
+      if (enemyBounty(g, u.ctrl) && (await may(g, u.ctrl, u, L('要重置這個單位嗎？', 'Ready this unit?')))) g.ready(u);
+    },
+    async onAttack(g, u) {
+      const n = u.damage;
+      if (!n) return;
+      const t = await g.pickUnit(u.ctrl, L(`可以對一個地面單位造成 ${n} 點傷害`, `You may deal ${n} damage to a ground unit`), (x) => x.arena === 'Ground', { optional: true, ctx: { harm: true, op: 'damage', n } });
+      if (t) await g.damageUnit(t, n, { p: u.ctrl, self: u });
+    },
+  });
+  const controls = (g, p, name) => g.P(p).units.some((u) => u.card.n === name) || (g.P(p).leader.card.n === name && !g.P(p).leader.deployed);
+  const ignoreAspFor = (asp, other) => (g, p) => {
+    const c = cardOf(asp === 'Villainy' ? 'Kylo Ren | Killing the Past' : 'Rey | Keeping the Past');
+    if (!c || !controls(g, p, other)) return 0;
+    return -(g.aspectPenalty(p, c) - g.aspectPenalty(p, c, [asp]));
+  };
+  def('Kylo Ren | Killing the Past', 'card', {
+    costMod: ignoreAspFor('Villainy', 'Rey'),
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('給一個單位本階段 +2/+0', 'Give a unit +2/+0 for this phase'), () => true, {});
+      if (!t) return;
+      g.buff(t, 2, 0);
+      if (!(t.card.a || []).includes('Villainy')) g.giveExp(t);
+    },
+  });
+  def('Kylo Ren | Rash and Deadly', 'leader', {
+    actions: [
+      {
+        text: L('橫置、棄 1 張手牌：給一個單位本階段 +2/+0', 'Exhaust, discard a card: give a unit +2/+0 for this phase'),
+        can: (g, Ld) => !Ld.exhausted && g.P(Ld.ctrl).hand.length > 0 && g.P(Ld.ctrl).units.length > 0,
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          await g.discardFromHand(Ld.ctrl, 1);
+          const t = await g.pickUnit(Ld.ctrl, L('給一個單位本階段 +2/+0', 'Give a unit +2/+0 for this phase'), () => true, {});
+          if (t) g.buff(t, 2, 0);
+        },
+      },
+    ],
+  });
+  def('Kylo\'s TIE Silencer | Ruthlessly Efficient', 'card', {
+    fromDiscard: (g, p, c) => (g.G.discardLog || []).some((x) => x.uid === c.uid && x.phaseId === g.G.phaseId && (x.from === 'hand' || x.from === 'deck')),
+  });
+  def('Lando Calrissian | Responsible Businessman', 'card', {
+    async whenPlayed(g, u) {
+      const P = g.P(u.ctrl);
+      if (!P.resources.length) return;
+      const pk = await g.pickCards(u.ctrl, L('可以把最多 2 個友方資源收回擁有者手牌', 'Return up to 2 friendly resources to their owners\' hands'), P.resources, 0, 2);
+      for (const r of pk) {
+        P.resources = P.resources.filter((x) => x !== r);
+        const o = r.owner != null ? r.owner : u.ctrl;
+        g.P(o).hand.push({ uid: r.uid, card: r.card, owner: o });
+        g.log('logReturnHand', r.card.n);
+      }
+    },
+  });
+  async function landoSmuggle(g, p) {
+    const P = g.P(p);
+    const rs = P.resources.filter((r) => g.smuggleCost(p, r.card) != null && ['Unit', 'Event', 'Upgrade'].includes(r.card.t) && g.canPay(p, Math.max(0, g.costOf(p, r.card, { baseCost: g.smuggleCost(p, r.card), from: 'smuggle' }) - 2)));
+    if (!rs.length) return;
+    const pk = await g.pickCards(p, L('用 Smuggle 打出一張（少 2 費）', 'Play a card using Smuggle (2 less)'), rs, 0, 1);
+    if (!pk.length) return;
+    await g.playCard(p, pk[0].uid, 'smuggle', { discount: 2 });
+    const own = P.resources.filter((r) => r.owner == null || r.owner === p);
+    if (own.length) await defeatResource(g, p, L('擊敗一個你擁有並控制的資源', 'Defeat a resource you own and control'), false, (r) => r.owner == null || r.owner === p);
+  }
+  const landoCan = (g, p) => g.P(p).resources.some((r) => g.smuggleCost(p, r.card) != null);
+  def('Lando Calrissian | With Impeccable Taste', 'leader', {
+    actions: [
+      {
+        text: L('橫置：用 Smuggle 打出一張卡（少 2 費），再擊敗一個資源', 'Exhaust: play a card using Smuggle (2 less), then defeat a resource'),
+        can: (g, Ld) => !Ld.exhausted && landoCan(g, Ld.ctrl),
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          await landoSmuggle(g, Ld.ctrl);
+        },
+      },
+    ],
+  });
+  def('Lando Calrissian | With Impeccable Taste', 'unit', {
+    actions: [
+      {
+        text: L('用 Smuggle 打出一張卡（少 2 費），再擊敗一個資源（每輪一次）', 'Play a card using Smuggle (2 less), then defeat a resource (once per round)'),
+        can: (g, u) => u.landoRound !== g.G.round && landoCan(g, u.ctrl),
+        async run(g, u) {
+          u.landoRound = g.G.round;
+          await landoSmuggle(g, u.ctrl);
+        },
+      },
+    ],
+  });
+  def('Lom Pyke | Making a Withdrawal', 'card', {
+    async whenPlayed(g, u) {
+      const o = 1 - u.ctrl;
+      if (!g.P(o).base.damage) return;
+      if (!(await g.yesno(o, L('Lom Pyke：要讓你的基地回復 5 點嗎？（對手可以給 2 個經驗代幣）', 'Lom Pyke: heal 5 damage from your base? (the opponent gives 2 Experience tokens)'), { card: u.card.key, aiNo: g.P(o).base.damage < 12 }))) return;
+      g.healBase(o, 5);
+      const t = await g.pickUnit(u.ctrl, L('給一個單位 2 個經驗代幣', 'Give 2 Experience tokens to a unit'), () => true, {});
+      if (t) g.giveExp(t, 2);
+    },
+  });
+  def('Lurking TIE Phantom', 'card', {
+    cantBeCapturedBy: (g, u, captor) => !captor || captor.ctrl !== u.ctrl,
+    modDamage: (g, u, n, src) => (enemyAbility(g, u, src || {}) ? 0 : n),
+    cantBeDefeatedBy: (g, u, why) => noEnemyDefeat(g, u, why || {}),
+  });
+  def('Lux Bonteri | Renegade Separatist', 'card', {
+    async onEnemyPlay(g, self, card) {
+      const lg = (g.G.playLog || [])[(g.G.playLog || []).length - 1];
+      if (!lg || lg.card !== card || lg.cost >= (card.c || 0)) return;
+      const t = await g.pickUnit(self.ctrl, L('選一個單位重置或橫置', 'Choose a unit to ready or exhaust'), () => true, {});
+      if (!t) return;
+      const i = await g.pickOption(self.ctrl, L(`${N(t)}：`, `${t.card.n}:`), [L('重置', 'Ready'), L('橫置', 'Exhaust')], { ctx: { aiPick: t.ctrl === self.ctrl ? 0 : 1 } });
+      if (i === 1) g.exhaust(t);
+      else g.ready(t);
+    },
+  });
+  def('Maul | Shadow Collective Visionary', 'card', {
+    async onAttack(g, u, atk) {
+      const t = await g.pickUnit(u.ctrl, L('可以選另一個友方地下社會單位承受這次攻擊的傷害', 'You may choose another friendly Underworld unit to take the damage for this attack'), (x) => x !== u && x.ctrl === u.ctrl && g.hasTrait(x, 'UNDERWORLD'), { optional: true });
+      if (t) u.maulRedirect = { attackId: atk.id, uid: t.uid };
+    },
+    async preventDamage(g, s, u, n, src) {
+      if (u !== s || !s.maulRedirect || !g.G.attack || g.G.attack.id !== s.maulRedirect.attackId) return false;
+      const t = g.findUnit(s.maulRedirect.uid);
+      if (!t) return false;
+      await g.damageUnit(t, n, src || {});
+      return true;
+    },
+  });
+  def('Mechanize', 'card', {
+    async event(g, p) {
+      const r = await playFromDiscard(g, p, g.P(p).discard.filter((c) => c.card.t === 'Unit' && !g.hasTrait(c.card, 'VEHICLE')), cardOf('Mechanize'), { prompt: L('從棄牌堆打出一個非載具單位（付費）', 'play a non-Vehicle unit from your discard pile (paying its cost)') });
+      if (r && r.uid && g.findUnit(r.uid)) g.giveExp(g.findUnit(r.uid));
+    },
+  });
+  def('Mercenary Gunship', 'card', {
+    anyActions: [
+      {
+        text: L('支付 4：取得這個單位的控制權', 'Pay 4: take control of this unit'),
+        can: (g, u, p) => p !== u.ctrl && g.canPay(p, 4),
+        run(g, u, p) {
+          g.pay(p, 4);
+          SWU.FX2.takeControl(g, u, p);
+        },
+      },
+    ],
+  });
+  def('Migs Mayfeld | Triggerman', 'card', {
+    async onEvent(g, self, ev) {
+      if (ev.type !== 'discarded' || ev.from !== 'hand' || self.migsRound === g.G.round || !g.findUnit(self.uid)) return;
+      const t = await g.pickTarget(self.ctrl, L('可以對一個單位或基地造成 2 點傷害', 'You may deal 2 damage to a unit or base'), { units: g.allUnits(), bases: [1 - self.ctrl, self.ctrl], optional: true, ctx: { harm: true, op: 'damage', n: 2 } });
+      if (!t) return;
+      self.migsRound = g.G.round;
+      if (t.base != null) g.damageBase(t.base, 2, { p: self.ctrl });
+      else if (t.unit) await g.damageUnit(t.unit, 2, { p: self.ctrl, self });
+    },
+  });
+  def('Millennium Falcon | Lando\'s Pride', 'card', { static: (g, u) => (u.playedPhase === g.G.phaseId && playedFromHand(g, u.uid) ? { kw: { Ambush: true } } : null) });
+  def('Millennium Falcon | Piece Of Junk', 'card', {
+    entersReady: true,
+    async onRegroupReady(g, self) {
+      if (g.canPay(self.ctrl, 1) && (await may(g, self.ctrl, self, L('要支付 1 讓她留在場上嗎？（不付就回手牌）', 'Pay 1 to keep her in play? (otherwise return her to hand)')))) g.pay(self.ctrl, 1);
+      else g.returnToHand(self);
+    },
+  });
+  def('Moff Gideon | Formidable Commander', 'unit', {
+    aura: (g, src, u) => (u.ctrl === src.ctrl && (u.card.c || 0) <= 3 && !g.isLeaderUnit(u) && g.G.attack && g.G.attack.attacker === u && g.G.attack.defender ? { p: 1, kw: { Overwhelm: true } } : null),
+  });
+  def('Moralo Eval | Infamous Murderer', 'card', {
+    async onEvent(g, self, ev) {
+      if (ev.type !== 'damage' || ev.base !== self.ctrl || !ev.combat || !g.findUnit(self.uid)) return;
+      const t = await g.pickUnit(self.ctrl, L('可以對一個單位造成 1 點傷害', 'You may deal 1 damage to a unit'), () => true, { optional: true, ctx: { harm: true, op: 'damage', n: 1 } });
+      if (t) await g.damageUnit(t, 1, { p: self.ctrl, self });
+    },
+  });
+  const nalaPen = (g, src, card) => card.t === 'Unit' && g.hasTrait(card, 'CLONE');
+  def('Nala Se | Clone Engineer', 'leader', { ignorePenalty: nalaPen });
+  auraGrant('Nala Se | Clone Engineer', 'unit', {
+    ignorePenalty: nalaPen,
+    auraGrant: (g, src, u) => (g.hasTrait(u, 'CLONE') ? { whenDefeated: (g, snap) => g.healBase(snap.ctrl, 2) } : null),
+  });
+  const neel = (g, u) => g.addNext(u.ctrl, { f: (c) => c.t === 'Unit' && (c.p || 0) <= 1, ready: true, phaseId: g.G.phaseId });
+  def('Neel | The Cutest Boy', 'card', { whenPlayed: neel, onAttack: neel });
+  // ===================== 第 5 批（輪替系列／TS26）下 =====================
+  const leaderUnits = (g, p) => g.P(p).units.filter((u) => u.isLeader).length;
+  const toResource = (g, p, c, ready) => {
+    g.P(p).resources.push({ uid: c.uid, card: c.card, owner: c.owner != null ? c.owner : p, exhausted: !ready });
+    g.log('logResourceThis', c.card.n);
+  };
+  const takeFromDiscard = (g, owner, uid) => {
+    const P = g.P(owner);
+    const c = P.discard.find((x) => x.uid === uid);
+    if (c) P.discard = P.discard.filter((x) => x !== c);
+    return c;
+  };
+  const dmgPick = async (g, p, n, prompt, filter, optional, self) => {
+    const t = await g.pickUnit(p, prompt, filter, { optional, ctx: { harm: true, op: 'damage', n } });
+    if (t) await g.damageUnit(t, n, { p, self });
+    return t;
+  };
+  def('Omega | Part of the Squad', 'card', {
+    ignorePenalty: (g, src, card) => card.t === 'Unit' && g.hasTrait(card, 'CLONE') && firstThisRound(g, src.ctrl, (c) => c.t === 'Unit' && g.hasTrait(c, 'CLONE')),
+    whenPlayed: (g, u) => RUN(g, u.ctrl, u.card, 'search the top 5 cards of your deck for a Clone card, reveal it, and draw it'),
+  });
+  pre('search the top 5 cards of your deck for a Clone card, reveal it, and draw it');
+  def('On Top of Things', 'card', {
+    whenPlayed(g, inst, t) {
+      if (t) phaseGrant(g, (g, u) => u.uid === t.uid, { cantBeAttackedBy: () => true });
+    },
+  });
+  def('Palpatine\'s Return', 'card', {
+    async event(g, p) {
+      const P = g.P(p);
+      const disc = (c) => (g.hasTrait(c.card, 'FORCE') ? 8 : 6);
+      const cs = P.discard.filter((c) => c.card.t === 'Unit' && g.canPay(p, Math.max(0, g.costOf(p, c.card) - disc(c))));
+      if (!cs.length) return;
+      const pk = await g.pickCards(p, L('從棄牌堆打出一個單位（少 6 費；原力單位少 8 費）', 'Play a unit from your discard pile (6 less; Force: 8 less)'), cs, 0, 1);
+      if (pk.length) await g.playCard(p, pk[0].uid, 'discard', { discount: disc(pk[0]) });
+    },
+  });
+  def('Phase-III Dark Trooper', 'card', {
+    onEvent(g, self, ev) {
+      if (ev.type === 'damage' && ev.u === self && ev.combat && g.findUnit(self.uid)) g.giveExp(self);
+    },
+  });
+  def('Planetary Invasion', 'card', {
+    async event(g, p) {
+      const us = g.allUnits().map((u) => ({ uid: u.uid, card: u.card }));
+      const pk = us.length ? await g.pickCards(p, L('重置最多 3 個單位（+1/+0、Overwhelm）', 'Ready up to 3 units (+1/+0 and Overwhelm)'), g.P(p).units.map((u) => ({ uid: u.uid, card: u.card })), 0, 3) : [];
+      for (const x of pk) {
+        const u = g.findUnit(x.uid);
+        if (!u) continue;
+        g.ready(u);
+        g.buff(u, 1, 0, 'phase', { Overwhelm: true });
+      }
+    },
+  });
+  async function preVizsla(g, u) {
+    const ups = [];
+    for (const h of g.allUnits()) if (h !== u && !g.hasTrait(h, 'VEHICLE')) for (const up of h.upgrades) if (!up.leaderPilot && !/Token/.test(up.card.t) && g.canPay(u.ctrl, up.card.c || 0)) ups.push({ uid: up.uid, card: up.card, host: h, up });
+    if (!ups.length) return;
+    const pk = await g.pickCards(u.ctrl, L('可以支付一張升級的費用，把它搶過來裝到這個單位', 'You may pay an upgrade\'s cost to take it and attach it to this unit'), ups, 0, 1);
+    if (!pk.length) return;
+    const { host, up } = pk[0];
+    g.pay(u.ctrl, up.card.c || 0);
+    host.upgrades = host.upgrades.filter((x) => x !== up);
+    if (g.findUnit(u.uid) && (g.upgradeTargets(u.ctrl, up.card) || []).includes(u)) {
+      up.ctrl = u.ctrl;
+      u.upgrades.push(up);
+      g.log('logAttach', up.card.n, u.card.n);
+    } else {
+      g.dropUpgrade(up, host);
+      g.log('logDefeat', up.card.n);
+    }
+  }
+  def('Pre Vizsla | Power Hungry', 'card', { whenPlayed: preVizsla, onAttack: preVizsla });
+  def('Pre Vizsla | Pursuing the Throne', 'unit', {
+    static: (g, u) => {
+      const n = g.P(u.ctrl).hand.length;
+      return n >= 3 ? { p: n >= 6 ? 2 : 0, kw: { Saboteur: true } } : null;
+    },
+  });
+  def('Privateer Crew', 'card', { whenPlayed: (g, u) => smug(g, u.uid) && g.giveExp(u, 3) });
+  def('Pyrrhic Assault', 'card', {
+    event(g, p) {
+      phaseGrant(g, (g, u) => u.ctrl === p, {
+        async whenDefeated(g, snap) {
+          await dmgPick(g, snap.ctrl, 2, L('對一個敵方單位造成 2 點傷害', 'Deal 2 damage to an enemy unit'), (x) => x.ctrl !== snap.ctrl, false);
+        },
+      });
+    },
+  });
+  def('Qi\'ra | I Alone Survived', 'unit', {
+    async whenDeployed(g, u) {
+      for (const x of g.allUnits()) if (x.damage) g.heal(x, x.damage);
+      for (const x of g.allUnits()) {
+        const n = Math.floor(g.remaining(x) / 2);
+        if (n) await g.damageUnit(x, n, { p: u.ctrl, self: u });
+      }
+    },
+  });
+  def('Regional Governor', 'card', {
+    async whenPlayed(g, u) {
+      const name = await SWU.FX2.nameCard(g, u.ctrl, 1 - u.ctrl, u.card);
+      if (name) (g.G.named = g.G.named || []).push({ kind: 'ban', name, victim: 1 - u.ctrl, src: u.uid });
+    },
+  });
+  def('Relentless | Konstantine\'s Folly', 'card', { blankFirstEvent: true });
+  def('Republic Defense Carrier', 'card', { costMod: (g, p) => -g.P(1 - p).units.length });
+  def('Reputable Hunter', 'card', { costMod: (g, p) => (enemyBounty(g, p) ? -1 : 0) });
+  async function resolute(g, u) {
+    const t = await g.pickUnit(u.ctrl, L('對一個敵方單位（及同名的其他敵方單位）造成 2 點傷害', 'Deal 2 damage to an enemy unit and each other enemy unit with the same name'), (x) => x.ctrl !== u.ctrl, { ctx: { harm: true, op: 'damage', n: 2 } });
+    if (!t) return;
+    const all = g.P(1 - u.ctrl).units.filter((x) => x.card.n === t.card.n);
+    for (const x of all) await g.damageUnit(x, 2, { p: u.ctrl, self: u });
+  }
+  def('Resolute | Under Anakin\'s Command', 'card', { costMod: (g, p) => -Math.floor(g.P(p).base.damage / 5), whenPlayed: resolute, onAttack: resolute });
+  def('Restock', 'card', {
+    async event(g, p) {
+      const q = await pickPlayer(g, p, cardOf('Restock'), false);
+      const Q = g.P(q);
+      if (!Q.discard.length) return;
+      const pk = await g.pickCards(p, L('選最多 4 張卡放到牌庫底', 'Choose up to 4 cards to put on the bottom of the deck'), Q.discard, 0, 4);
+      Q.discard = Q.discard.filter((x) => !pk.includes(x));
+      bottomRandom(g, q, pk);
+    },
+  });
+  const nextEvent = (g, p, n) => g.addNext(p, { f: (c) => c.t === 'Event', n, phaseId: g.G.phaseId });
+  def('Rex | No Other Option', 'leader', {
+    actions: [
+      {
+        text: L('橫置、重置一個橫置的敵方單位：下一張事件少 1 費', 'Exhaust, ready an exhausted enemy unit: your next event costs 1 less'),
+        can: (g, Ld) => !Ld.exhausted && g.P(1 - Ld.ctrl).units.some((x) => x.exhausted) && g.P(Ld.ctrl).hand.some((c) => c.card.t === 'Event'),
+        async run(g, Ld) {
+          Ld.exhausted = true;
+          const t = await g.pickUnit(Ld.ctrl, L('重置一個橫置的敵方單位', 'Ready an exhausted enemy unit'), (x) => x.ctrl !== Ld.ctrl && x.exhausted, {});
+          if (!t) return;
+          g.ready(t);
+          nextEvent(g, Ld.ctrl, 1);
+        },
+      },
+    ],
+  });
+  def('Rex | No Other Option', 'unit', {
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以重置一個橫置的敵方單位（下一張事件少 2 費）', 'You may ready an exhausted enemy unit (your next event costs 2 less)'), (x) => x.ctrl !== u.ctrl && x.exhausted, { optional: true, ctx: { aiNo: true } });
+      if (!t) return;
+      g.ready(t);
+      nextEvent(g, u.ctrl, 2);
+    },
+  });
+  def('Rex\'s DC-17s', 'card', {
+    grantFor: () => ({
+      onAnyReadied(g, self, u) {
+        if (g.G.phase !== 'action' || u.ctrl === self.ctrl || self.dc17Round === g.G.round || !self.exhausted) return;
+        self.dc17Round = g.G.round;
+        g.ready(self);
+      },
+    }),
+  });
+  def('Rey | Keeping the Past', 'card', {
+    costMod: ignoreAspFor('Heroism', 'Kylo Ren'),
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以回復一個單位 2 點傷害', 'You may heal 2 damage from a unit'), (x) => x.damage > 0, { optional: true });
+      if (!t) return;
+      g.heal(t, 2);
+      if (!(t.card.a || []).includes('Heroism')) g.giveShield(t);
+    },
+  });
+  def('Roger Roger', 'card', {
+    upWhenDefeated(g, up) {
+      const p = up.ctrl != null ? up.ctrl : up.owner;
+      const ts = g.P(p).units.filter((x) => isTok(x) && x.card.n === 'Battle Droid');
+      if (!ts.length) return;
+      const c = takeFromDiscard(g, up.owner, up.uid);
+      if (!c) return;
+      const t = ts[0];
+      t.upgrades.push({ uid: c.uid, card: c.card, owner: c.owner });
+      g.log('logAttach', c.card.n, t.card.n);
+    },
+  });
+  def('Rose Tico | Dedicated to the Cause', 'card', {
+    async onAttack(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以擊敗一個友方單位的護盾，給它 2 個經驗代幣', 'You may defeat a Shield on a friendly unit to give it 2 Experience tokens'), (x) => x.ctrl === u.ctrl && x.upgrades.some((y) => y.card.n === 'Shield'), { optional: true });
+      if (!t) return;
+      const sh = t.upgrades.find((y) => y.card.n === 'Shield');
+      t.upgrades = t.upgrades.filter((y) => y !== sh);
+      g.giveExp(t, 2);
+    },
+  });
+  def('Rukh | Thrawn\'s Assassin', 'card', {
+    async onEvent(g, self, ev) {
+      if (ev.type !== 'damage' || !ev.combat || !ev.u || ev.dealer !== self || ev.u.ctrl === self.ctrl) return;
+      if (g.findUnit(ev.u.uid) && !g.isLeaderUnit(ev.u)) await g.defeat(ev.u, {});
+    },
+  });
+  def('Rush Clovis | Banking Clan Scion', 'card', { onAttack: (g, u) => !g.readyResources(1 - u.ctrl) && g.createToken(u.ctrl, 'Battle Droid') });
+  def('Sabine Wren | Explosives Artist', 'card', {
+    cantBeAttackedBy: (g, u) => new Set(g.P(u.ctrl).units.filter((x) => x !== u).flatMap((x) => x.card.a || [])).size >= 3,
+    async onAttack(g, u, atk) {
+      const t = await g.pickTarget(u.ctrl, L('可以對防守者或一個基地造成 1 點傷害', 'You may deal 1 damage to the defender or a base'), { units: atk.defender ? [atk.defender] : [], bases: [1 - u.ctrl, u.ctrl], optional: true, ctx: { harm: true, op: 'damage', n: 1 } });
+      if (!t) return;
+      if (t.base != null) g.damageBase(t.base, 1, { p: u.ctrl });
+      else if (t.unit) await g.damageUnit(t.unit, 1, { p: u.ctrl, self: u });
+    },
+  });
+  def('Sabine Wren | You Can Count On Me', 'card', {
+    cantBeAttackedBy: (g, u) => u.exhausted,
+    async onAttack(g, u) {
+      if (!g.P(u.ctrl).deck.length || !(await may(g, u.ctrl, u, L('要棄掉牌庫頂 1 張嗎？', 'Discard the top card of your deck?')))) return;
+      const [c] = g.mill(u.ctrl, 1);
+      const ba = g.P(u.ctrl).base.card.a || [];
+      if (c && !(c.card.a || []).some((a) => ba.includes(a))) await dmgPick(g, u.ctrl, 2, L('對一個地面單位造成 2 點傷害', 'Deal 2 damage to a ground unit'), (x) => x.arena === 'Ground', false, u);
+    },
+  });
+  def('Salacious Crumb | Obnoxious Pet', 'card', {
+    whenPlayed: (g, u) => g.healBase(u.ctrl, 1),
+    actions: [
+      {
+        text: L('橫置、把這個單位收回手牌：對一個地面單位造成 1 點傷害', 'Exhaust, return this unit to hand: deal 1 damage to a ground unit'),
+        can: (g, u) => !u.exhausted && g.allUnits().some((x) => x !== u && x.arena === 'Ground' && x.ctrl !== u.ctrl),
+        async run(g, u) {
+          const p = u.ctrl;
+          g.exhaust(u);
+          g.returnToHand(u);
+          await dmgPick(g, p, 1, L('對一個地面單位造成 1 點傷害', 'Deal 1 damage to a ground unit'), (x) => x.arena === 'Ground', false);
+        },
+      },
+    ],
+  });
+  SWU.GLOBAL_GRANT.add('Satine Kryze | Committed to Peace');
+  def('Satine Kryze | Committed to Peace', 'card', {
+    globalGrant: () => ({
+      actions: [
+        {
+          text: L('橫置：棄掉對手牌庫頂（剩餘血量一半，無條件進位）', 'Exhaust: discard cards from an opponent\'s deck equal to half this unit\'s remaining HP, rounded up'),
+          can: (g, u) => !u.exhausted && g.P(1 - u.ctrl).deck.length > 0,
+          run(g, u) {
+            g.exhaust(u);
+            g.mill(1 - u.ctrl, Math.ceil(g.remaining(u) / 2));
+          },
+        },
+      ],
+    }),
+  });
+  def('Savage Opress | You Must Have Your Revenge', 'leader', {
+    aura(g, src, u) {
+      if (u.ctrl !== src.ctrl || g._savage) return null;
+      g._savage = true;
+      try {
+        const mx = Math.max(...g.P(u.ctrl).units.map((x) => g.power(x)));
+        return g.power(u) >= mx ? { kw: { Overwhelm: true } } : null;
+      } finally {
+        g._savage = false;
+      }
+    },
+  });
+  def('Saw Gerrera | Extremist', 'card', { onEnemyPlay: (g, self, card) => card.t === 'Event' && g.damageBase(1 - self.ctrl, 2, { p: 1 - self.ctrl }) });
+  def('Scanning Officer', 'card', {
+    whenPlayed(g, u) {
+      const o = 1 - u.ctrl;
+      const O = g.P(o);
+      const rv = SWU.shuffle([...O.resources]).slice(0, 3);
+      if (rv.length) g.revealCards(o, rv, 'reveal');
+      for (const r of rv) {
+        if (g.smuggleCost(o, r.card) == null || r.card.kwp.Smuggle == null) continue;
+        O.resources = O.resources.filter((x) => x !== r);
+        g.P(r.owner != null ? r.owner : o).discard.push({ uid: r.uid, card: r.card, owner: r.owner != null ? r.owner : o });
+        g.log('logDefeat', r.card.n);
+        if (O.deck.length) O.resources.push({ ...O.deck.shift(), exhausted: true });
+      }
+    },
+  });
+  def('Second Chance', 'card', {
+    grantFor: () => ({
+      whenDefeated(g, snap) {
+        const P = g.P(snap.owner);
+        if (P.discard.some((x) => x.uid === snap.uid)) (P.discardPlays = P.discardPlays || []).push({ uid: snap.uid, phaseId: g.G.phaseId, free: true });
+      },
+    }),
+  });
+  def('Secret Marriage', 'card', {
+    async event(g, p) {
+      const us = g.allUnits().filter((x) => !g.hasTrait(x, 'VEHICLE')).map((u) => ({ uid: u.uid, card: u.card }));
+      if (!us.length) return;
+      const pk = await g.pickCards(p, L('給最多 2 個非載具單位護盾（給敵方就抽 1）', 'Give a Shield to each of up to 2 non-Vehicle units (draw if you shield an enemy)'), us, 0, 2);
+      let draw = false;
+      for (const x of pk) {
+        const u = g.findUnit(x.uid);
+        if (!u) continue;
+        g.giveShield(u);
+        if (u.ctrl !== p) draw = true;
+      }
+      if (draw) g.draw(p, 1);
+    },
+  });
+  def('Shadow Collective Camp | Zanbar', 'card', { onLeaderDeployed: (g, src) => g.draw(src.ctrl != null ? src.ctrl : src.owner, 1) });
+  def('Shadowed Intentions', 'card', {
+    grantFor: () => ({
+      cantBeCapturedBy: (g, u, captor) => !captor || captor.ctrl !== u.ctrl,
+      cantBeDefeatedBy: (g, u, why) => noEnemyDefeat(g, u, why || {}),
+      cantBeBounced: () => true,
+    }),
+  });
+  def('Slaver\'s Freighter', 'card', {
+    async whenPlayed(g, u) {
+      const n = g.P(1 - u.ctrl).units.reduce((a, x) => a + x.upgrades.length, 0);
+      const t = await g.pickUnit(u.ctrl, L(`可以重置另一個攻擊力 ≤${n} 的單位`, `You may ready another unit with power ${n} or less`), (x) => x !== u && x.exhausted && g.power(x) <= n, { optional: true });
+      if (t) g.ready(t);
+    },
+  });
+  def('Sly Moore | Secretive Advisor', 'card', {
+    async whenPlayed(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('取得一個敵方代幣單位的控制權並重置', 'Take control of an enemy token unit and ready it'), (x) => x.ctrl !== u.ctrl && isTok(x), { ctx: { harm: true } });
+      if (!t) return;
+      SWU.FX2.takeControl(g, t, u.ctrl);
+      g.ready(t);
+      g.delay({ at: 'regroupStart', round: g.G.round, run: (g) => { if (g.findUnit(t.uid)) SWU.FX2.takeControl(g, t, t.owner); } });
+    },
+  });
+  def('Smoke and Cinders', 'card', {
+    async event(g, p) {
+      for (const q of [p, 1 - p]) {
+        const Q = g.P(q);
+        if (Q.hand.length <= 2) continue;
+        const keep = await g.pickCards(q, L('選 2 張留下，其餘棄掉', 'Choose 2 cards to keep; discard the rest'), Q.hand, 2, 2);
+        for (const c of Q.hand.filter((x) => !keep.includes(x))) {
+          Q.hand = Q.hand.filter((x) => x !== c);
+          Q.discard.push(c);
+          g.noteHandDiscard(q, c);
+        }
+      }
+    },
+  });
+  def('Soulless One | Customized for Grievous', 'card', {
+    async onAttack(g, u) {
+      const P = g.P(u.ctrl);
+      const cands = P.units.filter((x) => x !== u && !x.exhausted && (g.hasTrait(x, 'DROID') || x.card.n === 'General Grievous'));
+      const ld = !P.leader.deployed && !P.leader.exhausted && P.leader.card.n === 'General Grievous';
+      if (!cands.length && !ld) return;
+      const opts = [L('不要', 'No'), ...cands.map((x) => N(x)), ...(ld ? [N(P.leader) + L('（領袖）', ' (leader)')] : [])];
+      const i = await g.pickOption(u.ctrl, L('可以橫置友方機器人或格里弗斯：本次攻擊 +2/+0', 'You may exhaust a friendly Droid or General Grievous: +2/+0 for this attack'), opts, { ctx: { aiPick: opts.length > 1 ? 1 : 0 } });
+      if (i <= 0) return;
+      if (i <= cands.length) g.exhaust(cands[i - 1]);
+      else P.leader.exhausted = true;
+      g.buff(u, 2, 0, 'attack');
+    },
+  });
+  def('Spark of Hope', 'card', {
+    async event(g, p) {
+      const P = g.P(p);
+      const cs = P.discard.filter((c) => c.card.t === 'Unit' && defeatedNow(g, (x) => x.uid === c.uid));
+      if (!cs.length) return;
+      const pk = await g.pickCards(p, L('把本階段被擊敗的一個單位放成資源', 'Put a unit defeated this phase into play as a resource'), cs, 1, 1);
+      if (!pk.length) return;
+      takeFromDiscard(g, p, pk[0].uid);
+      toResource(g, p, pk[0], false);
+    },
+  });
+  def('SpecForce Soldier', 'card', {
+    async whenPlayed(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('讓一個單位本階段失去 Sentinel', 'A unit loses Sentinel for this phase'), (x) => g.has(x, 'Sentinel'), { ctx: { harm: true } });
+      if (t) t.loseKwPhase = { phaseId: g.G.phaseId, kws: ['Sentinel'] };
+    },
+  });
+  def('Strafing Gunship', 'card', {
+    attackArenas: () => ['Space', 'Ground'],
+    aura: (g, src, u) => (g.G.attack && g.G.attack.attacker === src && g.G.attack.defender === u && u.arena === 'Ground' ? { p: -2 } : null),
+  });
+  def('Sugi | Hired Guardian', 'card', { static: (g, u) => (g.P(1 - u.ctrl).units.some((x) => g.isUpgraded(x)) ? { kw: { Sentinel: true } } : null) });
+  def('Sundari Gauntlet', 'card', { whenAttacked: (g, u) => g.damageBase(u.ctrl, 1, { p: u.ctrl }) });
+  def('Sundari Palace | Mandalore', 'card', {
+    actions: [
+      {
+        text: L('史詩行動：每個友方領袖單位可以把一張手牌放成資源並重置', 'Epic Action: for each friendly leader unit, you may resource a card from hand and ready it'),
+        can: (g, B) => !B.epicUsed && leaderUnits(g, B.ctrl) > 0 && g.P(B.ctrl).hand.length > 0,
+        async run(g, B) {
+          B.epicUsed = true;
+          const p = B.ctrl;
+          const P = g.P(p);
+          let n = 0;
+          for (let i = 0; i < leaderUnits(g, p) && P.hand.length; i++) {
+            const pk = await g.pickCards(p, L('可以把一張手牌放成資源（重置）', 'You may resource a card from your hand (ready)'), P.hand, 0, 1);
+            if (!pk.length) break;
+            P.hand = P.hand.filter((x) => x !== pk[0]);
+            toResource(g, p, pk[0], true);
+            n++;
+          }
+          if (n) g.delay({ at: 'regroupStart', round: g.G.round, run: async (g) => { for (let i = 0; i < n; i++) await defeatResource(g, p, L('Sundari Palace：擊敗一個友方資源', 'Sundari Palace: defeat a friendly resource'), false); } });
+        },
+      },
+    ],
+  });
+  def('Superlaser Technician', 'card', {
+    async whenDefeated(g, snap) {
+      if (!g.P(snap.owner).discard.some((x) => x.uid === snap.uid)) return;
+      if (!(await may(g, snap.ctrl, snap.card, L('要把這個單位放成資源並重置嗎？', 'Put this unit into play as a resource and ready it?')))) return;
+      const c = takeFromDiscard(g, snap.owner, snap.uid);
+      if (c) toResource(g, snap.ctrl, c, true);
+    },
+  });
+  async function survivors(g, u) {
+    const ups = [];
+    for (const h of g.allUnits()) for (const up of h.upgrades) if (!up.leaderPilot) ups.push({ uid: up.uid, card: up.card, host: h, up });
+    if (!ups.length) return;
+    const pk = await g.pickCards(u.ctrl, L('可以把一張升級移到同一位玩家的另一個合法單位', 'You may move an upgrade to another eligible unit controlled by the same player'), ups, 0, 1);
+    if (!pk.length) return;
+    const { host, up } = pk[0];
+    const ts = g.P(host.ctrl).units.filter((x) => x !== host && (g.upgradeTargets(host.ctrl, up.card) || []).includes(x));
+    const t = ts.length ? await g.pickUnit(u.ctrl, L('移到哪個單位', 'Move it to which unit'), (x) => ts.includes(x), {}) : null;
+    if (!t) return;
+    host.upgrades = host.upgrades.filter((x) => x !== up);
+    t.upgrades.push(up);
+    g.log('logAttach', up.card.n, t.card.n);
+  }
+  def('Survivors\' Gauntlet', 'card', { whenPlayed: survivors, onAttack: survivors });
+  def('Synara San | Loyal to Kragan', 'card', {
+    async bounty(g, snap, collector) {
+      if (!snap.exhausted) return;
+      const b = await g.pickTarget(collector, L('賞金：對一個基地造成 5 點傷害', 'Bounty: deal 5 damage to a base'), { bases: [1 - collector, collector], ctx: { harm: true } });
+      if (b && b.base != null) g.damageBase(b.base, 5, { p: collector });
+    },
+  });
+  def('Tactical Droid Commander', 'card', {
+    async onFriendlyPlay(g, self, u) {
+      if (u === self || !g.hasTrait(u, 'SEPARATIST')) return;
+      const n = u.card.c || 0;
+      const t = await g.pickUnit(self.ctrl, L(`可以橫置一個費用 ≤${n} 的單位`, `You may exhaust a unit that costs ${n} or less`), (x) => (x.card.c || 0) <= n && !x.exhausted && x.ctrl !== self.ctrl, { optional: true, ctx: { harm: true } });
+      if (t) g.exhaust(t);
+    },
+  });
+  const takeX = (fn) => ({ costMod: (g, p) => -leaderUnits(g, p), event: fn });
+  def('Take Action', 'card', takeX(async (g, p) => { await dmgPick(g, p, 3, L('對一個單位造成 3 點傷害', 'Deal 3 damage to a unit'), () => true, false); }));
+  def('Take Aim', 'card', takeX(async (g, p) => {
+    const t = await g.pickUnit(p, L('用一個單位攻擊（+2/+0、Saboteur）', 'Attack with a unit (+2/+0 and Saboteur)'), (x) => x.ctrl === p && g.canAttackWith(x), {});
+    if (t) await g.attack(t, { power: 2, kw: { Saboteur: true } });
+  }));
+  def('Take Charge', 'card', takeX(async (g, p) => {
+    const us = g.allUnits().map((u) => ({ uid: u.uid, card: u.card }));
+    const pk = us.length ? await g.pickCards(p, L('給最多 3 個單位各 1 個經驗代幣', 'Give an Experience token to each of up to 3 units'), g.P(p).units.map((u) => ({ uid: u.uid, card: u.card })), 0, 3) : [];
+    for (const x of pk) if (g.findUnit(x.uid)) g.giveExp(g.findUnit(x.uid));
+  }));
+  def('Take Cover', 'card', takeX(async (g, p) => {
+    const t = await g.pickUnit(p, L('回復一個單位最多 3 點傷害並給它護盾', 'Heal up to 3 damage from a unit and give it a Shield'), () => true, {});
+    if (!t) return;
+    g.heal(t, 3);
+    g.giveShield(t);
+  }));
+  def('Tarfful | Kashyyyk Chieftan', 'card', {
+    async onEvent(g, self, ev) {
+      if (ev.type !== 'damage' || !ev.combat || !ev.u || ev.ctrl !== self.ctrl || !g.hasTrait(ev.u, 'WOOKIEE') || !g.findUnit(ev.u.uid) || !g.findUnit(self.uid)) return;
+      const t = await g.pickUnit(self.ctrl, L(`${N(ev.u)} 對一個敵方地面單位造成 ${ev.n} 點傷害`, `${ev.u.card.n} deals ${ev.n} damage to an enemy ground unit`), (x) => x.ctrl !== self.ctrl && x.arena === 'Ground', { ctx: { harm: true, op: 'damage', n: ev.n } });
+      if (t) await g.damageUnit(t, ev.n, { p: self.ctrl, self: ev.u });
+    },
+  });
+  def('Tech | Source of Insight', 'card', { techSmuggle: true });
+  def('The Chaos of War', 'card', {
+    event(g, p) {
+      for (const q of [p, 1 - p]) {
+        const n = g.P(q).hand.length;
+        if (n) g.damageBase(q, n, { p });
+      }
+    },
+  });
+  def('The Client | Dictated by Discretion', 'card', {
+    actions: [
+      {
+        text: L('橫置：讓一個單位本階段獲得「賞金：基地回復 5」', 'Exhaust: a unit gains "Bounty - Heal 5 damage from a base" this phase'),
+        can: (g, u) => !u.exhausted,
+        async run(g, u) {
+          g.exhaust(u);
+          const t = await g.pickUnit(u.ctrl, L('選一個單位', 'Choose a unit'), (x) => x.ctrl !== u.ctrl, {});
+          if (!t) return;
+          phaseGrant(g, (g, x) => x.uid === t.uid, {
+            async bounty(g, snap, collector) {
+              const b = await g.pickTarget(collector, L('賞金：回復一個基地 5 點傷害', 'Bounty: heal 5 damage from a base'), { bases: [collector, 1 - collector] });
+              if (b && b.base != null) g.healBase(b.base, 5);
+            },
+          });
+        },
+      },
+    ],
+  });
+  def('The Clone Wars', 'card', {
+    async event(g, p) {
+      const mx = g.readyResources(p) + (g.creditsUsable(p) ? g.P(p).credits : 0);
+      if (!mx) return;
+      const opts = Array.from({ length: mx + 1 }, (_, i) => String(i));
+      const i = await g.pickOption(p, L('要支付幾個資源？', 'Pay how many resources?'), opts, { ctx: { aiPick: Math.min(mx, 3) } });
+      const n = Math.max(0, i);
+      if (!n) return;
+      g.pay(p, n);
+      g.createToken(p, 'Clone Trooper', n);
+      g.createToken(1 - p, 'Battle Droid', n);
+    },
+  });
+  def('The Darksaber', 'card', {
+    costOnTarget: (g, p, t) => (g.hasTrait(t, 'MANDALORIAN') ? g.aspectPenalty(p, cardOf('The Darksaber')) : 0),
+    grantFor: () => ({
+      onAttack(g, u) {
+        for (const x of g.P(u.ctrl).units) if (x !== u && g.hasTrait(x, 'MANDALORIAN')) g.giveExp(x);
+      },
+    }),
+  });
+  def('The Darksaber | Only the Strongest Shall Rule', 'card', {
+    attachedStatic: () => ({ kw: { Sentinel: true } }),
+    whenPlayed(g, inst, t) {
+      if (!t) return;
+      const ks = new Set();
+      for (const u of g.P(t.ctrl).units) for (const k of Object.keys(g.kw(u))) if (!['SmuggleRaw', 'Bounty'].includes(k)) ks.add(k);
+      if (ks.size >= 4) g.ready(t);
+    },
+  });
+  def('The Emperor\'s Legion', 'card', {
+    event(g, p) {
+      for (const c of [...g.P(p).discard]) if (c.card.t === 'Unit' && defeatedNow(g, (x) => x.uid === c.uid)) moveDiscardToHand(g, p, c.uid);
+    },
+  });
+  def('The Invasion of Christophsis', 'card', {
+    async event(g, p) {
+      for (const u of [...g.P(1 - p).units]) if (g.findUnit(u.uid)) await g.defeat(u, {});
+    },
+  });
+  def('The Invisible Hand | Imposing Flagship', 'card', {
+    whenPlayed: (g, u) => g.createToken(u.ctrl, 'Battle Droid', 4),
+    async onAttack(g, u) {
+      const cs = g.P(u.ctrl).units.filter((x) => x !== u && !x.exhausted && g.hasTrait(x, 'SEPARATIST')).map((x) => ({ uid: x.uid, card: x.card }));
+      if (!cs.length) return;
+      const pk = await g.pickCards(u.ctrl, L('橫置任意數量的友方分離主義單位（每個對基地 1 傷）', 'Exhaust any number of friendly Separatist units (1 base damage each)'), cs, 0, cs.length);
+      let n = 0;
+      for (const x of pk) {
+        const t = g.findUnit(x.uid);
+        if (t && !t.exhausted) {
+          g.exhaust(t);
+          n++;
+        }
+      }
+      if (n) g.damageBase(1 - u.ctrl, n, { p: u.ctrl });
+    },
+  });
+  def('The Marauder | Shuttling the Bad Batch', 'card', {
+    async whenPlayed(g, u) {
+      const P = g.P(u.ctrl);
+      if (!P.discard.length) return;
+      const pk = await g.pickCards(u.ctrl, L('選棄牌堆一張卡（和你的單位同名就放成資源）', 'Choose a card in your discard pile (resource it if it shares a name with a unit you control)'), P.discard, 1, 1);
+      if (!pk.length || !P.units.some((x) => x.card.n === pk[0].card.n)) return;
+      takeFromDiscard(g, u.ctrl, pk[0].uid);
+      toResource(g, u.ctrl, pk[0], false);
+    },
+  });
+  def('Tobias Beckett | I Trust No One', 'card', {
+    async onCardPlayed(g, self, info) {
+      if (info.p !== self.ctrl || info.card.t === 'Unit' || self.tobRound === g.G.round) return;
+      const n = info.card.c || 0;
+      const t = await g.pickUnit(self.ctrl, L(`可以橫置一個費用 ≤${n} 的單位`, `You may exhaust a unit that costs ${n} or less`), (x) => (x.card.c || 0) <= n && !x.exhausted && x.ctrl !== self.ctrl, { optional: true, ctx: { harm: true } });
+      if (!t) return;
+      self.tobRound = g.G.round;
+      g.exhaust(t);
+    },
+  });
+  def('Traitorous', 'card', {
+    whenPlayed(g, inst, t) {
+      if (!t || g.isLeaderUnit(t) || (t.card.c || 0) > 3) return;
+      const p = (g.G.playLog || []).slice(-1)[0];
+      const to = p && p.uid === inst.uid ? p.p : inst.owner;
+      if (t.ctrl !== to) {
+        t.traitorous = inst.uid;
+        SWU.FX2.takeControl(g, t, to);
+      }
+    },
+    upWhenDefeated(g, up, host) {
+      if (host && g.findUnit(host.uid) && host.traitorous === up.uid) {
+        delete host.traitorous;
+        SWU.FX2.takeControl(g, host, host.owner);
+      }
+    },
+  });
+  def('Trandoshan Hunters', 'card', { whenPlayed: (g, u) => enemyBounty(g, u.ctrl) && g.giveExp(u) });
+  def('Tranquility | Inspiring Flagship', 'card', {
+    async whenPlayed(g, u) {
+      const cs = g.P(u.ctrl).discard.filter((c) => c.card.t === 'Unit' && g.hasTrait(c.card, 'REPUBLIC'));
+      if (!cs.length) return;
+      const pk = await g.pickCards(u.ctrl, L('可以把棄牌堆一個共和國單位收回手牌', 'You may return a Republic unit from your discard pile to your hand'), cs, 0, 1);
+      if (pk.length) moveDiscardToHand(g, u.ctrl, pk[0].uid);
+    },
+    onAttack(g, u) {
+      for (let i = 0; i < 3; i++) g.addNext(u.ctrl, { f: (c) => g.hasTrait(c, 'REPUBLIC'), n: 1, phaseId: g.G.phaseId });
+    },
+  });
+  def('Tribunal | Grave of the 332nd', 'card', {
+    costMod: (g, p) => -2 * g.G.playedThisPhase[p].length,
+    whenPlayed(g, u) {
+      for (const x of g.allUnits()) if (x !== u) g.buff(x, -2, -2);
+    },
+  });
+  def('Unlicensed Headhunter', 'card', { bounty: (g, snap, collector) => snap.exhausted && g.healBase(collector, 5) });
+  def('Unnatural Life', 'card', {
+    async event(g, p) {
+      const r = await playFromDiscard(g, p, g.P(p).discard.filter((c) => c.card.t === 'Unit' && defeatedNow(g, (x) => x.uid === c.uid)), cardOf('Unnatural Life'), { discount: 2, ready: true, prompt: L('打出本階段被擊敗的一個單位（少 2 費、就緒）', 'play a unit defeated this phase (2 less, ready)') });
+      if (r && r.uid && g.findUnit(r.uid)) {
+        const uid = r.uid;
+        g.delay({ at: 'regroupStart', round: g.G.round, run: async (g) => { const x = g.findUnit(uid); if (x) await g.defeat(x, {}); } });
+      }
+    },
+  });
+  def('Unrefusable Offer', 'card', {
+    grantFor: () => ({
+      async bounty(g, snap, collector) {
+        let c = g.P(snap.owner).discard.find((x) => x.uid === snap.uid);
+        let from = 'odiscard';
+        if (!c) {
+          for (const u of g.allUnits()) {
+            const k = (u.captured || []).find((x) => x.uid === snap.uid);
+            if (k) {
+              u.captured = u.captured.filter((x) => x !== k);
+              c = k;
+              from = 'deck';
+            }
+          }
+        }
+        if (!c || !(await may(g, collector, snap.card, L('賞金：要在你的控制下免費打出這個單位嗎？（輪末擊敗）', 'Bounty: play this unit for free under your control? (defeated at regroup)')))) return;
+        await g.playCard(collector, c.uid, from, { inst: c, free: true, ready: true });
+        const uid = c.uid;
+        g.delay({ at: 'regroupStart', round: g.G.round, run: async (g) => { const x = g.findUnit(uid); if (x) await g.defeat(x, {}); } });
+      },
+    }),
+  });
+  def('Valiant Assault Ship', 'card', { onAttack: (g, u) => g.P(1 - u.ctrl).resources.length > g.P(u.ctrl).resources.length && g.buff(u, 2, 0, 'attack') });
+  def('Vanguard Ace', 'card', {
+    whenPlayed(g, u) {
+      const n = g.G.playedThisPhase[u.ctrl].length - 1;
+      if (n > 0) g.giveExp(u, n);
+    },
+  });
+  def('Volunteer Soldier', 'card', { costMod: (g, p) => (g.P(p).units.some((x) => g.hasTrait(x, 'TROOPER')) ? -1 : 0) });
+  def('Wartime Mercenaries', 'card', {
+    async whenDefeated(g, snap) {
+      const o = 1 - snap.ctrl;
+      await expTo(g, o, L('可以給一個單位 1 個經驗代幣', 'You may give an Experience token to a unit'), (x) => x.ctrl === o || !(g.io[o] && !g.io[o].isHuman), true);
+    },
+  });
+  def('Wartime Pirate', 'card', {
+    async onAttack(g, u) {
+      const o = 1 - u.ctrl;
+      await dmgPick(g, o, 1, L('對一個單位造成 1 點傷害', 'Deal 1 damage to a unit'), (x) => x.ctrl !== o || !(g.io[o] && !g.io[o].isHuman), false);
+    },
+  });
+  def('Wartime Profiteer', 'card', {
+    async whenDefeated(g, snap) {
+      const o = 1 - snap.ctrl;
+      const rs = g.P(o).resources.filter((r) => r.exhausted);
+      if (!rs.length) return;
+      const pk = await g.pickCards(o, L('可以重置一個資源', 'You may ready a resource'), rs, 0, 1);
+      if (pk.length) pk[0].exhausted = false;
+    },
+  });
+  def('Wartime Refugee', 'card', { onAttack: (g, u) => g.healBase(1 - u.ctrl, 1) });
+  const wolffe = (g) => {
+    g.G.noHealPhase = g.G.phaseId;
+  };
+  def('Wolffe | Suspicious Veteran', 'card', { whenPlayed: wolffe, onAttack: wolffe });
+  def('Wrecker | Boom!', 'card', {
+    async whenPlayed(g, u) {
+      if (!g.allUnits().some((x) => x.arena === 'Ground' && x.ctrl !== u.ctrl)) return;
+      const r = await defeatResource(g, u.ctrl, L('可以擊敗一個友方資源，對一個地面單位造成 5 點傷害', 'You may defeat a friendly resource to deal 5 damage to a ground unit'), true);
+      if (r) await dmgPick(g, u.ctrl, 5, L('對一個地面單位造成 5 點傷害', 'Deal 5 damage to a ground unit'), (x) => x.arena === 'Ground', false, u);
+    },
+  });
+  def('Ziro the Hutt | Colorful Schemer', 'card', {
+    async whenPlayed(g, u) {
+      const t = await g.pickUnit(u.ctrl, L('可以橫置一個對手的單位', 'You may exhaust a unit an opponent controls'), (x) => x.ctrl !== u.ctrl && !x.exhausted, { optional: true, ctx: { harm: true } });
+      if (t) g.exhaust(t);
+    },
+    async onAttack(g, u) {
+      const rs = g.P(1 - u.ctrl).resources.filter((r) => !r.exhausted);
+      if (!rs.length) return;
+      const pk = await g.pickCards(u.ctrl, L('可以橫置一個對手的資源', 'You may exhaust a resource an opponent controls'), rs, 0, 1);
+      if (pk.length) pk[0].exhausted = true;
     },
   });
 })();
