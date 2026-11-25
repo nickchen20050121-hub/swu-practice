@@ -2665,7 +2665,7 @@
       d[zone][c.key] = (d[zone][c.key] || 0) + 1;
     }
     d.dirty = true;
-    renderBuilderBody();
+    renderBuilderBody({ deckOnly: c.t !== 'Leader' && c.t !== 'Base' });
   }
   function removeCard(key, zone = 'main') {
     const d = S.edit;
@@ -2673,7 +2673,7 @@
     d[zone][key]--;
     if (!d[zone][key]) delete d[zone][key];
     d.dirty = true;
-    renderBuilderBody();
+    renderBuilderBody({ deckOnly: true });
   }
   function renderBuilder(v) {
     S.decks = SWU.Deck.loadAll();
@@ -2682,13 +2682,44 @@
     v.append(h('div', { class: 'builder', id: 'builder' }));
     renderBuilderBody();
   }
-  function renderBuilderBody() {
+  function renderBuilderBody(opts = {}) {
     const root = $('#builder');
     if (!root) return;
+    // 只加減卡：搜尋結果不重畫（重畫會讓上方高度變動、手機畫面跳動），只更新那張卡的「已在牌組」標記
+    if (opts.deckOnly && root.children.length === 3) {
+      const winY0 = window.scrollY;
+      const anchorKey0 = S.anchor;
+      S.anchor = null;
+      const find0 = () => (anchorKey0 ? [...root.querySelectorAll('[data-anchor]')].find((x) => x.getAttribute('data-anchor') === anchorKey0) : null);
+      const b0 = find0();
+      const bTop = b0 ? b0.getBoundingClientRect().top : null;
+      root.style.minHeight = root.offsetHeight + 'px';
+      root.children[0].replaceWith(deckListPanel());
+      root.children[2].replaceWith(deckPanel());
+      for (const el of root.querySelectorAll('.rcard[data-anchor]')) {
+        const k = el.getAttribute('data-anchor').slice(2);
+        const n = (S.edit.main[k] || 0) + (S.edit.side[k] || 0);
+        el.classList.toggle('indeck', !!(n || S.edit.leader === k || S.edit.base === k));
+      }
+      root.style.minHeight = '';
+      if (Math.abs(window.scrollY - winY0) > 1) window.scrollTo(0, winY0);
+      const b1 = bTop != null ? find0() : null;
+      if (b1) {
+        const d = b1.getBoundingClientRect().top - bTop;
+        if (Math.abs(d) > 1) window.scrollBy(0, d);
+      }
+      return;
+    }
     const keepScroll = $('.results') ? $('.results').scrollTop : 0;
     const focus = document.activeElement && document.activeElement.id;
     // 手機：整頁捲動，重畫時先撐住高度、畫完把捲動位置放回去，加減卡時畫面不會跳
     const winY = window.scrollY;
+    // 剛剛按的那一列／那張卡：重畫後讓它留在螢幕上同一個位置
+    const anchorKey = S.anchor;
+    S.anchor = null;
+    const findAnchor = () => (anchorKey ? [...document.querySelectorAll('[data-anchor]')].find((x) => x.getAttribute('data-anchor') === anchorKey) : null);
+    const a0 = findAnchor();
+    const aTop = a0 ? a0.getBoundingClientRect().top : null;
     root.style.minHeight = root.offsetHeight + 'px';
     const next = [deckListPanel(), searchPanel(), deckPanel()];
     // 原地換掉三個區塊（不先清空），頁面高度不會瞬間變 0，手機就不會把畫面拉回上面
@@ -2700,6 +2731,11 @@
     if ($('.results')) $('.results').scrollTop = keepScroll;
     root.style.minHeight = '';
     if (Math.abs(window.scrollY - winY) > 1) window.scrollTo(0, winY);
+    const a1 = aTop != null ? findAnchor() : null;
+    if (a1) {
+      const d = a1.getBoundingClientRect().top - aTop;
+      if (Math.abs(d) > 1) window.scrollBy(0, d);
+    }
     // 手機：只有剛在打字時才把游標放回搜尋框（不然點卡片加牌會跳回搜尋框、跳出鍵盤）
     if (focus && $('#' + focus) && (!isTouch() || Date.now() - (S.typedAt || 0) < 1500)) {
       const el = $('#' + focus);
@@ -2824,7 +2860,9 @@
           'div',
           {
             class: 'rcard' + (n || isSet ? ' indeck' : ''),
-            onmouseenter: () => setPreviewBuilder(c),
+            'data-anchor': 'r|' + c.key,
+            onpointerdown: () => (S.anchor = 'r|' + c.key),
+            onmouseenter: () => !isTouch() && setPreviewBuilder(c),
             onclick: () => addCard(c, f.addZone || 'main'),
             oncontextmenu: (e) => {
               e.preventDefault();
@@ -2952,13 +2990,13 @@
           const pen = c.a ? SWU.Deck.penalty(d, c) : 0;
           return h(
             'div',
-            { class: 'drow', onmouseenter: () => c.t && setPreviewBuilder(c) },
+            { class: 'drow', 'data-anchor': zone + '|' + k, onpointerdown: () => (S.anchor = zone + '|' + k), onmouseenter: () => c.t && !isTouch() && setPreviewBuilder(c) },
             h('span', { class: 'dc' }, c.c != null ? c.c : '·'),
             aspectDots(c),
             c.t ? zoomable(h('span', { class: 'dn' }, SWU.cardName(c), c.s ? h('small', {}, ' ' + SWU.cardSub(c)) : null, pen ? h('em', { class: 'penmark' }, ' +' + pen) : null), c) : h('span', { class: 'dn' }, c.n),
-            h('button', { class: 'mini', title: '-', onclick: () => removeCard(k, zone) }, '−'),
+            h('button', { class: 'mini', title: '-', onmousedown: (e) => e.preventDefault(), onclick: () => removeCard(k, zone) }, '−'),
             h('b', { class: 'dq' }, n),
-            h('button', { class: 'mini', title: '+', onclick: () => c.t && addCard(c, zone) }, '+'),
+            h('button', { class: 'mini', title: '+', onmousedown: (e) => e.preventDefault(), onclick: () => c.t && addCard(c, zone) }, '+'),
             h(
               'button',
               {
@@ -2970,7 +3008,7 @@
                   if (!d[zone][k]) delete d[zone][k];
                   d[other][k] = (d[other][k] || 0) + 1;
                   d.dirty = true;
-                  renderBuilderBody();
+                  renderBuilderBody({ deckOnly: true });
                 },
               },
               zone === 'main' ? '⇢' : '⇠'
