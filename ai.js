@@ -102,7 +102,9 @@
       if (!best || s > best.s) best = { s, target: d };
     }
     if (t.base) {
-      const s = ap * ((H.cfg && H.cfg.baseW) || 1.1) + (g.P(1 - u.ctrl).base.damage > 20 ? 6 : 0);
+      // 推演對手時：照資料庫裡這個對手的習慣（愛打基地還是愛換場）
+      const bw = (H._opp && u.ctrl === H._opp.q && H._opp.baseW) || (H.cfg && H.cfg.baseW) || 1.1;
+      const s = ap * bw + (g.P(1 - u.ctrl).base.damage > 20 ? 6 : 0);
       if (!best || s >= best.s) best = { s, base: true };
     }
     return best;
@@ -184,17 +186,83 @@
     return s;
   };
   // ---------- 推測對手手牌：看對手領袖＋基地的屬性、已經出過的牌、卡價（當作環境熱門度） ----------
+  // ---------- 對手資料庫：記住每個對手領袖＋基地以前出過哪些牌、怎麼打（存在這台裝置） ----------
+  const OKEY = 'swu.opp.v1';
+  const OppDB = (SWU.OppDB = {
+    _d: null,
+    all() {
+      if (!this._d) {
+        try {
+          this._d = JSON.parse(localStorage.getItem(OKEY) || '{}');
+        } catch (e) {
+          this._d = {};
+        }
+      }
+      return this._d;
+    },
+    get(key) {
+      return this.all()[key] || null;
+    },
+    // 一局結束（或自動存檔）時把對手 q 這局公開過的牌和打法記下來；同一局只算一次（用 gid 覆蓋）
+    learn(g, q) {
+      try {
+        const Q = g.P(q), key = Q.leader.card.key + '|' + Q.base.card.key, gid = String(g.seed) + ':' + String(g.uid0);
+        const seen = {};
+        for (const x of [...Q.discard, ...Q.units, ...Q.units.flatMap((u) => u.upgrades || [])]) if (x && x.card && x.card.key && !x.isLeader && !/Token/.test(x.card.t)) seen[x.card.key] = (seen[x.card.key] || 0) + 1;
+        const st = { atkBase: 0, atkUnit: 0, init: [] };
+        for (const l of g.G.log) {
+          if (l.p !== q) continue;
+          if (l.k === 'logAttackBase') st.atkBase++;
+          else if (l.k === 'logAttackUnit') st.atkUnit++;
+          else if (l.k === 'logInitiative') st.init.push(l.r);
+        }
+        const all = this.all();
+        const e = (all[key] = all[key] || { games: {}, n: 0 });
+        e.games[gid] = { seen, st, date: Date.now() };
+        const ids = Object.keys(e.games).sort((a, b) => e.games[b].date - e.games[a].date).slice(0, 60);
+        e.games = Object.fromEntries(ids.map((i) => [i, e.games[i]]));
+        e.n = ids.length;
+        localStorage.setItem(OKEY, JSON.stringify(all));
+      } catch (e) {}
+    },
+    // 以前每局平均看到幾張（0～3）
+    cardRate(key) {
+      const e = this.get(key);
+      if (!e || !e.n) return null;
+      const r = {};
+      for (const x of Object.values(e.games)) for (const [k, c] of Object.entries(x.seen)) r[k] = (r[k] || 0) + Math.min(3, c) / e.n;
+      return r;
+    },
+  });
+  // 對手攻擊習慣：至少 3 局資料，打基地比例換算成推演時的「打基地權重」（一般約一半一半＝1.1）
+  H.oppBaseW = function (g, q) {
+    if (H.cfg && H.cfg.oppMem === false) return null;
+    const Q = g.P(q), e = OppDB.get(Q.leader.card.key + '|' + Q.base.card.key);
+    if (!e || e.n < 3) return null;
+    let b = 0, u = 0;
+    for (const x of Object.values(e.games)) (b += x.st.atkBase), (u += x.st.atkUnit);
+    if (b + u < 15) return null;
+    const r = (b + 1) / (b + u + 2);
+    return 1.1 * Math.max(0.5, Math.min(2.5, r / (1 - r)));
+  };
   H.predictPool = function (g, p) {
     const q = 1 - p, Q = g.P(q);
     const key = Q.leader.card.key + '|' + Q.base.card.key;
+    // 對手資料庫：以前和這個對手（同領袖＋基地）打過時看過的牌，機率調高
+    let mem = null;
+    if (H.cfg && H.cfg.oppMemFull) {
+      mem = {};
+      for (const c of g.decks[q].cards || []) mem[c.key] = (mem[c.key] || 0) + 1 / 3;
+    } else if (!(H.cfg && H.cfg.oppMem === false)) mem = OppDB.cardRate(key);
+    const ck = key + (mem ? '#m' : '');
     g._pool = g._pool || {};
-    let pool = g._pool[key];
+    let pool = g._pool[ck];
     if (!pool) {
       const asp = [...(Q.leader.card.a || []), ...(Q.base.card.a || [])];
       pool = SWU.DB.list
-        .filter((c) => c.pl === 'Yes' && ['Unit', 'Event', 'Upgrade'].includes(c.t) && (c.a || []).every((a) => asp.includes(a)))
-        .map((c) => ({ c, w: 1 + Math.min(3, Math.log10(1 + (+c.pr || 0) * 10)) * 1.5 + ((c.a || []).length ? 1 : 0) + Math.min(12, (SWU.Deck.metaFreq()[c.key.toLowerCase()] || 0)) * 1.2 }));
-      g._pool[key] = pool;
+        .filter((c) => c.pl === 'Yes' && ['Unit', 'Event', 'Upgrade'].includes(c.t) && ((c.a || []).every((a) => asp.includes(a)) || (mem && mem[c.key])))
+        .map((c) => ({ c, w: 1 + Math.min(3, Math.log10(1 + (+c.pr || 0) * 10)) * 1.5 + ((c.a || []).length ? 1 : 0) + Math.min(12, (SWU.Deck.metaFreq()[c.key.toLowerCase()] || 0)) * 1.2 + (mem && mem[c.key] ? 6 + Math.min(1, mem[c.key]) * (H.cfg && H.cfg.memW != null ? H.cfg.memW : 10) : 0) }));
+      g._pool[ck] = pool;
     }
     // 已經看過的牌（場上、棄牌堆、公開過的）：牌組通常放 3 張，剩下的機率高
     const seen = {};
@@ -228,6 +296,7 @@
   };
   H.search = async function (g, p, acts, opt = {}) {
     if (!SWU.engineRT || !g.rec || g.replaying) return null;
+    H._opp = { q: 1 - p, baseW: opt.oppBaseW || H.oppBaseW(g, 1 - p) };
     const rt = SWU.engineRT.get();
     const STOP = { stop: true };
     const base = H.evalState(g, p) - H.oppThreat(g, p) * 0.6;

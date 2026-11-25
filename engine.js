@@ -2040,7 +2040,9 @@
       G.phase = 'setup';
       // 隨機（或上一局輸的人）決定誰拿主動權先手
       const chooser = this.opts.initiativeChooser != null ? this.opts.initiativeChooser : rnd(2);
-      if (this.opts.askInitiative) G.initiative = (await this.yesno(chooser, SWU.t('promptGoFirst'), { goFirst: true })) ? chooser : 1 - chooser;
+      // 單局：像比賽一樣隨機決定先後攻；BO3 第二局起才由上一局輸家選
+      if (this.opts.randomFirst && this.opts.initiativeChooser == null) G.initiative = rnd(2);
+      else if (this.opts.askInitiative) G.initiative = (await this.yesno(chooser, SWU.t('promptGoFirst'), { goFirst: true })) ? chooser : 1 - chooser;
       else G.initiative = chooser;
       this.log('logStart', this.P(G.initiative).name);
       for (const P of G.players) {

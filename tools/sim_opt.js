@@ -46,8 +46,10 @@ let aW = 0, bW = 0, none = 0, ms = 0, dec = 0, tmax = 0;
         resolveManual: async () => {},
       };
     };
-    const k = Math.floor(i / 2) + off;
-    const dA = meta[k % meta.length], dB = luke ? lukeD : meta[(k + 1) % meta.length];
+    // 每 4 局一組：換座位也換牌組，排除「A 剛好拿到強牌組」的偏差
+    const k = Math.floor(i / 4) + off;
+    let dA = meta[k % meta.length], dB = luke ? lukeD : meta[(k + 1) % meta.length];
+    if (!luke && Math.floor(i / 2) % 2) [dA, dB] = [dB, dA];
     const decks = aSeat === 0 ? [mk(dA, 'A'), mk(dB, 'B')] : [mk(dB, 'B'), mk(dA, 'A')];
     const g = new SWU.Game(decks, aSeat === 0 ? [io(OA), io(OB)] : [io(OB), io(OA)]);
     await g.run();

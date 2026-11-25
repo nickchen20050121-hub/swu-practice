@@ -622,7 +622,7 @@
   // ---------- 開局 ----------
   async function startGame(next) {
     let mine, yuna;
-    const gopts = { askInitiative: true, manualPass: 0 };
+    const gopts = { askInitiative: true, randomFirst: true, manualPass: 0 };
     if (next === true && S.match) {
       mine = S.match.mine;
       yuna = S.match.yuna;
@@ -657,6 +657,26 @@
     if (S.game) recordGame(S.game, true);
     const g = new SWU.Game([mk(mine, SWU.playerName()), mk(yuna, SWU.friendMode() ? 'AI' : SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
     attachGame(g);
+    showIntro(g);
+  }
+  // ---------- 開場動畫：秀出雙方領袖＋基地，再公布先後攻（點一下可略過） ----------
+  function showIntro(g) {
+    const old = document.querySelector('.intro');
+    if (old) old.remove();
+    const en = SWU.lang === 'en';
+    const side = (P, cls) =>
+      h('div', { class: 'introside ' + cls }, h('div', { class: 'introname' }, P.name), h('div', { class: 'introcards' }, cardFace(P.leader.card, 'leader'), cardFace(P.base.card, 'card')));
+    const coin = h('div', { class: 'introcoin' }, '🪙 …');
+    const el = h('div', { class: 'intro', onclick: () => el.remove() }, side(g.P(1), 'them'), h('div', { class: 'introvs' }, 'VS'), side(g.P(0), 'me'), coin, h('small', { class: 'introskip' }, en ? 'Tap to skip' : '點一下略過'));
+    document.body.append(el);
+    setTimeout(() => {
+      const i = g.G.initiative;
+      if (i != null && el.isConnected) {
+        coin.textContent = '🪙 ' + (en ? `${g.P(i).name} goes first` : `${g.P(i).name} 先攻`);
+        coin.classList.add('on', i === 0 ? 'me' : 'them');
+      }
+    }, 1400);
+    setTimeout(() => el.isConnected && (el.classList.add('out'), setTimeout(() => el.remove(), 400)), 3600);
   }
   // ---------- 回上一步：用同一個亂數種子重播到上一個檢查點 ----------
   function undoTarget() {
@@ -768,6 +788,10 @@
   };
   SWU.GameLog = GameLog;
   function recordGame(g, unfinished) {
+    // 對手資料庫：記住玩家這局出過的牌和打法（兩版都記，只存在這台裝置）
+    if (!g.replaying && (g.G.winner != null || g.G.round >= 2)) try {
+      SWU.OppDB && SWU.OppDB.learn(g, 0);
+    } catch (e) {}
     if (!SWU.AI.settings.owner || g._logged || (g.G.winner == null && !(unfinished && (g.G.round >= 2 || (g.advice && g.advice.length))))) return;
     // 進行中（autosave）不鎖；打完或換新局才鎖
     if (unfinished !== 'auto') g._logged = true;
@@ -1039,7 +1063,7 @@
   }
   function downloadGames() {
     const all = GameLog.list();
-    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list(), advice: Advice.list() })], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list(), advice: Advice.list(), opponents: SWU.OppDB ? SWU.OppDB.all() : null })], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     const d = new Date(), z = (x) => String(x).padStart(2, '0');
@@ -2446,10 +2470,26 @@
     if (req.ctx && req.ctx.mulligan && S.game) {
       // 重抽起手：把手牌放大、亮亮的擺在視窗裡，看清楚再決定
       const hand = S.game.P(0).hand;
+      const en = SWU.lang === 'en';
+      const O = S.game.P(1), fi = S.game.G.initiative;
+      const peekBoard = () => {
+        m.hidden = true;
+        const b = h('button', { class: 'primary mullback', onclick: () => ((m.hidden = false), b.remove()) }, en ? 'Back to mulligan' : '回到留牌');
+        document.body.append(b);
+      };
       m.append(
         h(
           'div',
           { class: 'dialog mulldlg' },
+          h(
+            'div',
+            { class: 'mullopp' },
+            h('span', { class: 'muted small' }, en ? 'Opponent' : '對手'),
+            h('div', { class: 'mulloppcards', onclick: () => showPeek && showPeek(O.leader.card, 'leader') }, cardFace(O.leader.card, 'leader')),
+            h('div', { class: 'mulloppcards', onclick: () => showPeek && showPeek(O.base.card, 'card') }, cardFace(O.base.card, 'card')),
+            h('div', { class: 'mullinfo' }, h('b', {}, SWU.cardName(O.leader.card)), h('br'), h('span', { class: 'small muted' }, SWU.cardName(O.base.card)), h('br'), fi != null ? h('span', { class: 'small' }, '🪙 ' + (en ? (fi === 0 ? 'You go first' : 'Opponent goes first') : fi === 0 ? '你先攻' : '對手先攻')) : null),
+            h('button', { class: 'ghost small mullpeek', onclick: peekBoard }, en ? '👁 Board' : '👁 看場面')
+          ),
           h('h3', {}, req.prompt),
           h('div', { class: 'mullhand' }, ...hand.map((c) => cardFace(c.card, 'card'))),
           h('div', { class: 'mullbtns' }, ...req.options.map((o, i) => h('button', { class: i === 0 ? 'primary' : '', onclick: () => settle([o.id]) }, o.label)))
