@@ -652,6 +652,7 @@
       },
     });
     S.chat = [{ who: 'yuna', text: SWU.friendMode() ? t('friendHello') : SWU.lang === 'zh' ? '嘿嘿，請多指教～我會認真打的喔 (｡･ω･｡)' : "Hehe, let's have a good game~ I'll do my best!" }];
+    if (S.game) recordGame(S.game, true);
     const g = new SWU.Game([mk(mine, SWU.playerName()), mk(yuna, SWU.friendMode() ? 'AI' : SWU.lang === 'zh' ? '由奈' : 'Yuna')], [humanIO, aiPlayer], gopts);
     attachGame(g);
   }
@@ -732,6 +733,84 @@
     document.body.append(el);
     setTimeout(() => el.remove(), 1700);
   }
+  // ---------- 對局紀錄（主人模式）：每局結束存在這台裝置，設定頁可下載給 Claude 分析 ----------
+  const GKEY = 'swu.games.v1';
+  const GameLog = {
+    list() {
+      try {
+        return JSON.parse(localStorage.getItem(GKEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    },
+    save(entry) {
+      let all = GameLog.list();
+      all.push(entry);
+      // 空間不夠就丟掉最舊的
+      while (all.length) {
+        try {
+          localStorage.setItem(GKEY, JSON.stringify(all.slice(-80)));
+          return;
+        } catch (e) {
+          all = all.slice(Math.max(1, Math.floor(all.length / 4)));
+        }
+      }
+    },
+    clear() {
+      try {
+        localStorage.removeItem(GKEY);
+      } catch (e) {}
+    },
+  };
+  SWU.GameLog = GameLog;
+  function recordGame(g, unfinished) {
+    if (!SWU.AI.settings.owner || g._logged || (g.G.winner == null && !(unfinished && g.G.round >= 2))) return;
+    g._logged = true;
+    const deckOf = (d) => {
+      const cnt = {};
+      for (const c of d.cards || []) cnt[c.key] = (cnt[c.key] || 0) + 1;
+      return { leader: d.leader && d.leader.key, base: d.base && d.base.key, cards: cnt };
+    };
+    const st = SWU.AI.settings;
+    let ver = '';
+    try {
+      const s = [...document.scripts].map((x) => x.src).find((x) => /engine\.js\?v=/.test(x));
+      ver = s ? s.split('v=')[1] : '';
+    } catch (e) {}
+    GameLog.save({
+      date: new Date().toISOString(),
+      ver,
+      level: SWU.AI.levelNum(),
+      style: st.style || 'default',
+      match: S.match ? { wins: [...S.match.wins] } : null,
+      winner: g.G.winner,
+      youWon: g.G.winner === 0,
+      unfinished: g.G.winner == null,
+      rounds: g.G.round,
+      bases: g.G.players.map((P) => P.base.damage),
+      decks: g.decks.map(deckOf),
+      seed: g.seed,
+      uid0: g.uid0,
+      rec: g.rec,
+      log: g.G.log.map((l) => {
+        try {
+          return SWU.fmtLog(l, 'en');
+        } catch (e) {
+          return l.k;
+        }
+      }),
+    });
+  }
+  function downloadGames() {
+    const all = GameLog.list();
+    const blob = new Blob([JSON.stringify({ games: all })], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'swu-games-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.append(a);
+    a.click();
+    setTimeout(() => (URL.revokeObjectURL(a.href), a.remove()), 1000);
+  }
   function attachGame(g) {
     S.game = g;
     g.pauseFor = (kind, p) => (p === 1 && animOn() ? new Promise((r) => setTimeout(r, kind === 'attack' ? 750 : 600)) : null);
@@ -760,6 +839,7 @@
       else if (ev.type === 'gameover') {
         S.pending = null;
         renderBoard();
+        recordGame(g);
         const win = g.G.winner === 0;
         SWU.sfx && SWU.sfx(win ? 'win' : 'lose');
         if (S.match && g.G.winner != null && !g._counted) {
@@ -3037,12 +3117,41 @@
   function renderSettings(v) {
     const st = SWU.AI.settings;
     const save = () => SWU.AI.save();
+    const zh = SWU.lang !== 'en';
+    const nG = st.owner ? GameLog.list().length : 0;
+    const gamesField = st.owner
+      ? h(
+          'div',
+          { class: 'field' },
+          h('label', {}, zh ? `對局紀錄（這台裝置存了 ${nG} 局）` : `Game records (${nG} saved on this device)`),
+          h('p', { class: 'small muted' }, zh ? '每局打完會自動存下雙方每一步。下載後把檔案傳給 Claude，就能分析你怎麼贏、把電腦調強。' : 'Every finished game is saved with both players\' moves. Download and send the file to Claude to analyse and tune the AI.'),
+          h(
+            'div',
+            { class: 'row' },
+            h('button', { class: 'primary', disabled: !nG, onclick: downloadGames }, zh ? '下載對局紀錄' : 'Download records'),
+            h(
+              'button',
+              {
+                class: 'ghost',
+                disabled: !nG,
+                onclick: () => {
+                  if (!confirm(zh ? '確定要清除這台裝置上的對局紀錄嗎？' : 'Clear all game records on this device?')) return;
+                  GameLog.clear();
+                  render();
+                },
+              },
+              zh ? '清除' : 'Clear'
+            )
+          )
+        )
+      : null;
     const testOut = h('span', { class: 'small' });
     const backup = h('textarea', { id: 'backup', rows: '5', placeholder: t('backupHint') });
     v.append(
       h(
         'section',
         { class: 'panel settings' },
+        gamesField,
         h(
           'div',
           { class: 'field' },
