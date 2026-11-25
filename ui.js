@@ -1502,24 +1502,62 @@
         },
       },
       cardFace(card, side, { stats: { p: g.power(u), h: g.hp(u) } }),
-      h(
-        'div',
-        { class: 'counters' },
-        h('span', { class: 'pwr' }, g.power(u)),
-        h('span', { class: 'hp' + (u.damage ? ' hurt' : '') }, g.remaining(u)),
-        u.damage ? h('span', { class: 'dmg' }, '-' + u.damage) : null
-      ),
+      (() => {
+        // 戰力／生命：大數字＋跟印刷數值比的加減（綠色加、紅色減）
+        const dp = g.power(u) - (card.p || 0), dh = g.hp(u) - (card.h || 0);
+        const sg = (x) => (x > 0 ? '+' + x : String(x));
+        return h(
+          'div',
+          { class: 'counters' },
+          h('span', { class: 'pwr', title: (SWU.lang === 'en' ? 'Power' : '戰力') + (dp ? ' ' + (card.p || 0) + sg(dp) : '') }, g.power(u), dp ? h('sup', { class: dp > 0 ? 'up' : 'down' }, sg(dp)) : null),
+          u.damage ? h('span', { class: 'dmg' }, '-' + u.damage) : null,
+          h('span', { class: 'hp' + (u.damage ? ' hurt' : ''), title: (SWU.lang === 'en' ? 'Remaining HP' : '剩餘生命') + ' ' + g.remaining(u) + '/' + g.hp(u) + (dh ? '（' + (card.h || 0) + sg(dh) + '）' : '') }, g.remaining(u), dh ? h('sup', { class: dh > 0 ? 'up' : 'down' }, sg(dh)) : null)
+        );
+      })(),
+      u.upgrades.length ? upgradeBar(u) : null,
       pd && pd.type === 'distribute' && pd.alloc['u' + u.uid] ? h('span', { class: 'allocbadge' }, '+' + pd.alloc['u' + u.uid]) : null,
       h(
         'div',
         { class: 'tokens' },
-        ...u.upgrades.map((x) => h('span', { class: 'tok ' + (x.card.n === 'Shield' ? 'sh' : x.card.n === 'Experience' ? 'xp' : 'up'), title: x.card.key, onmouseenter: (e) => (e.stopPropagation(), setPreview(x.card, 'card')) }, x.card.n === 'Shield' ? '盾' : x.card.n === 'Experience' ? '+1' : x.card.n.slice(0, 6))),
         ...Object.entries(g.kw(u))
           .filter(([k, val]) => val && ['Sentinel', 'Overwhelm', 'Saboteur', 'Ambush', 'Raid', 'Restore', 'Grit', 'Hidden'].includes(k))
           .map(([k, val]) => h('span', { class: 'kw' }, kwShort(k) + (typeof val === 'number' ? val : '')))
       )
     );
     return el;
+  }
+  // 單位身上的升級：一小條「升級 ×N」，點開看全部升級的卡圖與加成
+  function upMod(x) {
+    const p = x.leaderPilot ? x.pilotMod[0] : x.card.p || 0;
+    const hh = x.leaderPilot ? x.pilotMod[1] : x.card.h || 0;
+    const sg = (v) => (v >= 0 ? '+' + v : String(v));
+    if (x.card.n === 'Shield') return '';
+    return sg(p) + '/' + sg(hh) + (x.leaderPilot ? (SWU.lang === 'en' ? ' · Pilot' : '・駕駛員') : '');
+  }
+  function upgradeBar(u) {
+    const en = SWU.lang === 'en';
+    const n = (name) => u.upgrades.filter((x) => x.card.n === name).length;
+    const sh = n('Shield'), xp = n('Experience'), wk = n('Weakness');
+    const pil = u.upgrades.filter((x) => x.leaderPilot).length;
+    const other = u.upgrades.length - sh - xp - wk - pil;
+    const bits = [];
+    if (pil) bits.push(en ? 'Pilot' : '駕駛員');
+    if (other) bits.push((en ? 'Upgrade' : '升級') + (other > 1 ? other : ''));
+    if (xp) bits.push((en ? 'XP' : '經驗') + xp);
+    if (sh) bits.push('🛡' + (sh > 1 ? sh : ''));
+    if (wk) bits.push((en ? 'Weak' : '弱點') + wk);
+    return h(
+      'div',
+      {
+        class: 'upbar',
+        title: en ? 'Click to see all upgrades' : '點一下看所有升級',
+        onclick: (e) => {
+          e.stopPropagation();
+          openViewPop((en ? 'Upgrades on ' : '升級：') + SWU.cardName(u.card) + '（' + u.upgrades.length + '）', u.upgrades.map((x) => x.card), u.upgrades.map(upMod));
+        },
+      },
+      bits.join('·')
+    );
   }
   function kwShort(k) {
     const zh = { Sentinel: '哨', Overwhelm: '壓', Saboteur: '破', Ambush: '伏', Raid: '突', Restore: '回', Grit: '堅', Hidden: '隱' };

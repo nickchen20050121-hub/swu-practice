@@ -96,7 +96,7 @@
   // ===================== 領袖駕駛員加成（官方升級數值） =====================
   SWU.PILOT_MOD = {
     'Luke Skywalker | Hero of Yavin': [4, 5],
-    'Darth Vader | Victor Squadron Leader': [3, 3],
+    'Darth Vader | Victor Squadron Leader': [5, 5],
   };
 
   // ===================== 領袖 =====================

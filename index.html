@@ -203,7 +203,11 @@ main#view{padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,en
 .act:hover,.can:hover{transform:translateY(-3px)}
 .sel .face{box-shadow:0 0 0 3px var(--good),0 0 16px var(--good)!important}
 .counters{position:absolute;left:-4px;right:-4px;bottom:-6px;display:flex;justify-content:space-between;pointer-events:none}
-.counters span{font-family:var(--f-num);font-weight:700;font-size:12px;border-radius:6px;padding:0 5px;color:#fff}
+.counters span{font-family:var(--f-num);font-weight:700;font-size:14px;line-height:18px;border-radius:6px;padding:0 5px;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.counters sup{font-size:9px;line-height:1;margin-left:2px;padding:0 3px;border-radius:4px;vertical-align:super;background:rgba(255,255,255,.92)}
+.counters sup.up{color:#16803c} .counters sup.down{color:#c0262d}
+.upbar{position:absolute;left:4px;right:4px;bottom:15px;z-index:2;font-size:10px;line-height:15px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:5px;background:rgba(20,24,40,.82);color:#ffe9a8;border:1px solid rgba(255,214,102,.7);cursor:pointer;font-weight:700}
+.upbar:hover{background:rgba(40,46,80,.95)}
 .pwr{background:var(--agg)} .hp{background:var(--vig)} .hp.hurt{background:var(--bad)}
 .dmg{position:absolute;left:50%;transform:translateX(-50%);background:var(--ink)!important;color:var(--panel)!important}
 .tokens{position:absolute;top:-6px;left:-4px;right:-4px;display:flex;flex-wrap:wrap;gap:2px}
@@ -564,19 +568,19 @@ button.inittok.take{border:2px dashed var(--warn);animation:initpulse 1.6s ease-
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611251200"></script>
-<script src="engine.js?v=202611251200"></script>
-<script src="zh_cards.js?v=202611251200"></script>
-<script src="i18n.js?v=202611251200"></script>
-<script src="effects.js?v=202611251200"></script>
-<script src="effects2.js?v=202611251200"></script>
-<script src="gfx.js?v=202611251200"></script>
-<script src="programs.js?v=202611251200"></script>
-<script src="meta_decks.js?v=202611251200"></script>
-<script src="deck.js?v=202611251200"></script>
-<script src="ai.js?v=202611251200"></script>
-<script src="sfx.js?v=202611251200"></script>
-<script src="ui.js?v=202611251200"></script>
+<script src="cards.js?v=202611251300"></script>
+<script src="engine.js?v=202611251300"></script>
+<script src="zh_cards.js?v=202611251300"></script>
+<script src="i18n.js?v=202611251300"></script>
+<script src="effects.js?v=202611251300"></script>
+<script src="effects2.js?v=202611251300"></script>
+<script src="gfx.js?v=202611251300"></script>
+<script src="programs.js?v=202611251300"></script>
+<script src="meta_decks.js?v=202611251300"></script>
+<script src="deck.js?v=202611251300"></script>
+<script src="ai.js?v=202611251300"></script>
+<script src="sfx.js?v=202611251300"></script>
+<script src="ui.js?v=202611251300"></script>
 <script>SWU.boot();</script>
 </body>
 </html>
