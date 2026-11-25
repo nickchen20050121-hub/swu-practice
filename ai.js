@@ -169,8 +169,8 @@
     s += (me.resources.length - op.resources.length) * W.res;
     // 行為風格：侵略＝更看重打對方基地；控制＝更看重場面、手牌和自己的血量
     let st = AI.settings.style;
-    // 實驗：依自己領袖的屬性自動選風格（侵略色＝搶血）
-    if (H.cfg && H.cfg.autoStyle && (!st || st === 'default')) st = (me.leader.card.a || []).includes('Aggression') ? 'aggro' : 'default';
+    // 依自己領袖的屬性自動選風格（侵略色＝搶血）；模擬驗證 Lv2 62:42、Lv4 45:35
+    if (!(H.cfg && H.cfg.autoStyle === false) && (!st || st === 'default')) st = (me.leader.card.a || []).includes('Aggression') ? 'aggro' : 'default';
     if (st === 'aggro') s += (30 - opHp) * 0.9 - (me.units.length ? 0 : 1);
     else if (st === 'control') {
       for (const u of me.units) s += unitV(u, true) * 0.3;
