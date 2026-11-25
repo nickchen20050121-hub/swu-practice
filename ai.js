@@ -176,6 +176,9 @@
       s += (me.hand.length - op.hand.length) * 0.8 + myHp * 0.3;
     }
     if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += W.ldReady;
+    // 先攻指示物：下一輪先手的價值（實驗中）
+    const iw = (H.cfg && H.cfg.initW) || 0;
+    if (iw && G.initiative != null) s += G.initiative === p ? iw : -iw;
     return s;
   };
   // ---------- 推測對手手牌：看對手領袖＋基地的屬性、已經出過的牌、卡價（當作環境熱門度） ----------

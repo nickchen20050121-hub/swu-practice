@@ -1488,13 +1488,33 @@
       else cost = this.costOf(p, card);
       const e = SWU.EFFECTS.get(card, 'card');
       let exploitMax = this.exploitOf(p, card, { from });
-      const reduce = Math.min(exploitMax, this.P(p).units.length) * 2;
+      let reduce = Math.min(exploitMax, this.P(p).units.length) * 2;
+      // 費用看目標而定的升級（Mastery 裝在獨特單位上 -1…）：用最便宜的目標判斷能不能打
+      if (card.t === 'Upgrade') reduce += this.bestTargetDiscount(p, card);
       if (!this.canPay(p, Math.max(0, cost - reduce)) && !(e && e.affordable && e.affordable(this, p, cost))) return null;
       if (card.t === 'Upgrade' && !/^Fortify/m.test(card.tx || '') && !this.upgradeTargets(p, card).length) return null;
       if (e && e.canPlay && !e.canPlay(this, p, from)) return null;
       if (this.cardBanned(p, card)) return null;
       if (card.t === 'Event' && (this.G.noEvents || []).some((x) => x.p === p && x.phaseId === this.G.phaseId)) return null;
       return { type: 'play', uid: c.uid, from, cost, label: SWU.t(from === 'smuggle' ? 'actSmuggle' : 'actPlay', card.n, cost) };
+    }
+    targetDiscount(p, card, t) {
+      const e0 = SWU.EFFECTS.get(card, 'card');
+      let d = 0;
+      if (e0 && e0.costOnTarget) d += e0.costOnTarget(this, p, t) || 0;
+      for (const u of this.P(p).units) {
+        const ue = this.eff(u);
+        if (ue && ue.upgradeCostOn) d += ue.upgradeCostOn(this, u, card, t) || 0;
+      }
+      return d;
+    }
+    bestTargetDiscount(p, card) {
+      const e0 = SWU.EFFECTS.get(card, 'card');
+      const hasOn = (e0 && e0.costOnTarget) || this.P(p).units.some((u) => { const ue = this.eff(u); return ue && ue.upgradeCostOn; });
+      if (!hasOn) return 0;
+      let best = 0;
+      for (const t of this.upgradeTargets(p, card)) best = Math.max(best, this.targetDiscount(p, card, t));
+      return best;
     }
     upgradeTargets(p, card) {
       const tx = card.tx || '';
@@ -1626,7 +1646,8 @@
       if (card.t === 'Upgrade' && !opts.asPilot && !opts.free && !/^Fortify/m.test(card.tx || '') && !opts.target) {
         const hasOn = (e0 && e0.costOnTarget) || this.P(p).units.some((u) => { const ue = this.eff(u); return ue && ue.upgradeCostOn; });
         if (hasOn) {
-          const targets = this.upgradeTargets(p, card);
+          // 只列出付得起的目標
+          const targets = this.upgradeTargets(p, card).filter((x) => this.canPay(p, Math.max(0, cost - this.targetDiscount(p, card, x))));
           const t = await this.pickUnit(p, SWU.t('promptAttach', card.n), (u) => targets.includes(u), { ctx: { card: card.key } });
           if (!t) return;
           opts = { ...opts, target: t };
