@@ -915,6 +915,21 @@
       }
       const ok = Reports.save(r);
       closeModal();
+      // 直接送到 GitHub 問題回報（開好已填內容的頁面，按 Submit 就送出）；只有主人版
+      if (SWU.AI.settings.owner) try {
+        const S0 = r.state;
+        const uline = (x) => `${x.card}${x.leader ? ' [L]' : ''} ${x.power}/${x.hp - x.damage}hp${x.exhausted ? ' ex' : ''}${x.upgrades.length ? ' +' + x.upgrades.join('+') : ''}`;
+        const ps = S0
+          ? S0.players
+              .map((P, i) => `P${i}${i === 0 ? ' (me)' : ' (AI)'} base ${P.base.card} dmg ${P.base.damage}; leader ${P.leader.card}${P.leader.deployed ? ' deployed' : ''}${P.leader.exhausted ? ' ex' : ''}; res ${P.readyRes}/${P.resources}; hand ${Array.isArray(P.hand) ? P.hand.join(', ') : P.hand}\n` + P.units.map((x) => '  - ' + uline(x)).join('\n'))
+              .join('\n')
+          : '';
+        let body = `**${zh ? '說明' : 'Note'}**\n${note || '-'}\n\nver ${ver} · level ${r.level} · round ${S0 ? S0.round : '?'} ${S0 ? S0.phase : ''}\n\n**Board**\n\`\`\`\n${ps}\n\`\`\`\n**Recent log**\n\`\`\`\n${r.recent.slice(-25).join('\n')}\n\`\`\`\n`;
+        if (body.length > 6000) body = body.slice(0, 6000) + '\n…';
+        const title = (zh ? '回報：' : 'Report: ') + (note || '').slice(0, 60);
+        const url = 'https://github.com/nickchen20050121-hub/swu-practice/issues/new?labels=report&title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+        window.open(url, '_blank', 'noopener');
+      } catch (e) {}
       toast(ok ? (zh ? '已記下這個問題 ✓（設定頁可下載）' : 'Report saved ✓ (download in Settings)') : zh ? '存不下來，空間不夠' : 'Could not save (storage full)');
     };
     m.append(
