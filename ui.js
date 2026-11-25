@@ -620,7 +620,7 @@
   // ---------- 開局 ----------
   async function startGame(next) {
     let mine, yuna;
-    const gopts = { askInitiative: true };
+    const gopts = { askInitiative: true, manualPass: 0 };
     if (next === true && S.match) {
       mine = S.match.mine;
       yuna = S.match.yuna;
@@ -2230,14 +2230,36 @@
       const boardOpts = req.options.filter((o) => o.uid != null);
       const listOpts = req.options.filter((o) => o.uid == null);
       const src = S.game && S.game.srcCard;
+      // 要點場上的單位時：改成畫面底部一條小提示，不擋住場面；清單收起來，要的話再展開
+      if (boardOpts.length) {
+        const zh = SWU.lang !== 'en';
+        const open = !!S.pickList;
+        return h('div', { class: 'promptslot' }, h(
+          'div',
+          { class: 'promptbar asking effpop onboard' + (open ? ' open' : '') },
+          h(
+            'div',
+            { class: 'effq' },
+            src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + SWU.cardName(src)) : null,
+            h('b', {}, req.prompt),
+            h('small', { class: 'muted' }, zh ? '點場上發亮的單位' : 'Tap a highlighted unit')
+          ),
+          h('div', { class: 'pickrow' },
+            ...listOpts.map((o) => h('button', { class: pd.sel.includes(o.id) ? 'on' : '', onclick: () => pickOption(o.id) }, o.label)),
+            (req.max || 1) > 1 && req.kind !== 'cards' ? h('button', { class: 'primary', disabled: pd.sel.length < min, onclick: () => settle(pd.sel) }, t('confirm')) : null,
+            min === 0 && req.kind !== 'yesno' ? h('button', { class: 'ghost', onclick: () => settle([]) }, t('skip')) : null,
+            h('button', { class: 'ghost small', onclick: () => ((S.pickList = !open), renderBoard()) }, open ? (zh ? '收起 ▾' : 'Hide ▾') : (zh ? '清單 ▴' : 'List ▴'))
+          ),
+          open ? h('div', { class: 'picklist' }, ...boardOpts.map((o) => h('button', { class: 'ghost small' + (pd.sel.includes(o.id) ? ' on' : ''), onmouseenter: () => hilite(o.uid), onclick: () => pickOption(o.id) }, o.label))) : null
+        ));
+      }
       return h(
         'div',
-        { class: 'promptbar asking effpop' + (boardOpts.length ? ' board' : '') },
+        { class: 'promptbar asking effpop' },
         src ? h('div', { class: 'effsrc', onmouseenter: () => setPreview(src, 'card') }, cardFace(src, 'card')) : null,
         h('div', { class: 'effq' }, src ? h('small', { class: 'muted' }, t('effectFrom') + '：' + SWU.cardName(src)) : null, h('b', {}, req.prompt)),
         req.kind === 'cards' ? h('button', { onclick: openCardsModal }, t('select')) : null,
         ...listOpts.map((o) => h('button', { class: pd.sel.includes(o.id) ? 'on' : '', onclick: () => pickOption(o.id) }, o.label)),
-        ...(boardOpts.length && boardOpts.length <= 8 ? boardOpts.map((o) => h('button', { class: 'ghost small', onmouseenter: () => hilite(o.uid), onclick: () => pickOption(o.id) }, o.label)) : []),
         (req.max || 1) > 1 && req.kind !== 'cards' ? h('button', { class: 'primary', disabled: pd.sel.length < min, onclick: () => settle(pd.sel) }, t('confirm')) : null,
         min === 0 && req.kind !== 'yesno' ? h('button', { class: 'ghost', onclick: () => settle([]) }, t('skip')) : null
       );

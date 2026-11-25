@@ -553,8 +553,14 @@
       async chooseAction(g, p, acts) {
         await wait(AI.settings.delay);
         if (!useClaude('action')) {
+          const t0 = Date.now();
           const r = await H.levelAction(g, p, acts, AI.levelNum());
           force = r.force != null && r.act && r.act.type === 'attack' ? { uid: r.act.uid, target: r.force } : null;
+          // 不讓「想多久」洩漏手牌：決定 Pass／搶先攻時也像有在考慮一樣等一下
+          if (r.act && (r.act.type === 'pass' || r.act.type === 'initiative') && AI.settings.delay !== 0) {
+            const left = 700 + Math.random() * 900 - (Date.now() - t0);
+            if (left > 0) await wait(left);
+          }
           return r.act;
         }
         return claudeOr(
