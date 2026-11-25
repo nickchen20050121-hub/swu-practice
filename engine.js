@@ -2098,8 +2098,8 @@
         const acts = this.legalActions(p);
         this.emit({ type: 'turn', p });
         let act;
-        // 只剩 Pass 時：電腦自動跳過；玩家（manualPass 座位）要自己按，保留虛張聲勢的空間
-        if (acts.length === 1 && this.opts.manualPass !== p) act = acts[0];
+        // 只剩 Pass 時：電腦自動跳過；玩家（manualPass 座位）要自己按，保留虛張聲勢的空間（拿了先攻之後規則上就是 Pass，自動跳過）
+        if (acts.length === 1 && (this.opts.manualPass !== p || G.tookInit[p])) act = acts[0];
         else {
           if (this.io[p].isHuman) this.checkpoints.push(this.rec.length);
           act = await this.input(p, 'a', () => this.io[p].chooseAction(this, p, acts));
