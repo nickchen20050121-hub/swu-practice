@@ -1,0 +1,94 @@
+{
+ "Darth Vader | Victor Squadron Leader": {
+  "best": {
+   "kill": 0.23,
+   "chip": 0.133,
+   "safeKill": 0.451,
+   "play0": 3.082,
+   "playC": 0.219,
+   "overpay": 2.205,
+   "evPen": 1.342,
+   "upPen": 0.639,
+   "atk0": 2.072,
+   "atkM": 0.248,
+   "deploy": 4.641,
+   "abil": 2.215,
+   "passS": 0.733
+  },
+  "final": [
+   246,
+   229,
+   41,
+   400
+  ]
+ },
+ "Boba Fett | Any Methods Necessary": {
+  "best": {
+   "kill": 0.088,
+   "chip": 0.091,
+   "safeKill": 0.39,
+   "play0": 1.916,
+   "playC": 0.128,
+   "overpay": 0.98,
+   "evPen": 0.816,
+   "upPen": 1.28,
+   "atk0": 6.273,
+   "atkM": 0.325,
+   "deploy": 3.065,
+   "abil": 3.161,
+   "passS": -0.035
+  },
+  "final": [
+   315,
+   278,
+   57,
+   400
+  ]
+ },
+ "Luke Skywalker | I Can Save Him  (只對 Talzin/Maul 調)": {
+  "best": {
+   "kill": 0.219,
+   "chip": 0.154,
+   "safeKill": 0.92,
+   "play0": 1.964,
+   "playC": 0.354,
+   "overpay": 1.871,
+   "evPen": 1.047,
+   "upPen": 1.121,
+   "atk0": 1.414,
+   "atkM": 0.487,
+   "deploy": 2.505,
+   "abil": 2.774,
+   "passS": 0.649
+  },
+  "final": [
+   285,
+   274,
+   63,
+   400
+  ]
+ },
+ "Darth Maul | Sith Revealed": {
+  "best": {
+   "kill": 0.214,
+   "chip": -0.212,
+   "safeKill": 0.451,
+   "play0": 2.847,
+   "playC": 0.358,
+   "overpay": 1.262,
+   "evPen": 1.694,
+   "upPen": 0.889,
+   "atk0": 2.754,
+   "atkM": 1.076,
+   "deploy": 3.345,
+   "abil": 2.897,
+   "passS": 0.733
+  },
+  "final": [
+   213,
+   208,
+   65,
+   400
+  ]
+ }
+}

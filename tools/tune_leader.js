@@ -11,7 +11,7 @@ const H = SWU.AI.heur;
 const id = process.argv[2], mins = +process.argv[3] || 30, N = +process.argv[4] || 150, out = process.argv[5] || 'rpl_' + id + '.json';
 const meta = window.SWU_META_DECKS;
 const L = meta.find((d) => d.id === id);
-const others = meta.filter((d) => d !== L);
+const others = meta.filter((d) => d !== L && (!process.env.OPP || process.env.OPP.split(',').includes(d.id)));
 const mk = (d, n) => ({ name: n, leader: SWU.Deck.card(d.leader), base: SWU.Deck.card(d.base), cards: SWU.Deck.expand(d) });
 const ce = console.error, cw = console.warn;
 async function one(rpL, i, seed) {
@@ -38,7 +38,8 @@ async function pair(rA, rB, n, s0) {
   return [a, b, d];
 }
 (async () => {
-  let best = { ...H.RP };
+  const start = process.env.START ? { ...H.RPL[L.leader] } : { ...H.RP };
+  let best = { ...start };
   const keys = Object.keys(H.RP);
   const t0 = Date.now();
   let it = 0, s = +(process.env.S0 || 0);
@@ -59,7 +60,7 @@ async function pair(rA, rB, n, s0) {
     fs.writeFileSync(out, JSON.stringify({ id, leader: L.leader, best, log }, null, 1));
   }
   const FN = +(process.env.FINALN || 400);
-  const [a, b, d] = await pair(best, H.RP, FN, 500000);
-  console.log('FINAL', id, L.leader, 'best', a, 'RP', b, 'of', FN, 'disc', d);
+  const [a, b, d] = await pair(best, start, FN, 500000);
+  console.log('FINAL', id, L.leader, 'best', a, 'start', b, 'of', FN, 'disc', d);
   fs.writeFileSync(out, JSON.stringify({ id, leader: L.leader, best, log, final: [a, b, d, FN] }, null, 1));
 })();
