@@ -26,7 +26,7 @@ const ce = console.error, cw = console.warn;
         H.cfg = {};
         if (stop) throw new Error('stop');
         if (q === 0 && taken < 2 && g.G.round >= 2 && g.G.round <= 6 && !g.replaying) {
-          const evs = acts.filter((a) => a.type === 'play' && ['Event', 'Upgrade'].includes((g.findAny(a.uid) || {}).card?.t));
+          const evs = acts.filter((a) => (a.type === 'play' && ['Event', 'Upgrade'].includes((g.findAny(a.uid) || {}).card?.t)) || (a.type === 'leaderAbility' && !a.manual));
           if (evs.length && Math.random() < 0.45) {
             const rec = JSON.parse(JSON.stringify(g.rec));
             console.error = () => {}; console.warn = () => {};
@@ -36,7 +36,7 @@ const ce = console.error, cw = console.warn;
             if (a) {
               const c = a.uid != null ? g.findAny(a.uid) : null;
               const tgt = r.force == null ? null : String(r.force).startsWith('base') ? 'base' : (g.findUnit(r.force) || {}).card?.key;
-              quiz.push({ id: 'q' + seed + '_' + rec.length, a: dA.id, b: dB.id, seed, uid0: g.uid0, rec, round: g.G.round, ai: { type: a.type, card: c ? c.card.key : null, target: tgt }, evs: evs.map((x) => g.findAny(x.uid).card.key) });
+              quiz.push({ id: 'q' + seed + '_' + rec.length, a: dA.id, b: dB.id, seed, uid0: g.uid0, rec, round: g.G.round, ai: { type: a.type, card: c ? c.card.key : null, target: tgt }, evs: evs.map((x) => (x.type === 'leaderAbility' ? 'leaderAbility' : g.findAny(x.uid).card.key)) });
               taken++;
               if (taken >= 2) stop = true;
               console.log('quiz', quiz.length, dA.leader, 'vs', dB.leader, 'r' + g.G.round, a.type, c && c.card.key, tgt || '');

@@ -91,8 +91,11 @@
   H.RP0 = { kill: 1.2, chip: 0.4, safeKill: 4, play0: 3, playC: 1.2, overpay: 0.8, evPen: 1, upPen: 1.5, atk0: 2, atkM: 0.6, deploy: 6, abil: 2.5, passS: 0.5 };
   // 2026-11-26 夜間自我對戰調出來的參數（367 輪爬山；1008 局驗證對原本 655:353）
   H.RP = {kill: 0.152, chip: 0.133, safeKill: 0.451, play0: 2.847, playC: 0.219, overpay: 1.262, evPen: 0.816, upPen: 0.889, atk0: 1.836, atkM: 0.593, deploy: 4.154, abil: 2.897, passS: 0.733};
-  const rp = () => (H.cfg && H.cfg.rp) || H.RP;
+  // 依領袖分開調的規則參數（tools/tune_leader.js；H._ldr 是目前行動玩家的領袖）
+  H.RPL = {};
+  const rp = () => (H.cfg && H.cfg.rp) || (H._ldr && !(H.cfg && H.cfg.noRPL) && H.RPL[H._ldr]) || H.RP;
   H.bestAttack = function (g, u) {
+    H._ldr = g.P(u.ctrl).leader && g.P(u.ctrl).leader.card.key;
     const R = rp();
     const t = g.attackTargets(u);
     const ap = g.power(u, true);
@@ -116,6 +119,7 @@
     return best;
   };
   H.chooseAction = function (g, p, acts) {
+    H._ldr = g.P(p).leader && g.P(p).leader.card.key;
     const P = g.P(p);
     const R = rp();
     let best = acts.find((a) => a.type === 'pass');
@@ -146,6 +150,26 @@
         s = f && f.s > 0 ? R.abil + f.s * ((H.cfg && H.cfg.maulScore) || 0) : -2;
       } else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : R.abil;
       else if (a.type === 'manualAbility' || a.type === 'manualLeader') s = AI.hasClaude() ? 1.5 : -1;
+      // 柏偉的答題習慣（2026-11-26，cfg 開關）
+      const C = H.cfg || {};
+      if (C.ldFirst && a.type === 'leaderAbility' && !a.manual && s > 0) s += C.ldFirst; // 領袖能力先用滿
+      if (C.waitOpp) {
+        const O = g.opp(p);
+        if (!O.units.some((u) => !u.exhausted) && O.hand.length) {
+          // 對方都打完了：先打（基地），事件留著等對方下一張
+          if (a.type === 'attack' && s > 0) s += C.waitOpp;
+          if (a.type === 'play') { const c = g.findAny(a.uid); if (c && c.card.t === 'Event') s -= C.waitOpp; }
+        }
+      }
+      if (C.saveRem && a.type === 'play') {
+        const c = g.findAny(a.uid);
+        if (c && c.card.t === 'Event' && /defeat (a|an) (non-leader |enemy )?(non-leader )?(ground |space )?unit/i.test(c.card.tx || '')) {
+          const O = g.opp(p).units, M = P.units;
+          const maxC = Math.max(0, ...O.map((u) => u.card.c || 0));
+          const pw = (L) => L.reduce((t, u) => t + g.power(u), 0);
+          if (maxC <= 3 && pw(M) > pw(O)) s -= C.saveRem; // 好的解牌留給大目標
+        }
+      }
       if (s > bestS) {
         bestS = s;
         best = a;
@@ -639,6 +663,7 @@
     return g.G.round <= 4 ? dmg >= 6 + g.G.round : dmg >= 14;
   };
   H.choose = function (g, p, req) {
+    H._ldr = g.P(p).leader && g.P(p).leader.card.key;
     const opts = req.options;
     const ctx = req.ctx || {};
     if (req.kind === 'yesno') {
