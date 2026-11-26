@@ -2247,6 +2247,7 @@
       h('span', { class: 'stat' }, t('hand') + ' ', h('b', {}, P.hand.length)),
       h('span', { class: 'stat' }, t('deck') + ' ', h('b', {}, P.deck.length)),
       h('span', { class: 'stat' }, t('discard') + ' ', h('b', {}, P.discard.length)),
+      g.G.initiative === pIdx ? h('span', { class: 'inittag' + (g.G.initiativeTaken ? ' taken' : ''), title: SWU.lang === 'en' ? 'Has the initiative token' : '先攻指示物在這邊' }, '★ ' + (SWU.lang === 'en' ? 'Initiative' : '先攻') + (g.G.initiativeTaken ? (SWU.lang === 'en' ? ' (taken)' : '（已拿）') : '')) : null,
       P.force || P._hadForce ? ((P._hadForce = true), h('span', { class: 'forcetok' + (P.force ? ' on' : ''), title: SWU.lang === 'en' ? (P.force ? 'Has the Force token' : 'No Force token') : P.force ? '有原力指示物' : '沒有原力指示物' }, P.force ? '✦ ' + t('toolForce') : '✕ ' + t('toolForce'))) : null,
       P.credits ? h('span', { class: 'stat' }, 'Credits ' + P.credits) : null
     );
