@@ -92,7 +92,7 @@
   // 2026-11-26 夜間自我對戰調出來的參數（367 輪爬山；1008 局驗證對原本 655:353）
   H.RP = {kill: 0.152, chip: 0.133, safeKill: 0.451, play0: 2.847, playC: 0.219, overpay: 1.262, evPen: 0.816, upPen: 0.889, atk0: 1.836, atkM: 0.593, deploy: 4.154, abil: 2.897, passS: 0.733};
   // 依領袖分開調的規則參數（tools/tune_leader.js；H._ldr 是目前行動玩家的領袖）
-  H.RPL = {};
+  H.RPL = {"Luke Skywalker | I Can Save Him": {"kill": 0.152, "chip": 0.14, "safeKill": 0.473, "play0": 2.847, "playC": 0.219, "overpay": 1.393, "evPen": 1.121, "upPen": 0.889, "atk0": 0.989, "atkM": 0.361, "deploy": 4.154, "abil": 4.974, "passS": 0.668}, "Wicket | Few Greater Battles to Fight": {"kill": 0.152, "chip": -0.201, "safeKill": 0.451, "play0": 2.775, "playC": 0.521, "overpay": 1.967, "evPen": 1.478, "upPen": 0.889, "atk0": 2.86, "atkM": 0.352, "deploy": 5.6, "abil": 2.482, "passS": 0.041}, "Mother Talzin | Power Through Magick": {"kill": 0.339, "chip": 0.08, "safeKill": 0.499, "play0": 2.745, "playC": 0.262, "overpay": 0.962, "evPen": 1.2, "upPen": 0.169, "atk0": 2.421, "atkM": 0.593, "deploy": 4.154, "abil": 2.583, "passS": 0.54}, "Lando Calrissian | Full Sabacc": {"kill": 0.152, "chip": 0.133, "safeKill": 0.429, "play0": 4.442, "playC": 0.344, "overpay": 0.864, "evPen": 0.62, "upPen": 0.527, "atk0": 1.836, "atkM": 0.593, "deploy": 4.154, "abil": 3.217, "passS": 0.733}};
   const rp = () => (H.cfg && H.cfg.rp) || (H._ldr && !(H.cfg && H.cfg.noRPL) && H.RPL[H._ldr]) || H.RP;
   H.bestAttack = function (g, u) {
     H._ldr = g.P(u.ctrl).leader && g.P(u.ctrl).leader.card.key;
@@ -150,6 +150,7 @@
         s = f && f.s > 0 ? R.abil + f.s * ((H.cfg && H.cfg.maulScore) || 0) : -2;
       } else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : R.abil;
       else if (a.type === 'manualAbility' || a.type === 'manualLeader') s = AI.hasClaude() ? 1.5 : -1;
+      s += H.leaderAdj(g, p, a);
       // 柏偉的答題習慣（2026-11-26，cfg 開關）
       const C = H.cfg || {};
       if (C.ldFirst && a.type === 'leaderAbility' && !a.manual && s > 0) s += C.ldFirst; // 領袖能力先用滿
@@ -379,6 +380,28 @@
     }
     return worst;
   };
+  // 領袖專屬打法（cfg 開關，只在相符的領袖套用）
+  H.leaderAdj = function (g, p, a) {
+    const C = H.cfg || {};
+    if (!a || !C.luke) return 0;
+    const P = g.P(p), key = P.leader && P.leader.card.key;
+    if (a.type === 'deploy' && /^Luke Skywalker \| I Can Save Him/.test(key)) {
+      // 路克：被解等於輸。對方還有資源和手牌（可能扣著解牌）就先別部署；對快攻或基地危險時早點部署守場
+      const O = g.opp(p), opReady = O.resources.filter((r) => !r.exhausted).length;
+      const od = g.decks && g.decks[1 - p];
+      const sp = od ? (H.ARCH[H.archOf(od)] || {}).speed : 2;
+      const left = (P.base.card.h || 30) - P.base.damage;
+      if (C.cheat && C.lukeSee) {
+        // 看得到對手手牌：手上有解得掉路克（7 血）的牌又付得起，就先別部署；沒有就放心下來
+        const kill = O.hand.some((c) => { const t = c.card.tx || '', k = c.card.c || 0; return k <= opReady + 1 && (/^Craving Power/.test(c.card.key) || /defeat (a|an) (non-leader )?(enemy )?unit|deal (7|8|9|10) damage/i.test(t)) && !/non-leader/i.test(t); });
+        return kill && left > 8 ? -C.lukeSee : C.lukeSee * 0.5;
+      }
+      if (sp === 1 || left <= 12) return C.luke * 0.5;
+      if (opReady >= 4 && O.hand.length >= 2) return -C.luke;
+      if (opReady <= 1) return C.luke * 0.5;
+    }
+    return 0;
+  };
   // 打了也沒用的事件：只會橫置敵人，但敵方單位已經全部橫置（或沒有單位）；只會傷害／擊敗敵人，但對方場上沒單位
   H.deadPlay = function (g, p, a) {
     if (!a || a.type !== 'play' || (H.cfg && H.cfg.noDead)) return false;
@@ -487,6 +510,7 @@
         console.error = ce;
       }
       if (score == null) score = H.evalState(g2, p);
+      score += H.leaderAdj(g, p, c.a) * ((H.cfg && H.cfg.ladjS) || 1);
       if (wasted) { score -= 8; H._wasteN = (H._wasteN || 0) + 1; }
       // 有效果錯誤的走法不採用
       if (g2.G.log.some((l) => l.k === 'logEffectError' && !/stop/.test(String(l.a[0])) && l.a[0] !== '[object Object]')) score -= 5;
