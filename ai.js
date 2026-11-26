@@ -218,6 +218,8 @@
     const hc = H.cfg && H.cfg.handCost;
     if (hc) s += (me.hand.reduce((a, c) => a + Math.min(8, c.card.c || 0), 0) - op.hand.reduce((a, c) => a + Math.min(8, c.card.c || 0), 0)) * hc;
     s += (me.resources.length - op.resources.length) * W.res;
+    // 信用點（Credit 代幣）＝可以花一次的資源；以前完全沒算，所以電腦不懂 Krennic／Lando 這類能力
+    if (H.cfg && H.cfg.cred) s += ((me.credits || 0) - (op.credits || 0)) * ((H.cfg && H.cfg.credW) || 1);
     // 行為風格：侵略＝更看重打對方基地；控制＝更看重場面、手牌和自己的血量
     let st = AI.settings.style;
     // 依自己領袖的屬性自動選風格（侵略色＝搶血）；模擬驗證 Lv2 62:42、Lv4 45:35
