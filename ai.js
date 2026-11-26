@@ -562,6 +562,12 @@
     }
     return best;
   };
+  // 對手是不是快攻：場上單位費用低、我方基地掉血快
+  H.oppAggro = function (g, p) {
+    const O = g.opp(p), me = g.P(p);
+    const dmg = me.base.damage || 0;
+    return g.G.round <= 4 ? dmg >= 6 + g.G.round : dmg >= 14;
+  };
   H.choose = function (g, p, req) {
     const opts = req.options;
     const ctx = req.ctx || {};
@@ -614,6 +620,11 @@
           if (c.t === 'Upgrade') v -= 1;
           if (c.t === 'Event' && /^Defeat|damage/i.test(c.tx || '') && !g.opp(p).units.length) v -= 1;
           if (needLeader) v -= 0.5;
+          // 高手習慣：解場／清場／奪取這類「答案牌」留在手上，不要當資源蓋掉
+          const rk = H.cfg && H.cfg.resKey != null ? H.cfg.resKey : 0;
+          if (rk && cost > R && (c.t === 'Event' || c.t === 'Unit') && /\bdefeat (all|each|a|an|up to)\b|take control of/i.test(c.tx || '')) v += rk;
+          const rb = H.cfg && H.cfg.resBig != null ? H.cfg.resBig : 0;
+          if (rb && cost >= 8 && H.oppAggro && H.oppAggro(g, p)) v -= rb;
           return v;
         };
         cards.sort((a, b) => keep(a) - keep(b));

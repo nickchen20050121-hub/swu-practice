@@ -1537,6 +1537,17 @@
       }
     },
   });
+  def('Commandeer', 'card', {
+    async event(g, p) {
+      const ok = (x) => x.ctrl !== p && !g.isLeaderUnit(x) && g.hasTrait(x, 'VEHICLE') && (x.card.c || 0) <= 6 && !(x.upgrades || []).some((up) => up.pilot);
+      const t = await g.pickUnit(p, L('奪取一個 6 費以下、沒有駕駛員的非領袖載具（就緒，下個重整階段開始時回到擁有者手牌）', 'Take control of a non-leader Vehicle unit that costs 6 or less without a Pilot (ready it; return it to its owner\'s hand at the start of the next regroup phase)'), ok, { ctx: { harm: true } });
+      if (!t) return;
+      SWU.FX2.takeControl(g, t, p);
+      g.ready(t);
+      const uid = t.uid;
+      g.delay({ at: 'regroupStart', round: g.G.round, run: (g) => { const x = g.findUnit(uid); if (x) g.returnToHand(x); } });
+    },
+  });
   def('Max Rebo | Encore!', 'card', { extend: true, extraRegroup: true });
   def('Mayor\'s Majordomo | No Problem Groveling', 'card', {
     extend: true,
