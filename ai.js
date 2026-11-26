@@ -350,8 +350,19 @@
     if (!cands.length) return { best: null, gain: -Infinity, base };
     const t0 = Date.now();
     const pool = H.predictPool(g, p);
+    // 浪費檢查：事件打出後，除了自己手牌、棄牌、資源以外，局面完全沒變 → 等於白丟一張牌
+    const sig = (gx) => JSON.stringify(gx.G.players.map((P, i) => [
+      P.units.map((u) => [u.uid, u.ctrl, u.damage, !!u.exhausted, gx.power(u), gx.remaining(u), u.upgrades.length]).sort(),
+      P.base.damage, !!P.leader.exhausted, !!P.leader.deployed, P.deck.length,
+      i === p ? 0 : [P.hand.length, P.discard.length, P.resources.length, P.resources.filter((r) => !r.exhausted).length],
+      i === p ? P.resources.length : 0,
+    ]).concat([gx.G.initiative]));
+    const sig0 = !opt.waste ? null : sig(g); // 測試中：預設關閉
+    const isEvent = (c) => { if (c.a.type !== 'play') return false; const x = g.findAny(c.a.uid); return !!(x && x.card.t === 'Event'); };
     const sim = async (c, deep) => {
       let score = null;
+      let wasteChecked = !sig0 || !isEvent(c), wasted = false;
+      const checkWaste = (g2) => { if (wasteChecked) return; wasteChecked = true; try { wasted = sig(g2) === sig0; } catch (e) {} };
       let forced = c.force != null;
       let oppMoves = 0;
       let rollN = 0;
@@ -364,6 +375,7 @@
             return !!o.autoSingle;
           },
           chooseAction: async (g2, who, acts2) => {
+            checkWaste(g2);
             // 推演到這回合結束：雙方都用快速規則打完，再看局面
             if (deep === 'roll' && acts2 && acts2.length && rollN++ < (opt.h2 ? 100 : 40)) return H.chooseAction(g2, who, acts2);
             // 深一層：讓對手用推測的手牌回應一手（最多兩個行動），再看局面
@@ -381,6 +393,7 @@
               return [c.force];
             }
             if (req.ctx && req.ctx.regroupResource) {
+              checkWaste(g2);
               // 推演看兩回合：第一次重整先照常放資源，到下一回合結束才評分
               if (deep === 'roll' && opt.h2 && rgN++ < 2) return H.choose(g2, qq, req);
               score = H.evalState(g2, p);
@@ -409,6 +422,7 @@
         console.error = ce;
       }
       if (score == null) score = H.evalState(g2, p);
+      if (wasted) { score -= 8; H._wasteN = (H._wasteN || 0) + 1; }
       // 有效果錯誤的走法不採用
       if (g2.G.log.some((l) => l.k === 'logEffectError' && !/stop/.test(String(l.a[0])) && l.a[0] !== '[object Object]')) score -= 5;
       return score;

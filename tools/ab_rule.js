@@ -9,7 +9,7 @@ SWU.initDB(window.SWU_CARDS);
 SWU.markVanillaKeywordCards();
 const H = SWU.AI.heur;
 const N = +process.argv[2] || 200, seed0 = +process.argv[3] || 0;
-const A = { rp: H.RP, ...JSON.parse(process.env.CFGA || '{}') }, B = { rp: H.RP, ...JSON.parse(process.env.CFGB || '{}') };
+const A = { rp: { ...H.RP, ...JSON.parse(process.env.RPA || '{}') }, ...JSON.parse(process.env.CFGA || '{}') }, B = { rp: { ...H.RP, ...JSON.parse(process.env.RPB || '{}') }, ...JSON.parse(process.env.CFGB || '{}') };
 const meta = SWU.Deck.presets().filter((d) => !d.id || !String(d.id).startsWith('preset-'));
 const mk = (d, n) => ({ name: n, leader: SWU.Deck.card(d.leader), base: SWU.Deck.card(d.base), cards: SWU.Deck.expand(d) });
 const ce = console.error, cw = console.warn;

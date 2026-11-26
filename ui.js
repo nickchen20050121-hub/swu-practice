@@ -659,6 +659,108 @@
     attachGame(g);
     showIntro(g);
   }
+  // ---------- 教由奈（主人模式）：重播到由奈自我對戰的某個局面，柏偉作答，存起來給 Claude 分析 ----------
+  const QKEY = 'swu.quiz.v1';
+  const QuizLog = {
+    list() {
+      try {
+        return JSON.parse(localStorage.getItem(QKEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    },
+    save(a) {
+      let all = QuizLog.list().filter((x) => x.id !== a.id);
+      all.push(a);
+      try {
+        localStorage.setItem(QKEY, JSON.stringify(all.slice(-500)));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+  };
+  function quizLeft() {
+    const done = new Set(QuizLog.list().map((x) => x.id));
+    return (window.SWU_QUIZ || []).filter((q) => !done.has(q.id) && allDecks().some((d) => d.id === q.a) && allDecks().some((d) => d.id === q.b));
+  }
+  function quizActText(g, a, zh) {
+    if (!a) return zh ? '（沒有）' : '(none)';
+    const nm = (k) => { const c = k && SWU.Deck.card(k); return c ? SWU.cardName(c) : k || ''; };
+    if (a.type === 'play') return (zh ? '打出 ' : 'Play ') + nm(a.card);
+    if (a.type === 'attack') return (zh ? '用 ' : 'Attack with ') + nm(a.card) + (zh ? ' 攻擊' : '') + (a.target ? ' → ' + (a.target === 'base' ? (zh ? '基地' : 'base') : nm(a.target)) : '');
+    if (a.type === 'pass') return zh ? 'Pass（跳過）' : 'Pass';
+    if (a.type === 'initiative') return zh ? '搶先攻' : 'Take the initiative';
+    if (a.type === 'deploy') return zh ? '部署領袖' : 'Deploy leader';
+    if (a.type === 'leaderAbility') return zh ? '使用領袖能力' : 'Use leader ability';
+    return a.type + (a.card ? ' ' + nm(a.card) : '');
+  }
+  function startQuiz() {
+    const left = quizLeft();
+    const zh = SWU.lang !== 'en';
+    if (!left.length) return toast(zh ? '題目都答完了！等由奈出新題目～' : 'All questions answered!');
+    const q = left[Math.floor(Math.random() * left.length)];
+    const dA = allDecks().find((d) => d.id === q.a), dB = allDecks().find((d) => d.id === q.b);
+    const mk = (d, name) => ({ name, leader: SWU.Deck.card(d.leader), base: SWU.Deck.card(d.base), cards: SWU.Deck.expand(d) });
+    const aiPlayer = SWU.AI.makePlayer({ say: () => {}, thinking: (v) => ((S.thinking = v), renderStatus()), error: () => {} });
+    const Q = { q, done: false, logFrom: null };
+    const check = (g) => {
+      if (Q.done || g.replaying || g.rec.length <= q.rec.length) return;
+      Q.done = true;
+      const first = g.rec[q.rec.length];
+      const act = first && first.v;
+      const c = act && act.uid != null ? g.findAny(act.uid) : null;
+      const mine = { type: act && act.type, card: c ? c.card.key : null };
+      const myLogs = g.G.log.slice(Q.logFrom || 0).filter((l) => l.p === 0).map((l) => { try { return SWU.fmtLog(l); } catch (e) { return l.k; } });
+      setTimeout(() => showQuizResult(g, Q, mine, myLogs), 300);
+    };
+    const wrap = (io) => ({
+      ...io,
+      isHuman: io.isHuman,
+      get autoSingle() { return !!SWU.AI.settings.autoSingle; },
+      chooseAction: (g, p, acts) => { check(g); return io.chooseAction(g, p, acts); },
+    });
+    if (S.game) recordGame(S.game, true);
+    S.match = null;
+    S.chat = [{ who: 'yuna', text: zh ? '出題囉！這個局面輪到你，你會怎麼打？照平常一樣直接操作就好 (｡･ω･｡)' : 'Quiz time! Your move here — just play it as usual.' }];
+    const g = new SWU.Game([mk(dA, SWU.playerName()), mk(dB, zh ? '由奈' : 'Yuna')], [wrap(humanIO), wrap(aiPlayer)], { seed: q.seed, uid0: q.uid0, replay: q.rec });
+    g.quiz = Q;
+    g._logged = true; // 出題局不存進一般對局紀錄
+    g.on((ev) => { if (ev.type === 'replay-done') Q.logFrom = g.G.log.length; });
+    attachGame(g);
+    toast(zh ? `出題（第 ${g.G.round || q.round} 回合）：輪到你` : 'Quiz: your move');
+  }
+  function showQuizResult(g, Q, mine, myLogs) {
+    const zh = SWU.lang !== 'en';
+    const q = Q.q;
+    const same = mine.type === q.ai.type && (mine.card || null) === (q.ai.card || null);
+    const m = $('#modal');
+    m.hidden = false;
+    m.innerHTML = '';
+    const box = h('textarea', { rows: '3', placeholder: zh ? '為什麼這樣打？（可不填，例如：先留著等對手翻面／這張要配合某張卡）' : 'Why? (optional)' });
+    const save = () => {
+      QuizLog.save({ id: q.id, date: new Date().toISOString(), round: q.round, a: q.a, b: q.b, mine, myLogs, ai: q.ai, same, note: box.value.trim(), step: q.rec.length, rec: g.rec.slice(q.rec.length, q.rec.length + 8) });
+    };
+    m.append(
+      h(
+        'div',
+        { class: 'dialog' },
+        h('h3', {}, zh ? '🎓 教由奈' : '🎓 Teach the AI'),
+        h('p', {}, h('b', {}, zh ? '你的選擇：' : 'You: '), quizActText(g, mine, zh)),
+        myLogs.length ? h('div', { class: 'small muted' }, h('ul', {}, ...myLogs.slice(0, 6).map((x) => h('li', {}, x)))) : null,
+        h('p', {}, h('b', {}, zh ? '由奈原本會：' : 'AI would: '), quizActText(g, q.ai, zh)),
+        h('p', { class: 'small ' + (same ? 'ok' : 'muted') }, same ? (zh ? '一樣耶！' : 'Same!') : zh ? '不一樣～你的答案會讓由奈知道哪裡想錯' : 'Different — your answer helps the AI learn'),
+        box,
+        h(
+          'div',
+          { class: 'row end' },
+          h('button', { class: 'ghost', onclick: () => (save(), closeModal()) }, zh ? '繼續打完這局' : 'Keep playing'),
+          h('button', { class: 'ghost', onclick: () => (save(), closeModal(), S.game && S.game.listeners.clear(), (S.game = null), (S.pending = null), render()) }, zh ? '結束' : 'Done'),
+          h('button', { class: 'primary', onclick: () => (save(), closeModal(), startQuiz()) }, zh ? `下一題（剩 ${Math.max(0, quizLeft().length - 1)}）` : 'Next')
+        )
+      )
+    );
+  }
   // ---------- 開場動畫：秀出雙方領袖＋基地，再公布先後攻（點一下可略過） ----------
   function showIntro(g) {
     const old = document.querySelector('.intro');
@@ -698,6 +800,7 @@
     closeModal();
     hidePeek();
     const g = new SWU.Game(old.decks, old.io, { ...old.opts, seed: old.seed, uid0: old.uid0, replay: old.rec.slice(0, u.to) });
+    if (old.quiz) (g.quiz = old.quiz), (g._logged = true);
     attachGame(g);
     toast(t('undo') + ' ✓');
   }
@@ -788,6 +891,7 @@
   };
   SWU.GameLog = GameLog;
   function recordGame(g, unfinished) {
+    if (g.quiz) return;
     // 對手資料庫：記住玩家這局出過的牌和打法（兩版都記，只存在這台裝置）
     if (!g.replaying && (g.G.winner != null || g.G.round >= 2)) try {
       SWU.OppDB && SWU.OppDB.learn(g, 0);
@@ -1063,7 +1167,7 @@
   }
   function downloadGames() {
     const all = GameLog.list();
-    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list(), advice: Advice.list(), opponents: SWU.OppDB ? SWU.OppDB.all() : null })], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ games: all, reports: Reports.list(), advice: Advice.list(), quiz: QuizLog.list(), opponents: SWU.OppDB ? SWU.OppDB.all() : null })], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     const d = new Date(), z = (x) => String(x).padStart(2, '0');
@@ -1347,7 +1451,8 @@
           optBtns('style', ['default', 'aggro', 'control']),
           S.lobby.mode === 'bo3' ? h('p', { class: 'muted small' }, t('bo3Hint')) : null,
           h('p', { class: 'ai-status ' + (SWU.AI.hasClaude() ? 'on' : 'off') }, SWU.AI.hasClaude() ? t('aiStatusOn', st.model) : t('aiStatusOff')),
-          h('button', { class: 'primary big', onclick: () => startGame(), disabled: !ready }, t('start'))
+          h('button', { class: 'primary big', onclick: () => startGame(), disabled: !ready }, t('start')),
+          SWU.AI.settings.owner && (window.SWU_QUIZ || []).length ? h('button', { class: 'ghost big quizbtn', onclick: () => startQuiz() }, (SWU.lang === 'en' ? '🎓 Teach the AI' : '🎓 教由奈（出題）') + ` · ${quizLeft().length}`) : null
         )
       ),
       h('div', { id: 'modal', class: 'modal', hidden: true })
