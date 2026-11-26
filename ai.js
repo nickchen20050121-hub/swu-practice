@@ -639,7 +639,8 @@
     }
     if (req.kind === 'option') return [ctx.aiPick != null && opts.some((o) => o.id === ctx.aiPick) ? ctx.aiPick : 0];
     // 單位／目標
-    const harm = HARM.test(req.prompt);
+    // 效果本身標明了有害／有益就照它（橫置、彈回這類字面上不像攻擊的也算有害）
+    const harm = ctx.harm != null && !(H.cfg && H.cfg.oldHarm) ? !!ctx.harm : HARM.test(req.prompt);
     let bestO = null;
     let bestS = -Infinity;
     for (const o of opts) {
@@ -669,6 +670,10 @@
             const shield = (u.upgrades || []).some((x) => x.card.n === 'Shield');
             s += !shield && ctx.n >= g.remaining(u) ? 8 + H.unitValue(g, u) : shield ? -3 : 0;
           }
+          // 橫置已經橫置的單位沒有意義
+          if (ctx.op === 'exhaust' && u.exhausted) s = enemy ? 0.1 : -H.unitValue(g, u);
+        } else if (ctx.op === 'ready') {
+          s = enemy ? -H.unitValue(g, u) : u.exhausted ? H.unitValue(g, u) : 0.1;
         }
         else s = enemy ? -H.unitValue(g, u) : H.unitValue(g, u) + u.damage;
       }
