@@ -129,7 +129,8 @@
         s = R.play0 + (card.c || 0) * R.playC - (a.cost - (card.c || 0)) * R.overpay;
         if (card.t === 'Event') {
           const tx = card.tx || '';
-          if (/Defeat/i.test(tx) && !g.opp(p).units.length) s = -5;
+          if (H.deadPlay(g, p, a)) s = -5;
+          else if (/Defeat/i.test(tx) && !g.opp(p).units.length) s = -5;
           else if (/damage/i.test(tx) && !g.opp(p).units.length) s = -5;
           else s -= R.evPen;
         }
@@ -313,6 +314,16 @@
     }
     return worst;
   };
+  // 打了也沒用的事件：只會橫置敵人，但敵方單位已經全部橫置（或沒有單位）；只會傷害／擊敗敵人，但對方場上沒單位
+  H.deadPlay = function (g, p, a) {
+    if (!a || a.type !== 'play' || (H.cfg && H.cfg.noDead)) return false;
+    const c = g.findAny(a.uid);
+    if (!c || c.card.t !== 'Event') return false;
+    const tx = c.card.tx || '';
+    const O = g.opp(p).units;
+    if (/exhaust/i.test(tx) && !/damage|defeat (a|an|up to|each|all) (enemy|non-leader|unit)|draw|create|token|heal|ready|attack|return|capture|resources|next|exhausted unit/i.test(tx.replace(/Defeat any number of friendly units\.?/i, '')) && !O.some((u) => !u.exhausted)) return true;
+    return false;
+  };
   H.search = async function (g, p, acts, opt = {}) {
     if (!SWU.engineRT || !g.rec || g.replaying) return null;
     H._opp = { q: 1 - p, baseW: opt.oppBaseW || H.oppBaseW(g, 1 - p) };
@@ -327,6 +338,7 @@
         continue;
       }
       if (a.type === 'pass' || a.type === 'initiative' || a.type === 'manualAbility' || a.type === 'manualLeader' || a.manual) continue;
+      if (H.deadPlay(g, p, a)) continue;
       if (a.type === 'attack') {
         const u = g.findUnit(a.uid);
         if (!u) continue;
