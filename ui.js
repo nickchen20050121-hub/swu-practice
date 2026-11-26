@@ -169,8 +169,8 @@
     return h(
       'div',
       { class: 'cinfo' + (opt.cls ? ' ' + opt.cls : '') },
-      h('div', { class: 'ci-name' }, zh && zn ? zn : card.n, zh && zs ? h('span', { class: 'ci-sub' }, '｜' + zs) : card.s ? h('span', { class: 'ci-sub' }, '｜' + card.s) : null),
-      zh && zn ? h('div', { class: 'ci-en ci-ename' }, card.n + (card.s ? ' | ' + card.s : '')) : null,
+      h('div', { class: 'ci-name' }, card.u ? h('span', { class: 'uniq', title: zh ? '獨特' : 'Unique' }, '✦') : null, zh && zn ? zn : card.n, zh && zs ? h('span', { class: 'ci-sub' }, '｜' + zs) : card.s ? h('span', { class: 'ci-sub' }, '｜' + card.s) : null),
+      zh && zn ? h('div', { class: 'ci-en ci-ename' }, (card.u ? '✦' : '') + card.n + (card.s ? ' | ' + card.s : '')) : null,
       h('div', { class: 'ci-meta' }, cardMeta(card)),
       zh && (card.tr || []).length ? h('div', { class: 'ci-en ci-tr' }, card.tr.join(' · ')) : null,
       kws.length ? h('div', { class: 'ci-kws' }, ...kws.map((k) => h('span', { class: 'chip' }, SWU.bi(SWU.kwName(k, 'zh'), k)))) : null,
@@ -313,7 +313,7 @@
       'div',
       { class: 'frame ' + (card.a && card.a[0] ? ASP_CLASS[card.a[0]] : 'neutral') },
       h('div', { class: 'fr-top' }, card.c != null && card.t !== 'Base' ? h('b', { class: 'fr-cost' }, isUnitSide ? '' : card.c) : null, aspectDots(card)),
-      h('div', { class: 'fr-name' }, SWU.cardName(card)),
+      h('div', { class: 'fr-name' }, (card.u ? '✦' : '') + SWU.cardName(card)),
       card.s ? h('div', { class: 'fr-sub' }, SWU.cardSub(card)) : null,
       h('div', { class: 'fr-text' }, full ? SWU.cardText(card, side) : SWU.cardText(card, side).slice(0, 160)),
       p != null || hp != null ? h('div', { class: 'fr-stats' }, h('span', { class: 'pw' }, p != null ? p : ''), h('span', { class: 'hpv' }, hp != null ? hp : '')) : null
