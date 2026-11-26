@@ -714,7 +714,9 @@
       const c = act && act.uid != null ? g.findAny(act.uid) : null;
       const mine = { type: act && act.type, card: c ? c.card.key : null };
       const myLogs = g.G.log.slice(Q.logFrom || 0).filter((l) => l.p === 0).map((l) => { try { return SWU.fmtLog(l); } catch (e) { return l.k; } });
-      setTimeout(() => showQuizResult(g, Q, mine, myLogs), 300);
+      // 顯示結果時暫停這局（不然接下來的選擇視窗會把結果蓋掉）；按「繼續／下一題／結束」才往下打
+      Q.wait = new Promise((r) => (Q.release = r));
+      showQuizResult(g, Q, mine, myLogs);
     };
     // 重播期間雙方都當成電腦（單一選項自動選、不記錄），和產生題目時一模一樣，局面才不會跑掉
     const wrap = (io) => ({
@@ -723,7 +725,11 @@
       get distribute() { return Q.ready ? io.distribute : undefined; },
       get showCards() { return Q.ready ? io.showCards : undefined; },
       get autoSingle() { return !!SWU.AI.settings.autoSingle; },
-      chooseAction: (g, p, acts) => { check(g); return io.chooseAction(g, p, acts); },
+      chooseAction: async (g, p, acts) => {
+        check(g);
+        if (Q.wait) await Q.wait;
+        return io.chooseAction(g, p, acts);
+      },
     });
     if (S.game) recordGame(S.game, true);
     S.match = null;
@@ -770,7 +776,7 @@
           'div',
           { class: 'row end' },
           h('button', { class: 'ghost', onclick: look }, zh ? '👀 先看場面' : '👀 View board'),
-          h('button', { class: 'ghost', onclick: () => (save(), closeModal()) }, zh ? '繼續打完這局' : 'Keep playing'),
+          h('button', { class: 'ghost', onclick: () => (save(), closeModal(), Q.release && Q.release()) }, zh ? '繼續打完這局' : 'Keep playing'),
           h('button', { class: 'ghost', onclick: () => (save(), chipOff(), closeModal(), S.game && S.game.listeners.clear(), (S.game = null), (S.pending = null), render()) }, zh ? '結束' : 'Done'),
           h('button', { class: 'primary', onclick: () => (save(), chipOff(), closeModal(), startQuiz()) }, zh ? `下一題（剩 ${Math.max(0, quizLeft().length - 1)}）` : 'Next')
         )
