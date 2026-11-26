@@ -583,7 +583,10 @@
       const tx = SWU.sideText ? SWU.sideText(c.card, 'card') : c.card.tx || '';
       const wd = /When Defeated/i.test(tx), wp = /When Played/i.test(tx);
       const body = (c.card.p || 0) + (c.card.h || 0);
-      const s = (wd ? 3 : 0) + (wp ? 2 : 0) - body * 0.4 + 1;
+      // 被擊敗時造成傷害／擊敗（例如 The Legacy Run 的 6 點分配傷害）＝ Maul 直接把它炸掉當解牌
+      const wdHit = /When Defeated:[^\n]*(deal \d+ damage|defeat)/i.test(tx) ? 1 : 0;
+      const enemies = g.opp(p).units.length;
+      const s = (wd ? 3 : 0) + (wp ? 2 : 0) + (wdHit && enemies ? 4 + Math.min(3, enemies) : 0) - body * 0.4 + 1;
       if (!best || s > best.s) best = { c, s };
     }
     return best;

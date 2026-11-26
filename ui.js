@@ -2225,7 +2225,7 @@
       h('span', { class: 'stat' }, t('hand') + ' ', h('b', {}, P.hand.length)),
       h('span', { class: 'stat' }, t('deck') + ' ', h('b', {}, P.deck.length)),
       h('span', { class: 'stat' }, t('discard') + ' ', h('b', {}, P.discard.length)),
-      P.force ? h('span', { class: 'stat force' }, t('toolForce')) : null,
+      P.force || P._hadForce ? ((P._hadForce = true), h('span', { class: 'forcetok' + (P.force ? ' on' : ''), title: SWU.lang === 'en' ? (P.force ? 'Has the Force token' : 'No Force token') : P.force ? '有原力指示物' : '沒有原力指示物' }, P.force ? '✦ ' + t('toolForce') : '✕ ' + t('toolForce'))) : null,
       P.credits ? h('span', { class: 'stat' }, 'Credits ' + P.credits) : null
     );
     // 資源（卡背，已用的橫置）、牌庫、棄牌堆、對手手牌
