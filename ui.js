@@ -705,18 +705,23 @@
     const aiPlayer = SWU.AI.makePlayer({ say: () => {}, thinking: (v) => ((S.thinking = v), renderStatus()), error: () => {} });
     const Q = { q, done: false, logFrom: null };
     const check = (g) => {
-      if (Q.done || g.replaying || g.rec.length <= q.rec.length) return;
+      if (Q.done || g.replaying || !Q.ready) return;
+      // 只認柏偉自己真的做出的行動（不是重播、不是其他選擇）
+      const first = g.rec.slice(q.rec.length).find((r) => r.p === 0 && r.k === 'a');
+      if (!first) return;
       Q.done = true;
-      const first = g.rec[q.rec.length];
       const act = first && first.v;
       const c = act && act.uid != null ? g.findAny(act.uid) : null;
       const mine = { type: act && act.type, card: c ? c.card.key : null };
       const myLogs = g.G.log.slice(Q.logFrom || 0).filter((l) => l.p === 0).map((l) => { try { return SWU.fmtLog(l); } catch (e) { return l.k; } });
       setTimeout(() => showQuizResult(g, Q, mine, myLogs), 300);
     };
+    // 重播期間雙方都當成電腦（單一選項自動選、不記錄），和產生題目時一模一樣，局面才不會跑掉
     const wrap = (io) => ({
       ...io,
-      isHuman: io.isHuman,
+      get isHuman() { return !!io.isHuman && Q.ready; },
+      get distribute() { return Q.ready ? io.distribute : undefined; },
+      get showCards() { return Q.ready ? io.showCards : undefined; },
       get autoSingle() { return !!SWU.AI.settings.autoSingle; },
       chooseAction: (g, p, acts) => { check(g); return io.chooseAction(g, p, acts); },
     });
@@ -726,7 +731,7 @@
     const g = new SWU.Game([mk(dA, SWU.playerName()), mk(dB, zh ? '由奈' : 'Yuna')], [wrap(humanIO), wrap(aiPlayer)], { seed: q.seed, uid0: q.uid0, replay: q.rec });
     g.quiz = Q;
     g._logged = true; // 出題局不存進一般對局紀錄
-    g.on((ev) => { if (ev.type === 'replay-done') Q.logFrom = g.G.log.length; });
+    g.on((ev) => { if (ev.type === 'replay-done') (Q.logFrom = g.G.log.length), (Q.ready = true); });
     attachGame(g);
     toast(zh ? `出題（第 ${g.G.round || q.round} 回合）：輪到你` : 'Quiz: your move');
   }
@@ -738,8 +743,18 @@
     m.hidden = false;
     m.innerHTML = '';
     const box = h('textarea', { rows: '3', placeholder: zh ? '為什麼這樣打？（可不填，例如：先留著等對手翻面／這張要配合某張卡）' : 'Why? (optional)' });
+    if (Q.note) box.value = Q.note;
     const save = () => {
-      QuizLog.save({ id: q.id, date: new Date().toISOString(), round: q.round, a: q.a, b: q.b, mine, myLogs, ai: q.ai, same, note: box.value.trim(), step: q.rec.length, rec: g.rec.slice(q.rec.length, q.rec.length + 8) });
+      Q.note = box.value.trim();
+      QuizLog.save({ id: q.id, date: new Date().toISOString(), round: q.round, a: q.a, b: q.b, mine, myLogs, ai: q.ai, same, note: Q.note, step: q.rec.length, rec: g.rec.slice(q.rec.length, q.rec.length + 8) });
+    };
+    save();
+    const chipOff = () => { const c = document.querySelector('.quizchip'); if (c) c.remove(); };
+    chipOff();
+    const look = () => {
+      save();
+      closeModal();
+      document.body.append(h('button', { class: 'quizchip primary', onclick: () => (chipOff(), showQuizResult(g, Q, mine, myLogs)) }, zh ? '🎓 看出題結果' : '🎓 Quiz result'));
     };
     m.append(
       h(
@@ -754,9 +769,10 @@
         h(
           'div',
           { class: 'row end' },
+          h('button', { class: 'ghost', onclick: look }, zh ? '👀 先看場面' : '👀 View board'),
           h('button', { class: 'ghost', onclick: () => (save(), closeModal()) }, zh ? '繼續打完這局' : 'Keep playing'),
-          h('button', { class: 'ghost', onclick: () => (save(), closeModal(), S.game && S.game.listeners.clear(), (S.game = null), (S.pending = null), render()) }, zh ? '結束' : 'Done'),
-          h('button', { class: 'primary', onclick: () => (save(), closeModal(), startQuiz()) }, zh ? `下一題（剩 ${Math.max(0, quizLeft().length - 1)}）` : 'Next')
+          h('button', { class: 'ghost', onclick: () => (save(), chipOff(), closeModal(), S.game && S.game.listeners.clear(), (S.game = null), (S.pending = null), render()) }, zh ? '結束' : 'Done'),
+          h('button', { class: 'primary', onclick: () => (save(), chipOff(), closeModal(), startQuiz()) }, zh ? `下一題（剩 ${Math.max(0, quizLeft().length - 1)}）` : 'Next')
         )
       )
     );
@@ -783,7 +799,7 @@
   // ---------- 回上一步：用同一個亂數種子重播到上一個檢查點 ----------
   function undoTarget() {
     const g = S.game;
-    if (!g || !S.pending || g.G.winner != null || !g.checkpoints) return null;
+    if (!g || !S.pending || g.G.winner != null || !g.checkpoints || g.quiz) return null;
     const cps = g.checkpoints;
     if (!cps.length) return null;
     const last = cps[cps.length - 1];

@@ -157,6 +157,41 @@
   // 局面評分權重（2026-11-25 起用自我對戰調整：tools/tune_eval.js）
   H.EW0 = { pw: 1.1, rm: 0.9, cost: 0.3, leader: 3, shield: 2, rdyMe: 0.35, rdyOp: 0.5, hp: 1.25, opLow: 1.0, myLow: 0.8, hand: 1.6, res: 1.2, ldReady: 1 };
   H.EW = { ...H.EW0 };
+  // ---------- 牌型（依整副牌：領袖＋基地＋卡表）----------
+  // 速度：1 快攻（太空／地面）、2 節奏中速、3 消耗中速控制、4 硬控
+  H.ARCH = {
+    spaceAggro: { zh: '太空快攻', en: 'Space aggro', speed: 1 },
+    groundAggro: { zh: '地面快攻', en: 'Ground aggro', speed: 1 },
+    tempo: { zh: '節奏中速', en: 'Tempo midrange', speed: 2 },
+    midrange: { zh: '消耗中速控制', en: 'Attrition midrange', speed: 3 },
+    control: { zh: '硬控', en: 'Hard control', speed: 4 },
+  };
+  H.archOf = function (deck) {
+    if (!deck || !deck.cards || !deck.cards.length) return 'tempo';
+    if (deck._arch) return deck._arch;
+    const cs = deck.cards.map((c) => c.card || c);
+    const n = cs.length;
+    const units = cs.filter((c) => c.t === 'Unit');
+    const space = units.filter((c) => /Space/.test(c.ar || c.arena || '')).length;
+    const avg = cs.reduce((a, c) => a + (c.c || 0), 0) / n;
+    const cheap = units.filter((c) => (c.c || 0) <= 2).length / n * 50;
+    const big = cs.filter((c) => (c.c || 0) >= 7).length / n * 50;
+    const ev = cs.filter((c) => c.t === 'Event').length / n * 50;
+    let a;
+    if (units.length / n < 0.6 || ev >= 15) a = 'control';
+    else if (avg <= 3.25 && space / Math.max(1, units.length) >= 0.4) a = 'spaceAggro';
+    else if (avg <= 3.25 && cheap >= 10) a = 'groundAggro';
+    else if (avg >= 4.3 || big >= 11) a = 'midrange';
+    else a = 'tempo';
+    deck._arch = a;
+    return a;
+  };
+  // 誰是進攻方：比對手快就搶血（aggro），比對手慢就控場（control）
+  H.roleStyle = function (g, p) {
+    const me = H.ARCH[H.archOf(g.decks && g.decks[p])], op = H.ARCH[H.archOf(g.decks && g.decks[1 - p])];
+    if (!me || !op) return 'default';
+    return me.speed < op.speed ? 'aggro' : me.speed > op.speed ? 'control' : 'default';
+  };
   H.evalState = function (g, p) {
     const W = (H.cfg && H.cfg.ew) || H.EW;
     const G = g.G;
@@ -179,11 +214,15 @@
     for (const u of me.units) s += unitV(u, true);
     for (const u of op.units) s -= unitV(u, false);
     s += (me.hand.length - op.hand.length) * W.hand;
+    // 實驗：手牌的價值看費用（高費解牌留著打重要目標，不要拿去換小怪）
+    const hc = H.cfg && H.cfg.handCost;
+    if (hc) s += (me.hand.reduce((a, c) => a + Math.min(8, c.card.c || 0), 0) - op.hand.reduce((a, c) => a + Math.min(8, c.card.c || 0), 0)) * hc;
     s += (me.resources.length - op.resources.length) * W.res;
     // 行為風格：侵略＝更看重打對方基地；控制＝更看重場面、手牌和自己的血量
     let st = AI.settings.style;
     // 依自己領袖的屬性自動選風格（侵略色＝搶血）；模擬驗證 Lv2 62:42、Lv4 45:35
-    if (!(H.cfg && H.cfg.autoStyle === false) && (!st || st === 'default')) st = (me.leader.card.a || []).includes('Aggression') ? 'aggro' : 'default';
+    if (H.cfg && H.cfg.roleStyle && (!st || st === 'default')) st = H.roleStyle(g, p);
+    else if (!(H.cfg && H.cfg.autoStyle === false) && (!st || st === 'default')) st = (me.leader.card.a || []).includes('Aggression') ? 'aggro' : 'default';
     if (st === 'aggro') s += (30 - opHp) * 0.9 - (me.units.length ? 0 : 1);
     else if (st === 'control') {
       for (const u of me.units) s += unitV(u, true) * 0.3;
