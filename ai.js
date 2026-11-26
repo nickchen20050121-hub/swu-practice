@@ -187,6 +187,15 @@
       s += (me.hand.length - op.hand.length) * 0.8 + myHp * 0.3;
     }
     if (me.leader && !me.leader.deployed && !me.leader.exhausted) s += W.ldReady;
+    // 換線（文章：地面打不贏就到太空打基地）：對方在那一區沒有單位擋，我的單位等於可以直接打基地
+    const lw = H.cfg && H.cfg.laneW;
+    if (lw) {
+      for (const ar of ['Ground', 'Space']) {
+        const mine = me.units.filter((u) => u.arena === ar), theirs = op.units.filter((u) => u.arena === ar);
+        if (!theirs.length) s += mine.reduce((a, u) => a + g.power(u), 0) * lw;
+        if (!mine.length) s -= theirs.reduce((a, u) => a + g.power(u), 0) * lw;
+      }
+    }
     // 先攻指示物：下一輪先手的價值（實驗中）
     const iw = (H.cfg && H.cfg.initW) || 0;
     if (iw && G.initiative != null) s += G.initiative === p ? iw : -iw;
