@@ -2608,7 +2608,17 @@
             h('span', { class: 'muted small' }, en ? 'Opponent' : '對手'),
             h('div', { class: 'mulloppcards', onclick: () => showPeek && showPeek(O.leader.card, 'leader') }, cardFace(O.leader.card, 'leader')),
             h('div', { class: 'mulloppcards', onclick: () => showPeek && showPeek(O.base.card, 'card') }, cardFace(O.base.card, 'card')),
-            h('div', { class: 'mullinfo' }, h('b', {}, SWU.cardName(O.leader.card)), h('br'), h('span', { class: 'small muted' }, SWU.cardName(O.base.card)), h('br'), fi != null ? h('span', { class: 'small' }, '🪙 ' + (en ? (fi === 0 ? 'You go first' : 'Opponent goes first') : fi === 0 ? '你先攻' : '對手先攻')) : null),
+            h('div', { class: 'mullinfo' }, h('b', {}, SWU.cardName(O.leader.card)), h('br'), h('span', { class: 'small muted' }, SWU.cardName(O.base.card)), h('br'), fi != null ? h('span', { class: 'small' }, '🪙 ' + (en ? (fi === 0 ? 'You go first' : 'Opponent goes first') : fi === 0 ? '你先攻' : '對手先攻')) : null, (() => {
+              // 牌型：誰是進攻方（指南第六段：開局先決定角色）
+              try {
+                const HH = SWU.AI.heur, A = HH.ARCH, gg = S.game;
+                const ma = A[HH.archOf(gg.decks[0])], oa = A[HH.archOf(gg.decks[1])];
+                const role = ma.speed < oa.speed ? (en ? 'You are the beatdown: pressure the base' : '你是進攻方：主動搶血') : ma.speed > oa.speed ? (en ? 'You are the control: trade and outlast' : '你是防守方：先守住、拖後期') : en ? 'Even speed: fight for the board' : '速度差不多：爭場面';
+                return h('div', { class: 'small archinfo' }, (en ? 'Archetypes: ' : '牌型：') + (en ? ma.en : ma.zh) + ' vs ' + (en ? oa.en : oa.zh), h('br'), h('b', {}, role));
+              } catch (e) {
+                return null;
+              }
+            })()),
             h('button', { class: 'ghost small mullpeek', onclick: peekBoard }, en ? '👁 Board' : '👁 看場面')
           ),
           h('h3', {}, req.prompt),
