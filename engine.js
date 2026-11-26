@@ -1713,6 +1713,11 @@
         if (this.has(u, 'Shielded')) this.giveShield(u);
         // 其他卡「當你打出單位時」
         await this.fire(p, 'onFriendlyPlay', u);
+        // Maul | Old Master 等：先擊敗，「打出時」在擊敗之後才結算
+        if (opts.defeatFirst) {
+          await this.defeat(u, { by: opts.defeatFirst });
+          await this.checkState();
+        }
         if (e && e.whenPlayed) {
           await this.safe(() => e.whenPlayed(this, u));
           await this.fire(p, 'onUsedWhenPlayed', u, () => this.safe(() => e.whenPlayed(this, u)));

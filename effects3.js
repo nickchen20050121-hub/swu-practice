@@ -1500,12 +1500,41 @@
       }
     },
   });
+  def('Maul | Old Master', 'leader', {
+    actions: [
+      {
+        text: L('橫置：從手牌打出一個單位（少 1 費），然後擊敗它（打出時在擊敗後結算）', 'Exhaust: play a unit from your hand (1 less), then defeat it (When Played resolves after)'),
+        can: (g, Ld) => !Ld.exhausted && g.P(Ld.ctrl).hand.some((c) => c.card.t === 'Unit' && g.canPay(Ld.ctrl, Math.max(0, g.costOf(Ld.ctrl, c.card, { discount: 1 })))),
+        async run(g, Ld) {
+          const p = Ld.ctrl != null ? Ld.ctrl : Ld.owner;
+          const cands = g.P(p).hand.filter((c) => c.card.t === 'Unit' && g.canPay(p, Math.max(0, g.costOf(p, c.card, { discount: 1 }))));
+          if (!cands.length) return;
+          const pick = await g.pickCards(p, L('Maul：選擇要打出並擊敗的單位（少 1 費）', 'Maul: choose a unit to play and defeat (1 less)'), cands, 1, 1, { maulSac: true });
+          if (!pick.length) return;
+          Ld.exhausted = true;
+          await g.playCard(p, pick[0].uid, 'hand', { discount: 1, defeatFirst: 'Maul' });
+        },
+      },
+    ],
+  });
   def('Maul | Old Master', 'unit', {
     extend: true,
     async whenDeployed(g, u) {
       const ids = new Set((g.G.defeated || []).filter((d) => d.phaseId === g.G.phaseId).map((d) => d.uid));
       const P = g.P(u.ctrl);
       await playFromDiscard(g, u.ctrl, P.discard.filter((c) => c.card.t === 'Unit' && ids.has(c.uid) && g.canPay(u.ctrl, Math.max(0, g.costOf(u.ctrl, c.card) - 5))), u.card, { discount: 5, prompt: L('可以打出本階段被擊敗的單位（少 5 費）', 'you may play a unit defeated this phase (5 less)') });
+    },
+  });
+  def('Nightbrother | Maul\'s Gauntlet', 'card', {
+    extend: true,
+    async whenPlayed(g, u) {
+      const p = u.ctrl;
+      const cands = g.P(p).discard.filter((c) => c.card.t === 'Unit' && g.canPay(p, Math.max(0, g.costOf(p, c.card) - 3)));
+      const r = await playFromDiscard(g, p, cands, u.card, { discount: 3, ready: true, prompt: L('可以從棄牌堆打出一個單位（少 3 費、進場就緒，下個重整階段開始時擊敗）', 'you may play a unit from your discard pile (3 less, enters ready, defeated at the start of the next regroup phase)') });
+      if (r && r.card && g.findUnit(r.uid)) {
+        const uid = r.uid;
+        g.delay({ at: 'regroupStart', round: g.G.round, run: async (g) => { const x = g.findUnit(uid); if (x) await g.defeat(x); } });
+      }
     },
   });
   def('Max Rebo | Encore!', 'card', { extend: true, extraRegroup: true });

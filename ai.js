@@ -140,7 +140,10 @@
         s = b ? R.atk0 + b.s * R.atkM : -1;
       } else if (a.type === 'deploy') s = R.deploy;
       else if (a.type === 'initiative') s = P.units.length && !acts.some((x) => x.type === 'attack' || x.type === 'play') ? 1 : 0.2;
-      else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : R.abil;
+      else if (a.type === 'leaderAbility' && !(H.cfg && H.cfg.noMaulSac) && /^Maul \| Old Master/.test(P.leader.card.key)) {
+        const f = H.maulFodder(g, p);
+        s = f && f.s > 0 ? R.abil + f.s * ((H.cfg && H.cfg.maulScore) || 0) : -2;
+      } else if (a.type === 'ability' || a.type === 'leaderAbility' || a.type === 'baseAbility') s = a.manual ? (AI.hasClaude() ? 1.5 : -1) : R.abil;
       else if (a.type === 'manualAbility' || a.type === 'manualLeader') s = AI.hasClaude() ? 1.5 : -1;
       if (s > bestS) {
         bestS = s;
@@ -546,6 +549,19 @@
     return done({ act: pass || r.best || acts[0] });
   };
   const HARM = /damage|defeat|capture|-\d|傷害|擊敗|俘虜|攻擊誰|attack/i;
+  // Maul | Old Master：手牌單位當「打出就擊敗」的祭品值不值得（有被擊敗時／打出時效果的便宜單位最划算，大身材白板單位最虧）
+  H.maulFodder = function (g, p, list) {
+    const cs = list || g.P(p).hand.filter((c) => c.card.t === 'Unit' && g.canPay(p, Math.max(0, g.costOf(p, c.card, { discount: 1 }))));
+    let best = null;
+    for (const c of cs) {
+      const tx = SWU.sideText ? SWU.sideText(c.card, 'card') : c.card.tx || '';
+      const wd = /When Defeated/i.test(tx), wp = /When Played/i.test(tx);
+      const body = (c.card.p || 0) + (c.card.h || 0);
+      const s = (wd ? 3 : 0) + (wp ? 2 : 0) - body * 0.4 + 1;
+      if (!best || s > best.s) best = { c, s };
+    }
+    return best;
+  };
   H.choose = function (g, p, req) {
     const opts = req.options;
     const ctx = req.ctx || {};
@@ -564,6 +580,10 @@
         if (u && /1 damage to|造成 1 點傷害|deal 2 to|造成 2 點傷害/.test(req.prompt) && g.remaining(u) <= 2) return ['no'];
       }
       return ['yes'];
+    }
+    if (req.kind === 'cards' && ctx.maulSac && !(H.cfg && H.cfg.noMaulSac)) {
+      const b = H.maulFodder(g, p, opts.map((o) => g.findAny(o.id)).filter(Boolean));
+      if (b) return [b.c.uid];
     }
     if (req.kind === 'cards') {
       const cards = opts.map((o) => ({ o, c: g.findAny(o.id) }));
