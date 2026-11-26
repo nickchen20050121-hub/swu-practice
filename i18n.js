@@ -137,7 +137,7 @@
       bt: '當一個友方單位的攻擊結束時：替那個單位或你的基地回復 2 點傷害。',
     },
     'Gungi | Fighting for Kashyyyk': { tx: '堅毅（這個單位身上每有 1 點傷害就 +1/+0。）\n當這個單位受到傷害並存活時：你可以棄 1 張手牌。若你這麼做，準備這個單位。' },
-    'Gungi | Finding Himself': { tx: '（資料庫沒有收錄這張卡的能力文字，暫時當成白板單位。）' },
+    'Gungi | Finding Himself': { tx: '（這張卡沒有能力。獨特單位：同名的只能有一張在場。）' },
     'Huyang | Your Aptitude Falls Short': { tx: '攻擊時：你可以讓一個有升級卡的單位本階段 -4/-0。' },
     'Mina Bonteri | Stop This War': { tx: '回復 1（這個單位攻擊時，替你的基地回復 1 點傷害。）\n被擊敗時：你可以揭示 綠 綠 白（從手牌展示合計含有這些圖示的卡）。若你這麼做，抽 1 張牌。' },
     'Soaring Can-Cell': { tx: '突襲 1\n當你控制卡夏克（Kashyyyk）基地時，這個單位獲得伏擊。' },
