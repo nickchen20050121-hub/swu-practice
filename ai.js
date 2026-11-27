@@ -415,7 +415,7 @@
   H.search = async function (g, p, acts, opt = {}) {
     if (!SWU.engineRT || !g.rec || g.replaying) return null;
     H._opp = { q: 1 - p, baseW: opt.oppBaseW || H.oppBaseW(g, 1 - p) };
-    const rt = SWU.engineRT.get();
+    let rt = SWU.engineRT.get();
     const STOP = { stop: true };
     const base = H.evalState(g, p) - H.oppThreat(g, p) * 0.6;
     const cands = [];
@@ -516,6 +516,29 @@
       if (g2.G.log.some((l) => l.k === 'logEffectError' && !/stop/.test(String(l.a[0])) && l.a[0] !== '[object Object]')) score -= 5;
       return score;
     };
+    // 2026-11-28 柏偉回報網站常常無回應：推演全部在主執行緒跑，一想就是十幾秒畫面完全卡住。
+    // 在瀏覽器裡每跑約 40ms 就讓出一次，讓畫面、捲動、點擊都能動（Node 的模擬工具不受影響）
+    const UI = typeof document !== 'undefined';
+    let lastYield = Date.now();
+    const breathe = async () => {
+      if (!UI || Date.now() - lastYield < 40) return;
+      // 讓出前先把引擎的亂數／編號還給真正的對局；回來時再記一次（期間可能開了新局）
+      SWU.engineRT.set(rt);
+      await new Promise((r) => {
+        if (typeof MessageChannel !== 'undefined') {
+          const ch = new MessageChannel();
+          ch.port1.onmessage = () => r();
+          ch.port2.postMessage(0);
+        } else setTimeout(r, 0);
+      });
+      rt = SWU.engineRT.get();
+      lastYield = Date.now();
+    };
+    const sim0 = sim;
+    const simY = async (c, deep) => {
+      await breathe();
+      return sim0(c, deep);
+    };
     let best = null, bestS = -Infinity;
     try {
       const scored = [];
@@ -523,7 +546,7 @@
         if (Date.now() - t0 > (opt.tA || (opt.samples > 1 ? 4000 : 2500))) break;
         let sc = 0;
         const ns = opt.samples || 1;
-        for (let k = 0; k < ns; k++) sc += await sim(c, false);
+        for (let k = 0; k < ns; k++) sc += await simY(c, false);
         sc /= ns;
         scored.push({ c, sc });
         if (sc > bestS) {
@@ -538,7 +561,7 @@
         for (const x of scored.slice(0, opt.top || 5)) {
           if (Date.now() - t0 > (opt.tB || 6000)) break;
           const rs = [];
-          for (let k = 0; k < opt.rollout; k++) rs.push(await sim(x.c, 'roll'));
+          for (let k = 0; k < opt.rollout; k++) rs.push(await simY(x.c, 'roll'));
           const mean = rs.reduce((a, b) => a + b, 0) / rs.length;
           // 風險：同一個行動在不同推演裡結果差很多（例如怕對手手上有解牌），就扣分
           const sd = Math.sqrt(rs.reduce((a, b) => a + (b - mean) ** 2, 0) / rs.length);
@@ -565,7 +588,7 @@
           if (Date.now() - t0 > 5000) break;
           let d = 0;
           const N = 3;
-          for (let k = 0; k < N; k++) d += await sim(x.c, true);
+          for (let k = 0; k < N; k++) d += await simY(x.c, true);
           d = d / N + x.sc * 0.25;
           if (d > bd) {
             bd = d;

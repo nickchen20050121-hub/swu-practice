@@ -483,7 +483,7 @@ body.ingame #app{height:100dvh;display:flex;flex-direction:column}
 body.ingame header.top{padding-top:6px;padding-bottom:6px}
 body.ingame main#view{flex:1;min-height:0;padding:8px max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px))}
 body.ingame .table-wrap{height:100%;align-items:stretch;grid-template-columns:minmax(0,1fr) clamp(240px,22vw,320px)}
-body.ingame .board{--cw:clamp(40px,calc((100dvh - 385px) / 5.8),104px);--hcw:clamp(42px,calc((100dvh - 385px) / 5.5),110px);height:100%;min-height:0;overflow:hidden auto;grid-template-rows:auto auto minmax(min-content,1fr) auto minmax(min-content,1fr) auto;gap:6px;padding:8px 10px;align-content:stretch}
+body.ingame .board{--cw:clamp(40px,calc((100dvh - 385px) / 5.8),104px);--hcw:clamp(42px,calc((100dvh - 385px) / 5.5),110px);height:100%;min-height:0;overflow:hidden auto;grid-template-rows:min-content min-content minmax(min-content,1fr) min-content minmax(min-content,1fr) min-content;gap:6px;padding:8px 10px;align-content:stretch}
 body.ingame .zone{min-height:min-content;padding:4px 8px 6px;gap:3px;grid-template-rows:auto minmax(0,1fr)}
 body.ingame .lane{min-height:0;padding:14px 6px 6px}
 body.ingame .units{flex-wrap:nowrap;overflow-x:auto;overflow-y:visible;padding-bottom:6px;scrollbar-width:thin}
@@ -492,6 +492,9 @@ body.ingame .hand{--cw:var(--hcw);flex-wrap:nowrap;overflow-x:auto;padding:6px 2
 body.ingame .hand>*{flex:none}
 body.ingame .board>.hand{position:sticky;bottom:-8px;z-index:5;background:var(--panel);border-radius:8px}
 body.ingame .promptbar{min-height:0;padding:6px 10px}
+/* 2026-11-28 柏偉：Pass 常被擋住。場面一多、畫面不夠高時，auto 列會被壓到比內容矮，
+   兩行的動作選單第二行（Pass、回上一步）掉到自己的場面底下被蓋住 → 上面 .board 的列改成 min-content，不准壓扁 */
+body.ingame .board>.promptbar{min-height:min-content}
 body.ingame .side{position:static;height:100%;min-height:0;overflow:auto;align-content:start}
 body.ingame .side .preview{--cw:min(200px,16vw)}
 body.ingame .cardback{width:calc(var(--cw)*.3);height:calc(var(--cw)*.42);font-size:calc(var(--cw)*.13)}
@@ -617,22 +620,22 @@ body:has(.promptbar.effpop.onboard) #board{padding-bottom:120px}
 </head>
 <body>
 <div id="app"></div>
-<script src="cards.js?v=202611270430"></script>
-<script src="engine.js?v=202611270430"></script>
-<script src="zh_cards.js?v=202611270430"></script>
-<script src="i18n.js?v=202611270430"></script>
-<script src="effects.js?v=202611270430"></script>
-<script src="pilots.js?v=202611270430"></script>
-<script src="effects2.js?v=202611270430"></script>
-<script src="gfx.js?v=202611270430"></script>
-<script src="effects3.js?v=202611270430"></script>
-<script src="programs.js?v=202611270430"></script>
-<script src="meta_decks.js?v=202611270430"></script>
-<script src="quiz.js?v=202611270430"></script>
-<script src="deck.js?v=202611270430"></script>
-<script src="ai.js?v=202611270430"></script>
-<script src="sfx.js?v=202611270430"></script>
-<script src="ui.js?v=202611270430"></script>
+<script src="cards.js?v=202611280030"></script>
+<script src="engine.js?v=202611280030"></script>
+<script src="zh_cards.js?v=202611280030"></script>
+<script src="i18n.js?v=202611280030"></script>
+<script src="effects.js?v=202611280030"></script>
+<script src="pilots.js?v=202611280030"></script>
+<script src="effects2.js?v=202611280030"></script>
+<script src="gfx.js?v=202611280030"></script>
+<script src="effects3.js?v=202611280030"></script>
+<script src="programs.js?v=202611280030"></script>
+<script src="meta_decks.js?v=202611280030"></script>
+<script src="quiz.js?v=202611280030"></script>
+<script src="deck.js?v=202611280030"></script>
+<script src="ai.js?v=202611280030"></script>
+<script src="sfx.js?v=202611280030"></script>
+<script src="ui.js?v=202611280030"></script>
 <script>SWU.boot();</script>
 </body>
 </html>
