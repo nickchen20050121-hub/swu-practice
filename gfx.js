@@ -851,6 +851,9 @@
     if (f.shielded && !(u.upgrades || []).some((x) => x.card.n === 'Shield')) return false;
     if (f.arena && u.arena !== f.arena) return false;
     if (f.sameArena && ctx.self && u.arena !== ctx.self.arena) return false;
+    // 「另一個單位」「同一區域」指的是上一步選的單位（例如 Collateral Damage：先打一個單位，再打同區域的另一個單位或基地）
+    if (f.notPrev && (ctx.prev || []).some((x) => x && x.uid === u.uid)) return false;
+    if (f.sameArenaPrev && ctx.prev && ctx.prev[0] && ctx.prev[0].arena && u.arena !== ctx.prev[0].arena) return false;
     if (f.token && !/Token/.test(u.card.t)) return false;
     if (f.nonToken && /Token/.test(u.card.t)) return false;
     if (f.traits && !f.traits.every((t) => g.hasTrait(u, t))) return false;
