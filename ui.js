@@ -378,6 +378,26 @@
     zoom.cur = null;
     if (zoom.el) zoom.el.className = 'zoom';
   }
+  // 打牌時：選擇視窗、手機的卡片說明擋住場面 → 右上角「看場面」按鈕，按了暫時藏起來，點任何地方回去
+  function installBoardPeek() {
+    const zh = () => SWU.lang !== 'en';
+    const btn = h('button', { id: 'boardpeek', class: 'boardpeek', hidden: true, onclick: (e) => (e.stopPropagation(), document.body.classList.add('peekboard'), (shield.hidden = false), (btn.hidden = true)) });
+    const shield = h('div', { id: 'peekshield', class: 'peekshield', hidden: true, onclick: (e) => (e.stopPropagation(), document.body.classList.remove('peekboard'), (shield.hidden = true)) });
+    document.body.append(btn, shield);
+    const open = (sel) => {
+      const el = $(sel);
+      return el && !el.hidden;
+    };
+    setInterval(() => {
+      const inGame = S.tab === 'play' && S.game;
+      const covered = inGame && (open('#modal') || open('#peek'));
+      if (!covered && document.body.classList.contains('peekboard')) (document.body.classList.remove('peekboard'), (shield.hidden = true));
+      const show = !!covered && !document.body.classList.contains('peekboard');
+      if (btn.hidden === show) btn.hidden = !show;
+      btn.textContent = zh() ? '👁 看場面' : '👁 View board';
+      shield.textContent = zh() ? '點任何地方回去' : 'Tap anywhere to go back';
+    }, 250);
+  }
   function installZoom() {
     const fine = () => window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches;
     document.addEventListener('mouseover', (e) => {
@@ -472,8 +492,10 @@
       },
       true
     );
+    // 手機長按卡片不要跳「複製圖片／下載圖片」選單
     document.addEventListener('contextmenu', (e) => {
-      if (e.target.closest && e.target.closest('[data-zoom]') && zoom.shownByPress) e.preventDefault();
+      if (!e.target.closest) return;
+      if (e.target.closest('[data-zoom], #zoom, .face, .peek') && (zoom.shownByPress || !fine())) e.preventDefault();
     });
   }
   // 點兩下判定（電腦 dblclick／手機連點兩下都適用）
@@ -3175,6 +3197,7 @@
             onclick: () => addCard(c, f.addZone || 'main'),
             oncontextmenu: (e) => {
               e.preventDefault();
+              if (isTouch()) return; // 手機長按是看大圖，不移除
               removeCard(c.key, f.addZone || 'main');
             },
           },
@@ -3816,6 +3839,7 @@
     document.documentElement.lang = SWU.lang === 'zh' ? 'zh-Hant' : 'en';
     S.decks = SWU.Deck.loadAll();
     installZoom();
+    installBoardPeek();
     render();
   };
 })();
