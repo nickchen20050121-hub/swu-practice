@@ -602,6 +602,35 @@
     }
     return { best: best && best.a, force: best && best.force, gain: bestS - base, base };
   };
+  // Lv8 自己分配傷害（Devastator、Ninth Sister 等）：在打得死的對手單位裡挑價值最高的組合（領袖加分），
+  // 剩下的打基地；能直接打爆基地就全打基地。2026-11-28 A/B：379:362（640 組，z=1.55）
+  H.distribute = function (g, p, req) {
+    if (req.mode === 'heal' || req.mode === 'token' || req.own) return g.autoDistribute(p, req);
+    const units = req.targets.filter((t) => t.uid != null).map((t) => ({ t, u: g.findUnit(t.uid) })).filter((x) => x.u && x.u.ctrl !== p);
+    const baseT = req.targets.find((t) => t.base != null && t.base !== p);
+    const total = req.total, alloc = {};
+    if (baseT) {
+      const B = g.P(baseT.base).base;
+      if ((B.card.h || 30) - B.damage <= total) return { [baseT.id]: total };
+    }
+    const shield = (u) => u.upgrades.some((x) => x.card.n === 'Shield') && !req.unpreventable;
+    const ks = units.filter((x) => !shield(x.u)).map((x) => ({ ...x, need: g.remaining(x.u), v: H.unitValue(g, x.u) + (x.u.isLeader ? 8 : 0) })).filter((x) => x.need <= total);
+    if (ks.length > 12) return g.autoDistribute(p, req);
+    let best = [], bestV = 0, bestN = 0;
+    for (let m = 1; m < 1 << ks.length; m++) {
+      let n = 0, v = 0;
+      for (let i = 0; i < ks.length; i++) if (m & (1 << i)) ((n += ks[i].need), (v += ks[i].v));
+      if (n <= total && (v > bestV || (v === bestV && n < bestN))) ((bestV = v), (bestN = n), (best = ks.filter((_, i) => m & (1 << i))));
+    }
+    let left = total;
+    for (const x of best) ((alloc[x.t.id] = x.need), (left -= x.need));
+    if (left && baseT) alloc[baseT.id] = (alloc[baseT.id] || 0) + left;
+    else if (left && units.length) {
+      const big = units.filter((x) => !alloc[x.t.id]).sort((a, b) => g.remaining(b.u) - g.remaining(a.u))[0] || units[0];
+      alloc[big.t.id] = (alloc[big.t.id] || 0) + left;
+    }
+    return Object.keys(alloc).length ? alloc : g.autoDistribute(p, req);
+  };
   // 預想版行動選擇：沒有好處的行動就搶先攻／Pass
   // ---------- 難度 1～7（2026-11-25 柏偉：8 級還是太簡單 → 改 7 級整體往上）----------
   // 1：規則型；2：預想一步；3～4：前幾名推演到回合結束；5：原本的最強（前 12 名各推演 14 次）；
@@ -888,6 +917,8 @@
           }
         );
       },
+      // Lv8：自己分配傷害時挑「打得死、價值最高」的組合；其他等級沿用引擎的分配
+      distribute: AI.levelNum() >= 8 ? async (g, p, req) => H.distribute(g, p, req) : undefined,
       async choose(g, p, req) {
         if (force && req.kind === 'target' && req.ctx && req.ctx.uid === force.uid && req.options.some((o) => o.id === force.target)) {
           const t = force.target;

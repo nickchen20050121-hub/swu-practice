@@ -44,7 +44,7 @@
     scSize: '張數', scCurve: '前期卡比例', scAvg: '平均費用', scPenalty: '顏色罰費', scConsistency: '穩定度（3 張的比例）', scInteraction: '互動手段', scUnits: '單位比例',
     scNote: '只看牌組結構，不代表實戰勝率。', errNoLeader: '還沒選領袖', errNoBase: '還沒選基地', errTooFew: '主牌只有 {0} 張（至少 50）', errTooMany: '{0} 超過 3 張', errSide: '備牌 {0} 張（最多 10）',
     errJson: 'JSON 格式有誤', warnUnknown: '找不到：{0}', presetPQ: 'Luke Skywalker (ASH)｜起源之樹・卡希克 (HMW)｜MAGICSTAR 行星賽 PQ 版 52 張', presetA2: 'Luke Skywalker (ASH)｜起源之樹・卡希克 (HMW)｜A2 調整版 50 張', autoDeckName: '自動組牌',
-    pickLeaderBase: '先選好領袖和基地', addHint: '點卡片加入牌組；右鍵或長按移除', clickToSet: '點卡片設為{0}',
+    pickLeaderBase: '先選好領袖和基地', addHint: '點卡片加入牌組；右鍵移除（手機：長按看大圖和效果，在牌表按 − 移除）', clickToSet: '點卡片設為{0}',
     // 設定
     setLang: '語言', setKey: 'Claude API 金鑰', setKeyHint: '金鑰只會存在這台電腦的瀏覽器裡。到 console.anthropic.com 建立。', setTest: '測試連線', testing: '測試中…', testOk: '連線成功', testFail: '連線失敗：{0}',
     setModel: '模型', setEffort: '思考深度', effLow: '快（low）', effMed: '中（medium）', effHigh: '深（high）', setMode: '哪些決定交給 Claude', modeMain: '主要行動與效果判讀（較快、較省）', modeAll: '每個決定（較聰明、較慢、較貴）',
@@ -80,7 +80,7 @@
     scSize: 'Size', scCurve: 'Early cards', scAvg: 'Average cost', scPenalty: 'Aspect penalty', scConsistency: 'Consistency (3-ofs)', scInteraction: 'Interaction', scUnits: 'Unit ratio',
     scNote: 'Structure only; not a win-rate prediction.', errNoLeader: 'No leader', errNoBase: 'No base', errTooFew: 'Main deck has {0} cards (50 minimum)', errTooMany: '{0} has more than 3 copies', errSide: 'Sideboard has {0} (10 max)',
     errJson: 'Invalid JSON', warnUnknown: 'Not found: {0}', presetPQ: 'Luke Skywalker (ASH) | Origin Tree (HMW) | MAGICSTAR PQ, 52', presetA2: 'Luke Skywalker (ASH) | Origin Tree (HMW) | A2 tune, 50', autoDeckName: 'Auto-build',
-    pickLeaderBase: 'Choose a leader and a base first', addHint: 'Click a card to add it; right-click or long-press to remove', clickToSet: 'Click to set as {0}',
+    pickLeaderBase: 'Choose a leader and a base first', addHint: 'Click a card to add it; right-click to remove (phone: long-press for the big card and text, remove with − in the list)', clickToSet: 'Click to set as {0}',
     setLang: 'Language', setKey: 'Claude API key', setKeyHint: 'The key stays in this browser only. Create one at console.anthropic.com.', setTest: 'Test connection', testing: 'Testing…', testOk: 'Connected', testFail: 'Failed: {0}',
     setModel: 'Model', setEffort: 'Thinking effort', effLow: 'Fast (low)', effMed: 'Medium', effHigh: 'Deep (high)', setMode: 'Decisions made by Claude', modeMain: 'Main actions and effect reading (faster, cheaper)', modeAll: 'Every decision (smarter, slower, costlier)',
     setDelay: "Delay between Yuna's moves (ms)", setImages: 'Show official card images (needs internet)', setData: 'Backup', exportAll: 'Export all decks', importAll: 'Import backup', backupHint: 'Save this text; paste it back on another computer.',
@@ -398,7 +398,15 @@
       showZoom(zoom.cur, e.clientX, e.clientY);
     });
     document.addEventListener('mousedown', hideZoom, true);
-    document.addEventListener('scroll', hideZoom, true);
+    document.addEventListener(
+      'scroll',
+      (e) => {
+        if (e.target && e.target.closest && e.target.closest('#zoom')) return; // 大圖裡的說明可以捲
+        zoom.stickyOpen = false;
+        hideZoom();
+      },
+      true
+    );
     // 手機長按
     let press = null;
     document.addEventListener(
@@ -409,6 +417,7 @@
         if (!f || !f._zc || f.closest('#zoom')) return;
         press = setTimeout(() => {
           zoom.shownByPress = true;
+          zoom.sticky = !!f.closest('.rcard, .dlist');
           clearTimeout(peekTimer);
           hidePeek();
           showZoom(f, 0, 0, true);
@@ -420,6 +429,13 @@
       clearTimeout(press);
       if (zoom.shownByPress) {
         zoom.shownByPress = false;
+        // 組牌器：長按放開後大圖留著慢慢看，再點一下任何地方才收起
+        if (zoom.sticky) {
+          zoom.stickyOpen = true;
+          if (zoom.el) zoom.el.classList.add('sticky');
+          if (e.cancelable) e.preventDefault();
+          return;
+        }
         hideZoom();
         if (e.cancelable) e.preventDefault(); // 長按放開不要算成點擊
       }
@@ -432,6 +448,13 @@
     document.addEventListener(
       'click',
       (e) => {
+        if (zoom.stickyOpen) {
+          zoom.stickyOpen = false;
+          hideZoom();
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
         if (fine()) return;
         if (tapShown) {
           tapShown = false;
@@ -3141,7 +3164,6 @@
       const n = (S.edit.main[c.key] || 0) + (S.edit.side[c.key] || 0);
       const isSet = S.edit.leader === c.key || S.edit.base === c.key;
       const pr = printingOf(c, f.sets);
-      let press;
       items.push(
         h(
           'div',
@@ -3155,10 +3177,8 @@
               e.preventDefault();
               removeCard(c.key, f.addZone || 'main');
             },
-            ontouchstart: () => (press = setTimeout(() => removeCard(c.key, f.addZone || 'main'), 600)),
-            ontouchend: () => clearTimeout(press),
           },
-          cardFace(c, 'card', { noZoom: isTouch() }),
+          cardFace(c, 'card'),
           n ? h('span', { class: 'count' }, '×' + n) : isSet ? h('span', { class: 'count' }, '✓') : null,
           h('small', {}, SWU.cardName(c), c.s ? ' – ' + SWU.cardSub(c) : ''),
           pr ? h('small', { class: 'setno' }, pr.set + ' ' + String(pr.n).padStart(3, '0')) : null
